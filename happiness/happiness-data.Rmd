@@ -23,7 +23,7 @@ library(knitr)
 ```{r, message=FALSE}
 happiness_df <- read_xls("WHR2018Chapter2OnlineData.xls", sheet=2,
                           range='A1:K157', col_names=TRUE) %>% 
-  select(`Happiness score`)
+   select(Country, `Happiness score`)
 
 ```
 
