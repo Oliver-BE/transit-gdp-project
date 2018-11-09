@@ -1,15 +1,31 @@
 ---
-title: "gdp_data"
+title: "gdp-data"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
 ```
 
 ## Import Data
 
 ```{r, message = FALSE}
-summary(cars)
+bea_gdp_df <- read_csv("bea-gdp-by-city.csv")
+head(bea_gdp_df)
+# we will need to create a new year column, will likely need to tidyr::spread()
+
+oecd_gdp_df <- read_csv("oecd-gdp-by-city.csv")
+head(oecd_gdp_df)
 ```
 
