@@ -1,0 +1,15 @@
+---
+title: "gdp_data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Import Data
+
+```{r, message = FALSE}
+summary(cars)
+```
+
