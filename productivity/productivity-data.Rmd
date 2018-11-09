@@ -21,10 +21,8 @@ library(knitr)
 ## Import Data
 
 ```{r, message = FALSE}
-productivity_df <- read_xls("bea-productivity.xlsx", sheet=1,
-                          range='A1:K157', col_names=TRUE) %>% 
-   select(Country, `Happiness score`)
-
-head(happiness_df)
+productivity_df <- read_xlsx("bea-productivity.xlsx", sheet=1,
+                          range='A4:F386', col_names=TRUE)
+head(productivity_df)
 ```
 
