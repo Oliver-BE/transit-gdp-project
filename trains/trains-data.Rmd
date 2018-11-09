@@ -1,0 +1,35 @@
+---
+title: "trains-data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## Import Data
+
+### Washington Metro API
+
+
+```{r, message=FALSE}
+file_name <- 'https://api.wmata.com/TrainPositions/TrainPositions?contentType={json}' # put url here
+  
+raw_train_df <- jsonlite::fromJSON(file_name) 
+train_df <- raw_train_df$ # figure out what goes here from raw_train_df
+
+train_df_final <- train_df %>% 
+    
+head(train_df_final)
+```
