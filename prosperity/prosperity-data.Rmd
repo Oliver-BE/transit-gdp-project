@@ -21,7 +21,7 @@ library(knitr)
 ## Import Data
 
 ```{r, message = FALSE}
-summary(cars)
+# productivity_df <- # read_xlsx("cpi-prosperity.xlsx", sheet=1,
+                          # range='A18:F386', col_names=TRUE)
+# head(productivity_df)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
