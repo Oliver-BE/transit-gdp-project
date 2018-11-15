@@ -21,7 +21,7 @@ library(knitr)
 ## Read in xlsx
 
 ```{r, message=FALSE}
-happiness_df <- read_xls("whr-happiness.xls", sheet=2,
+happiness_df <- read_xls("./happiness/whr-happiness.xls", sheet=2,
                           range='A1:K157', col_names=TRUE) %>% 
    select(Country, `Happiness score`)
 
