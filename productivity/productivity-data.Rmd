@@ -21,7 +21,7 @@ library(knitr)
 ## Import Data
 
 ```{r, message = FALSE}
-productivity_df <- read_xlsx("./productivity/bea-productivity.xlsx", sheet=1,
+productivity_df <- read_xlsx("bea-productivity.xlsx", sheet=1,
                           range='A4:F386', col_names=TRUE)
 head(productivity_df)
 ```
