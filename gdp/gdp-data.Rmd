@@ -21,12 +21,14 @@ library(knitr)
 ## Import Data
 
 ```{r, message = FALSE}
-ny_gdp_df <- read_csv("gdp-newyork.csv") %>% 
-  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName", "LineCode",
-                                         "Description"))
-
+ny_gdp_df <- read_xls("gdp-industrytotal.xls", sheet = 1, 
+                      range = 'A6:S390', col_names=TRUE) %>% 
+  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
+  separate(col = GeoName, into = c("City","State"), sep = ",", remove = TRUE)
+  #sapply(FUN = gsub(pattern = "(Metropolitan Statistical Area)",
+                                                  #   replacement = "", x = "(Metropolitan Statistical Area)"))
+ 
 head(ny_gdp_df)
-
 
 ```
 
