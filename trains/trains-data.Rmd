@@ -38,5 +38,21 @@ head(train_df_final)
 ### NYC data
 
 ```{r, message=FALSE}
+test1 <- read_csv('nyc/2013-10-nyc/trips.txt')
 
+trips_clean_data <- function(file_name) {
+  df <- read_csv(file_name) %>% 
+    select(route_id, service_id, trip_id) 
+  return(df)
+}
+
+test <- (trips_clean_data('nyc/2013-10-nyc/trips.txt'))
+
+calendar_clean_data <- function(file_name) {
+  
+}
+
+calendar_dates_clean_data <- function(file_name) {
+  
+}
 ```
