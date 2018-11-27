@@ -41,7 +41,8 @@ unemployment_2017 <- unemployment_df(5, 2017)
 final_unemployment_df <- full_join(unemployment_2013, unemployment_2014) %>% 
   full_join(unemployment_2015) %>% 
   full_join(unemployment_2016) %>% 
-  full_join(unemployment_2017)
+  full_join(unemployment_2017) %>% 
+  separate(col = City, into = c("City","State"), sep = ",", remove = TRUE)
 
 head(final_unemployment_df)
 
