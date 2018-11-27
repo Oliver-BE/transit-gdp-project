@@ -33,3 +33,10 @@ train_df_final <- train_df %>%
     
 head(train_df_final)
 ```
+
+
+### NYC data
+
+```{r, message=FALSE}
+
+```
