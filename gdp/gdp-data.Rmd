@@ -21,9 +21,12 @@ library(knitr)
 ## Import Data
 
 ```{r, message = FALSE}
-bea_gdp_df <- read_csv("gdp-newyork.csv")
-head(bea_gdp_df)
-# we will need to create a new year column, will likely need to tidyr::spread()
+ny_gdp_df <- read_csv("gdp-newyork.csv") %>% 
+  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName", "LineCode",
+                                         "Description"))
+
+head(ny_gdp_df)
+
 
 ```
 
