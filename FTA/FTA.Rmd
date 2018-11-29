@@ -1,0 +1,57 @@
+---
+title: "FTA-data"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## NYC data
+
+```{r, message=FALSE}
+
+FTA_df <- function(file_name, sheet_number, range) {
+  df <- read_xlsx(file_name, sheet=sheet_number, range=range, col_names=TRUE) 
+  
+  df <- df %>% 
+  filter(`Reporter Type` == "Full Reporter") %>% 
+  filter(Active == "Active") %>% 
+  gather(key = "Date", value = "")
+  
+  
+    
+  return(df)
+}
+
+#I don't really know how helpful the master will be
+#It contains master info about each transportation agency and the relevant Urbanized Area (UZA)
+#It has  a different spreadsheet design so I don't use the function for it
+master_df <- read_xlsx("FTA_September_2018.xlsx", sheet="A1:Y2129", range=2, col_names=TRUE) %>% filter(`Reporter Type` == "Full Reporter") %>% 
+  filter(Active == "Active")
+
+ 
+#Unlinked Passenger Trips (VRM)
+UPT_df<- FTA_df("FTA_September_2018.xlsx", 3, "A1:HB2129") 
+
+#Vehicle Revenue Miles (VRM)
+VRM_df<- FTA_df("FTA_September_2018.xlsx", 4, "A1:HB2129") 
+
+#Vehicle Revenue Hours (VRH)
+VRH_df<- FTA_df("FTA_September_2018.xlsx", 5, "A1:HB2129") 
+
+#Vehicles Operated in Maximum Service (VOMS) aka Peak Service
+VOMS_df <-FTA_df("FTA_September_2018.xlsx", 6, "A1:HB2129")
+
+```
