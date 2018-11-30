@@ -23,7 +23,9 @@ library(knitr)
 ```{r, message = FALSE}
 gdp_df <- read_xls("gdp-industrytotal.xls", sheet = 1, 
                       range = 'A6:S390', col_names=TRUE) %>% 
-  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName"))
+  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
+  mutate("GEO.id2" = as.integer(GeoFips)) %>% 
+  select(GEO.id2, GeoName, year, gdp) 
 
 
   # separate(col = GeoName, into = c("City","State"), sep = ",", remove = TRUE)
@@ -32,8 +34,6 @@ gdp_df <- read_xls("gdp-industrytotal.xls", sheet = 1,
 
 View(gdp_df)
 
-
-#test <- gdp_df %>% 
 #  select(State)
 
 #file_name <- paste0('States', '.csv')
