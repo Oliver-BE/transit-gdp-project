@@ -18,7 +18,7 @@ library(readr)
 library(knitr)
 ```
 
-## R Markdown
+## Join Census Data
 
 ```{r, message=FALSE}
 population_data <- pop_all_years
@@ -27,4 +27,9 @@ census_data <- final_census_df
 joined_census_data <- full_join(df1, df2)
 
 View(joined_census_data)
+
+# full join doesn't work; creates duplicate rows. maybe need inner_join
+df1 <- gdp_df
+df2 <- inner_join(joined_census_data, df1)
+View(df2)
 ```
