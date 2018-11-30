@@ -1,0 +1,102 @@
+---
+title: "FTA Funding"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## FTA Funding
+
+```{r, message=FALSE}
+
+  # BEGIN WRANGLE FUNCTION\
+funding_df <- function(sheet_number, col_name) {
+df <- read_xlsx("TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
+  
+ df <- df %>% 
+   filter(`Reporter Type` == "Full Reporter") %>% 
+    select(-`Reporter Type`) %>%
+     gather(key = "Year",
+          value = Name_of_Var,
+          -`Last Report Year`,
+          -`NTD ID`,
+          -`Legacy NTD ID`,
+          -`Agency Name`,
+          -`Agency Status`,
+          -City,
+          -State,
+          -`Census Year`,
+          -`Primary UZA Name`,
+          -UZA,
+          -`UZA Area SQ Miles`,
+          -`UZA Population`,
+          -`2017 Status`)
+
+   df[,col_name] <- df[,'Name_of_Var']
+   df[,'Name_of_Var'] <- NULL
+
+  return(df)
+}
+# END WRANGLE FUNCTION
+
+
+#Total Funding
+Total_Funding_df <- funding_df(3, "Total_Funding") %>% 
+  group_by(UZA) %>% 
+  mutate(Total_Funding = sum(Total_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Total_Funding) %>% 
+  unique()
+
+#Federal Funding
+Federal_Funding_df <- funding_df(4, "Federal_Funding") %>% 
+  group_by(UZA) %>% 
+  mutate(Federal_Funding = sum(Federal_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Federal_Funding) %>% 
+  unique()
+
+#State Funding
+State_Funding_df <- funding_df(5, "State_Funding") %>% 
+  group_by(UZA) %>% 
+  mutate(State_Funding = sum(State_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, State_Funding) %>% 
+  unique()
+
+#Local Funding 
+Local_Funding_df <- funding_df(6, "Local_Funding") %>% 
+  group_by(UZA) %>% 
+  mutate(Local_Funding = sum(Local_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Local_Funding) %>% 
+  unique()
+
+#Other Funding (aka Fares and other assorted revenue)
+Other_Funding_df <- funding_df(3, "Other_Funding") %>% 
+  group_by(UZA) %>% 
+  mutate(Other_Funding = sum(Other_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Other_Funding) %>% 
+  unique()
+
+#Joining Funding Dfs
+#NOTE: The sum of federal, state, local and other funding do not equal total funding. Something to note and potentially figure out at some point
+Joined_Funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(State_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(Local_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(Other_Funding_df, by = c("UZA", "Year")) 
+
+
+
+ 
+
+```

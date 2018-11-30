@@ -30,8 +30,8 @@ transit_stations_2017 <- read_xlsx("Transit Stations_0.xlsx", sheet=1, range="A1
 UZA_transit_stations_2017 <- full_join(master_df, transit_stations_2017, by = c("5 digit NTD ID" = "NTD ID" )) %>% 
   select(Agency, UZA, `UZA Name`, `Total Stations`) %>% 
   group_by(UZA) %>% 
-  mutate(Total_Stations = sum(`Total Stations`, na.rm = TRUE)) %>% 
-  select(UZA, Total_Stations) %>% 
+  mutate(Total_Stations_2017 = sum(`Total Stations`, na.rm = TRUE)) %>% 
+  select(UZA, Total_Stations_2017) %>% 
   unique()
 
 

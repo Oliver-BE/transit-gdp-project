@@ -45,7 +45,27 @@ df <- df %>%
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS) 
+         -TOS)  %>% 
+    mutate(Modes = if((Modes == "HR"| 
+                  Modes == "LR" | 
+                  Modes == "SR" | 
+                  Modes ==  "CR" | 
+                  Modes == "IP" | 
+                  Modes == "MG" | 
+                  Modes =="YR" | 
+                  Modes == "AR" | 
+                  Modes == "CC")){"Rail"}
+       else if(Modes == "FB"){"Ferry Boat"}
+       else if ((Modes == "MB" | 
+                Modes == "TB" | 
+                Modes == "CB" | 
+                Modes ==  "RB"| 
+                Modes ==  "PB" |
+                Modes == "JT")){"Non-Rail Bus "}
+       else if ((Modes == "VP" | 
+                 Modes == "DR" | 
+                 Modes == "DT" | 
+                 Modes == "TR" )){"Non-Rail Other"}) 
 
   df[,col_name] <- df[,'Name_of_Var']
   df[,'Name_of_Var'] <- NULL
@@ -106,6 +126,101 @@ VRH_df<- FTA_df(5, "VRHs") %>%
 #   unique()
 ```
 
+#Transit Station Data Wrangling
+
+```{r, message=FALSE}
+
+transit_stations_2017 <- read_xlsx("Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
+  filter(`Reporter Type` == "Full Reporter") %>% 
+  select(`NTD ID`, `Agency Name`, `Total Stations`)
+  
+
+#Potentially double counted transit stations by used by multiple transit networks
+UZA_transit_stations_2017 <- full_join(master_df, transit_stations_2017, by = c("5 digit NTD ID" = "NTD ID" )) %>% 
+  select(Agency, UZA, `UZA Name`, `Total Stations`) %>% 
+  group_by(UZA) %>% 
+  mutate(Total_Stations_2017 = sum(`Total Stations`, na.rm = TRUE)) %>% 
+  select(UZA, Total_Stations_2017) %>% 
+  unique()
+```
+
+## FTA Funding Data
+
+```{r, message=FALSE}
+
+  # BEGIN WRANGLE FUNCTION\
+funding_df <- function(sheet_number, col_name) {
+df <- read_xlsx("TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
+  
+ df <- df %>% 
+   filter(`Reporter Type` == "Full Reporter") %>% 
+    select(-`Reporter Type`) %>%
+     gather(key = "Year",
+          value = Name_of_Var,
+          -`Last Report Year`,
+          -`NTD ID`,
+          -`Legacy NTD ID`,
+          -`Agency Name`,
+          -`Agency Status`,
+          -City,
+          -State,
+          -`Census Year`,
+          -`Primary UZA Name`,
+          -UZA,
+          -`UZA Area SQ Miles`,
+          -`UZA Population`,
+          -`2017 Status`)
+
+   df[,col_name] <- df[,'Name_of_Var']
+   df[,'Name_of_Var'] <- NULL
+
+  return(df)
+}
+# END WRANGLE FUNCTION
+
+
+#Total Funding
+Total_Funding_df <- funding_df(3, "Total_Funding") %>% 
+  group_by(UZA, Year) %>% 
+  mutate(Total_Funding = sum(Total_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Total_Funding) %>% 
+  unique()
+
+#Federal Funding
+Federal_Funding_df <- funding_df(4, "Federal_Funding") %>% 
+  group_by(UZA, Year) %>% 
+  mutate(Federal_Funding = sum(Federal_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Federal_Funding) %>% 
+  unique()
+
+#State Funding
+State_Funding_df <- funding_df(5, "State_Funding") %>% 
+  group_by(UZA, Year) %>% 
+  mutate(State_Funding = sum(State_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, State_Funding) %>% 
+  unique()
+
+#Local Funding 
+Local_Funding_df <- funding_df(6, "Local_Funding") %>% 
+  group_by(UZA, Year) %>% 
+  mutate(Local_Funding = sum(Local_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Local_Funding) %>% 
+  unique()
+
+#Other Funding (aka Fares and other assorted revenue)
+Other_Funding_df <- funding_df(3, "Other_Funding") %>% 
+  group_by(UZA, Year) %>% 
+  mutate(Other_Funding = sum(Other_Funding, na.rm = TRUE)) %>%  
+  select(UZA, Year, Other_Funding) %>% 
+  unique()
+
+#Joining Funding Dfs
+#NOTE: The sum of federal, state, local and other funding do not equal total funding. Something to note and potentially figure out at some point
+Joined_Funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(State_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(Local_Funding_df, by = c("UZA", "Year")) %>% 
+  full_join(Other_Funding_df, by = c("UZA", "Year")) 
+```
 
 # Joining Everything 
 
@@ -126,13 +241,12 @@ final1_FTA_df <- full_join(relevant_master, UPT_df, by= c("UZA")) %>%
 
 #Joining Transit Stations from Transit Stations.Rmd
 #Potentially double counts transit stations that are used by multiple transit networks
+
 final2_FTA_df <- full_join(final1_FTA_df, UZA_transit_stations_2017, by= "UZA")
 
-
-
-
-  
-  
-
-
+#Joining Funding Data
+ 
+final3_FTA_df <- full_join(final2_FTA_df, Joined_Funding_df, by=c("UZA", "Year"))
 ```
+
+
