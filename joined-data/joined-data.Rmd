@@ -1,0 +1,30 @@
+---
+title: "joined-data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## R Markdown
+
+```{r, message=FALSE}
+population_data <- pop_all_years
+census_data <- final_census_df
+
+joined_census_data <- full_join(df1, df2)
+
+View(joined_census_data)
+```
