@@ -24,12 +24,12 @@ library(knitr)
 population_data <- pop_all_years
 census_data <- final_census_df
 
-joined_census_data <- full_join(df1, df2)
+joined_census_data <- full_join(population_data, census_data)
 
 View(joined_census_data)
 
 # full join doesn't work; creates duplicate rows. maybe need inner_join
-df1 <- gdp_df
-df2 <- inner_join(joined_census_data, df1)
-View(df2)
+# df1 <- gdp_df
+# df2 <- inner_join(joined_census_data, df1)
+# View(df2)
 ```
