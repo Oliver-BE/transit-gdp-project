@@ -1,0 +1,31 @@
+---
+title: "happiness-data"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## Read in xlsx
+
+```{r, message=FALSE}
+happiness_df <- read_xls("./happiness/whr-happiness.xls", sheet=2,
+                          range='A1:K157', col_names=TRUE) %>% 
+   select(Country, `Happiness score`)
+
+head(happiness_df)
+```
+
+
