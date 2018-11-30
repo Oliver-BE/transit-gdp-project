@@ -23,12 +23,14 @@ library(knitr)
 ```{r, message = FALSE}
 gdp_df <- read_xls("gdp-industrytotal.xls", sheet = 1, 
                       range = 'A6:S390', col_names=TRUE) %>% 
-  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
-  separate(col = GeoName, into = c("City","State"), sep = ",", remove = TRUE)
+  gather(key = "year", value = "gdp", -c("GeoFips", "GeoName"))
+
+
+  # separate(col = GeoName, into = c("City","State"), sep = ",", remove = TRUE)
   #sapply(FUN = gsub(pattern = "(Metropolitan Statistical Area)",
                                                   #   replacement = "", x = "(Metropolitan Statistical Area)"))
 
-head(gdp_df)
+View(gdp_df)
 
 
 #test <- gdp_df %>% 
