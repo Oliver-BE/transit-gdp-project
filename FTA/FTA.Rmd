@@ -61,10 +61,10 @@ UPT_df<- FTA_df(3, "UPTs")%>%
   mutate(Year = substr(Date, 4, 5)) %>% 
   group_by(UZA, Year) %>% 
   mutate(UPTs = sum(UPTs, na.rm = TRUE)) %>% 
-  select(UZA, `UZA Name`, Year, UPTs) %>% 
+  mutate(temp = 20) %>% 
+  unite(year, c(temp, Year), sep = "", remove = TRUE) %>% 
+  select(UZA, `UZA Name`, year, UPTs) %>% 
   unique()
-
-
 
 #Vehicle Revenue Miles (VRMs)
 VRM_df<- FTA_df(4, "VRMs") %>% 
