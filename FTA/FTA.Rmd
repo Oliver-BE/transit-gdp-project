@@ -18,32 +18,36 @@ library(readr)
 library(knitr)
 ```
 
-## NYC data
+## FTA data
 
 ```{r, message=FALSE}
 
-#I don't really know how helpful the master will be
+#Master is a bit weird
 #It contains master info about each transportation agency and the relevant Urbanized Area (UZA)
 #It has  a different spreadsheet design so I don't use the function for it
-master_df <- read_xlsx("FTA_September_2018.xlsx", sheet="A1:Y2129", range=2, col_names=TRUE) %>% filter(`Reporter Type` == "Full Reporter") %>% 
+
+master_df <- read_xlsx("FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+  filter(`Reporter Type` == "Full Reporter") %>% 
   filter(Active == "Active")
 
 
-FTA_df <- function(file_name, sheet_number, range, Name_of_Var) {
-  df <- read_xlsx(file_name, sheet=sheet_number, range=range, col_names=TRUE) 
+FTA_df <- function(sheet_number, col_name) {
+  df <- read_xlsx("FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
+  
   
   df <- df %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") 
+  filter(Active == "Active")
+    
   
   return(df)
 }
 
  
 #Unlinked Passenger Trip (UPTs)
-UPT_df<- FTA_df("FTA_September_2018.xlsx", 3, "A1:HB2129", "Unlinked Passenger Trips") %>% 
+UPT_df<- FTA_df(3, "UPTs")%>% 
   gather(key = "Date", 
-         value = character_UPT, 
+         value = UPTs,
          -`5 digit NTD ID`, 
          -`4 digit NTD ID`, 
          -Agency, 
@@ -52,13 +56,16 @@ UPT_df<- FTA_df("FTA_September_2018.xlsx", 3, "A1:HB2129", "Unlinked Passenger T
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS) %>% 
-  mutate(UPTs = as.numeric(character_UPT)) %>% 
+         -TOS) %>%
+  mutate(UPTs = as.numeric(UPTs)) %>% #convert UPT from characters into doubles
   group_by(UZA, Date) %>% 
-  mutate(tUPTs = sum(UPTs, na.rm = TRUE))
+  #Group by Urbanized Area (UZA) as to collapse areas with multiple agencies and to collapse different kinds of transportation. Group by Date so as to not collapse the time series
+  mutate(UPTs = sum(UPTs, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Date, UPTs) %>% 
+  unique()
 
 #Vehicle Revenue Miles (VRMs)
-VRM_df<- FTA_df("FTA_September_2018.xlsx", 4, "A1:HB2129", "Vehicle Revenue Miles") %>% 
+VRM_df<- FTA_df(4, "VRMs") %>% 
   gather(key = "Date", 
          value = VRMs, 
          -`5 digit NTD ID`, 
@@ -72,7 +79,7 @@ VRM_df<- FTA_df("FTA_September_2018.xlsx", 4, "A1:HB2129", "Vehicle Revenue Mile
          -TOS)
 
 #Vehicle Revenue Hours (VRHs)
-VRH_df<- FTA_df("FTA_September_2018.xlsx", 5, "A1:HB2129", "Vehicle Revenue Hours") %>% 
+VRH_df<- FTA_df(5, "VRHs") %>% 
   gather(key = "Date", 
          value = VRHs, 
          -`5 digit NTD ID`, 
