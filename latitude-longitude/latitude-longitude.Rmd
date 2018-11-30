@@ -1,0 +1,25 @@
+---
+title: "latitude-longitude"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Library-ing
+
+```{r cars}
+library(readxl)
+```
+
+## Importing Data
+
+```{r pressure, echo=FALSE}
+ 
+metropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 1)
+micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
