@@ -30,55 +30,46 @@ master_df <- read_xlsx("FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col
   filter(`Reporter Type` == "Full Reporter") %>% 
   filter(Active == "Active")
 
-
+#BEGIN WRANGLE FUNCTION
 FTA_df <- function(sheet_number, col_name) {
   df <- read_xlsx("FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
-  
 df <- df %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active")
+  filter(Active == "Active") %>% 
+    gather(key = "Date", 
+         value = Name_of_Var, 
+         -`5 digit NTD ID`, 
+         -`4 digit NTD ID`, 
+         -Agency, 
+         -Active, 
+         -`Reporter Type`, 
+         -UZA, 
+         -`UZA Name`, 
+         -Modes, 
+         -TOS) 
+
+  df[,col_name] <- df[,'Name_of_Var']
+  df[,'Name_of_Var'] <- NULL
 
   return(df)
 }
+#END WRANGLE FUNCTION
 
  
 #Unlinked Passenger Trip (UPTs)
 
 #Group by Urbanized Area (UZA) as to collapse areas with multiple agencies and to collapse different kinds of transportation. Group by Date so as to not collapse the time series
-UPT_df<- FTA_df(3, "UPTs")%>% 
-  gather(key = "Date", 
-         value = UPTs, 
-         -`5 digit NTD ID`, 
-         -`4 digit NTD ID`, 
-         -Agency, 
-         -Active, 
-         -`Reporter Type`, 
-         -UZA, 
-         -`UZA Name`, 
-         -Modes, 
-         -TOS) %>% 
-  mutate(UPTs = as.numeric(UPTs)) %>% #convert UPT from characters into doubles
+UPT_df<- FTA_df(3, "UPTs") %>% 
+  mutate(UPTs = as.numeric(UPTs))%>% #convert UPT from characters into doubles
   mutate(Year = substr(Date, 4, 5)) %>% 
   group_by(UZA, Year) %>% 
   mutate(UPTs = sum(UPTs, na.rm = TRUE)) %>% 
-  mutate(temp = 20) %>% 
-  unite(year, c(temp, Year), sep = "", remove = TRUE) %>% 
-  select(UZA, `UZA Name`, year, UPTs) %>% 
+  select(UZA, `UZA Name`, Year, UPTs) %>% 
   unique()
 
+
 #Vehicle Revenue Miles (VRMs)
-VRM_df<- FTA_df(4, "VRMs") %>% 
-  gather(key = "Date", 
-         value = VRMs, 
-         -`5 digit NTD ID`, 
-         -`4 digit NTD ID`, 
-         -Agency, 
-         -Active, 
-         -`Reporter Type`, 
-         -UZA, 
-         -`UZA Name`, 
-         -Modes, 
-         -TOS)%>% 
+VRM_df<- FTA_df(4, "VRMs") %>%  
   mutate(VRMs = as.numeric(VRMs)) %>% #convert UPT from characters into doubles
   mutate(Year = substr(Date, 4, 5)) %>% 
   group_by(UZA, Year) %>% 
@@ -88,17 +79,6 @@ VRM_df<- FTA_df(4, "VRMs") %>%
 
 #Vehicle Revenue Hours (VRHs)
 VRH_df<- FTA_df(5, "VRHs") %>% 
-  gather(key = "Date", 
-         value = VRHs, 
-         -`5 digit NTD ID`, 
-         -`4 digit NTD ID`, 
-         -Agency, 
-         -Active, 
-         -`Reporter Type`, 
-         -UZA, 
-         -`UZA Name`, 
-         -Modes, 
-         -TOS) %>% 
   mutate(VRHs = as.numeric(VRHs)) %>% #convert UPT from characters into doubles
   mutate(Year = substr(Date, 4, 5)) %>% 
   group_by(UZA, Year) %>% 
@@ -126,10 +106,23 @@ VRH_df<- FTA_df(5, "VRHs") %>%
 #   select(UZA, `UZA Name`, Year, VOMS) %>%
 #   unique()
 
-#joining
-final_FTA_df <- full_join(UPT_df, VRM_df, by= c("UZA", "UZA Name", "Year")) %>% 
-  full_join(VRH_df, by= c("UZA", "UZA Name", "Year"))
 
+#Getting relevant data from master
+relevant_master <- master_df %>%
+  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
+  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010)
+
+
+#joining
+final_FTA_df <- full_join(relevant_master, UPT_df, by= c("UZA")) %>% 
+  full_join(VRM_df, by= c("UZA", "UZA Name", "Year")) %>% 
+  full_join(VRH_df, by= c("UZA", "UZA Name", "Year")) %>% 
+  mutate(temp = 20) %>% 
+  unite(Year, c(temp, Year), sep = "", remove = TRUE) 
+
+
+  
+  
 
 
 ```
