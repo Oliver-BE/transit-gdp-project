@@ -25,14 +25,15 @@ library(knitr)
 
 ## Reading in data
 
-```{r pressure, echo=FALSE}
+```{r pressure, echo=FALSE, message=FALSE}
 
 read_df <- function(file_name, year) {
   df <- read_csv(file_name) 
   colnames(df)[4] <- "PopEstimate" 
   colnames(df)[5] <- "MOE" 
   df <- df %>% 
-    mutate("Year" = year)
+    mutate("Year" = year) %>% 
+    select(-MOE)
   return(df)
 }
 
@@ -47,10 +48,11 @@ pop_2014 <- read_df('2014/ACS_14_1YR_B01003.csv', 2014)
 pop_2015 <- read_df('2015/ACS_15_1YR_B01003.csv', 2015)
 pop_2016 <- read_df('2016/ACS_16_1YR_B01003.csv', 2016)
 pop_2017 <- read_df('2017/ACS_17_1YR_B01003.csv', 2017)
+
 ```
 
 ## Joining data
-```{r}
+```{r, message=FALSE}
 pop_all_years <- full_join(pop_2007, pop_2008) %>%
   full_join(pop_2009) %>%
   full_join(pop_2010) %>%
