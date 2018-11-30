@@ -19,7 +19,6 @@ library(knitr)
 ```
 
 ## FTA data
-
 ```{r, message=FALSE}
 
 #Master is a bit weird
@@ -105,8 +104,12 @@ VRH_df<- FTA_df(5, "VRHs") %>%
 #   mutate(VOMS = sum(VOMS, na.rm = TRUE)) %>%
 #   select(UZA, `UZA Name`, Year, VOMS) %>%
 #   unique()
+```
 
 
+# Joining Everything 
+
+```{r, message=FALSE}
 #Getting relevant data from master
 relevant_master <- master_df %>%
   mutate( UZA_Pop_2010 = `UZA Population`) %>% 
@@ -114,11 +117,18 @@ relevant_master <- master_df %>%
 
 
 #joining
-final_FTA_df <- full_join(relevant_master, UPT_df, by= c("UZA")) %>% 
+final1_FTA_df <- full_join(relevant_master, UPT_df, by= c("UZA")) %>% 
   full_join(VRM_df, by= c("UZA", "UZA Name", "Year")) %>% 
   full_join(VRH_df, by= c("UZA", "UZA Name", "Year")) %>% 
   mutate(temp = 20) %>% 
-  unite(Year, c(temp, Year), sep = "", remove = TRUE) 
+  unite(Year, c(temp, Year), sep = "", remove = TRUE) %>% 
+  unique()
+
+#Joining Transit Stations from Transit Stations.Rmd
+#Potentially double counts transit stations that are used by multiple transit networks
+final2_FTA_df <- full_join(final1_FTA_df, UZA_transit_stations_2017, by= "UZA")
+
+
 
 
   
