@@ -36,9 +36,18 @@ FTA_df <- function(sheet_number, col_name) {
   
 df <- df %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") %>% 
-    gather(key = "Date", 
-         value = Name_of_Var, 
+  filter(Active == "Active")
+
+  return(df)
+}
+
+ 
+#Unlinked Passenger Trip (UPTs)
+
+#Group by Urbanized Area (UZA) as to collapse areas with multiple agencies and to collapse different kinds of transportation. Group by Date so as to not collapse the time series
+UPT_df<- FTA_df(3, "UPTs")%>% 
+  gather(key = "Date", 
+         value = UPTs, 
          -`5 digit NTD ID`, 
          -`4 digit NTD ID`, 
          -Agency, 
@@ -47,23 +56,15 @@ df <- df %>%
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS) %>%
-    mutate_(col_name = 'Name_of_Var') %>%
-    select(-Name_of_Var)
-  
-  return(df)
-}
-
- 
-#Unlinked Passenger Trip (UPTs)
-UPT_df<- FTA_df(3, "UPTs")%>% 
+         -TOS) %>% 
   mutate(UPTs = as.numeric(UPTs)) %>% #convert UPT from characters into doubles
-  group_by(UZA, Date) %>% 
-  #Group by Urbanized Area (UZA) as to collapse areas with multiple agencies and to collapse different kinds of transportation. Group by Date so as to not collapse the time series
+  mutate(Year = substr(Date, 4, 5)) %>% 
+  group_by(UZA, Year) %>% 
   mutate(UPTs = sum(UPTs, na.rm = TRUE)) %>% 
-  select(UZA, `UZA Name`, Date, UPTs) %>% 
-  unique() %>% 
-  mutate(Year = substr(Date, 4, 5))
+  select(UZA, `UZA Name`, Year, UPTs) %>% 
+  unique()
+
+
 
 #Vehicle Revenue Miles (VRMs)
 VRM_df<- FTA_df(4, "VRMs") %>% 
@@ -77,7 +78,13 @@ VRM_df<- FTA_df(4, "VRMs") %>%
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS)
+         -TOS)%>% 
+  mutate(VRMs = as.numeric(VRMs)) %>% #convert UPT from characters into doubles
+  mutate(Year = substr(Date, 4, 5)) %>% 
+  group_by(UZA, Year) %>% 
+  mutate(VRMs = sum(VRMs, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, VRMs) %>% 
+  unique()
 
 #Vehicle Revenue Hours (VRHs)
 VRH_df<- FTA_df(5, "VRHs") %>% 
@@ -91,12 +98,18 @@ VRH_df<- FTA_df(5, "VRHs") %>%
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS)
+         -TOS) %>% 
+  mutate(VRHs = as.numeric(VRHs)) %>% #convert UPT from characters into doubles
+  mutate(Year = substr(Date, 4, 5)) %>% 
+  group_by(UZA, Year) %>% 
+  mutate(VRHs = sum(VRHs, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, VRHs) %>% 
+  unique()
 
 
 #Vehicles Operated in Maximum Service (VOMS) aka Peak Service
-VOMS_df <-FTA_df("FTA_September_2018.xlsx", 6, "A1:HB2129", "Vehicles Operated in Maximum Service") %>% 
-  gather(key = "Date", value = UPTs, 
+VOMS_df <-FTA_df( 6, "VOMS") %>% 
+  gather(key = "Date", value = VOMS, 
          -`5 digit NTD ID`, 
          -`4 digit NTD ID`, 
          -Agency, 
@@ -105,6 +118,12 @@ VOMS_df <-FTA_df("FTA_September_2018.xlsx", 6, "A1:HB2129", "Vehicles Operated i
          -UZA, 
          -`UZA Name`, 
          -Modes, 
-         -TOS)
+         -TOS) %>% 
+  mutate(VOMS = as.numeric(VOMS)) %>% #convert UPT from characters into doubles
+  mutate(Year = substr(Date, 4, 5)) %>% 
+  group_by(UZA, Year) %>% 
+  mutate(VOMS = sum(VOMS, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, VOMS) %>% 
+  unique()
 
 ```
