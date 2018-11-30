@@ -22,36 +22,81 @@ library(knitr)
 
 ```{r, message=FALSE}
 
-FTA_df <- function(file_name, sheet_number, range) {
-  df <- read_xlsx(file_name, sheet=sheet_number, range=range, col_names=TRUE) 
-  
-  df <- df %>% 
-  filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") %>% 
-  gather(key = "Date", value = "")
-  
-  
-    
-  return(df)
-}
-
 #I don't really know how helpful the master will be
 #It contains master info about each transportation agency and the relevant Urbanized Area (UZA)
 #It has  a different spreadsheet design so I don't use the function for it
 master_df <- read_xlsx("FTA_September_2018.xlsx", sheet="A1:Y2129", range=2, col_names=TRUE) %>% filter(`Reporter Type` == "Full Reporter") %>% 
   filter(Active == "Active")
 
+
+FTA_df <- function(file_name, sheet_number, range, Name_of_Var) {
+  df <- read_xlsx(file_name, sheet=sheet_number, range=range, col_names=TRUE) 
+  
+  df <- df %>% 
+  filter(`Reporter Type` == "Full Reporter") %>% 
+  filter(Active == "Active") 
+  
+  return(df)
+}
+
  
-#Unlinked Passenger Trips (VRM)
-UPT_df<- FTA_df("FTA_September_2018.xlsx", 3, "A1:HB2129") 
+#Unlinked Passenger Trip (UPTs)
+UPT_df<- FTA_df("FTA_September_2018.xlsx", 3, "A1:HB2129", "Unlinked Passenger Trips") %>% 
+  gather(key = "Date", 
+         value = character_UPT, 
+         -`5 digit NTD ID`, 
+         -`4 digit NTD ID`, 
+         -Agency, 
+         -Active, 
+         -`Reporter Type`, 
+         -UZA, 
+         -`UZA Name`, 
+         -Modes, 
+         -TOS) %>% 
+  mutate(UPTs = as.numeric(character_UPT)) %>% 
+  group_by(UZA, Date) %>% 
+  mutate(tUPTs = sum(UPTs, na.rm = TRUE))
 
-#Vehicle Revenue Miles (VRM)
-VRM_df<- FTA_df("FTA_September_2018.xlsx", 4, "A1:HB2129") 
+#Vehicle Revenue Miles (VRMs)
+VRM_df<- FTA_df("FTA_September_2018.xlsx", 4, "A1:HB2129", "Vehicle Revenue Miles") %>% 
+  gather(key = "Date", 
+         value = VRMs, 
+         -`5 digit NTD ID`, 
+         -`4 digit NTD ID`, 
+         -Agency, 
+         -Active, 
+         -`Reporter Type`, 
+         -UZA, 
+         -`UZA Name`, 
+         -Modes, 
+         -TOS)
 
-#Vehicle Revenue Hours (VRH)
-VRH_df<- FTA_df("FTA_September_2018.xlsx", 5, "A1:HB2129") 
+#Vehicle Revenue Hours (VRHs)
+VRH_df<- FTA_df("FTA_September_2018.xlsx", 5, "A1:HB2129", "Vehicle Revenue Hours") %>% 
+  gather(key = "Date", 
+         value = VRHs, 
+         -`5 digit NTD ID`, 
+         -`4 digit NTD ID`, 
+         -Agency, 
+         -Active, 
+         -`Reporter Type`, 
+         -UZA, 
+         -`UZA Name`, 
+         -Modes, 
+         -TOS)
+
 
 #Vehicles Operated in Maximum Service (VOMS) aka Peak Service
-VOMS_df <-FTA_df("FTA_September_2018.xlsx", 6, "A1:HB2129")
+VOMS_df <-FTA_df("FTA_September_2018.xlsx", 6, "A1:HB2129", "Vehicles Operated in Maximum Service") %>% 
+  gather(key = "Date", value = UPTs, 
+         -`5 digit NTD ID`, 
+         -`4 digit NTD ID`, 
+         -Agency, 
+         -Active, 
+         -`Reporter Type`, 
+         -UZA, 
+         -`UZA Name`, 
+         -Modes, 
+         -TOS)
 
 ```
