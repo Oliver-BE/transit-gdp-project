@@ -1,0 +1,43 @@
+---
+title: "census-data"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## Upload Data
+
+```{r, message=False}
+# HC03_VC134 (percent no health insurance coverage)
+# HC01_VC171 (percentage of people with income below poverty level)
+
+# clean up data 
+clean_up_data <- function(file_name) {
+  df <- read_csv(file_name) %>% 
+    mutate('Median household income(dollars)' = HC01_EST_VC69,
+           'Percent workers commuting by public transportation' = HC02_EST_VC23,
+           'Percent population unemployed' = HC02_EST_VC06) %>% 
+     select(GEO.id, `GEO.display-label`, 
+           `Median household income(dollars)`, 
+           `Percent workers commuting by public transportation`,
+           `Percent population unemployed`)
+            
+  return(df)
+}
+
+test <- clean_up_data("2007/ACS_07_1YR_DP3.csv")
+View(test)
+```
