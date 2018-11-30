@@ -108,22 +108,28 @@ VRH_df<- FTA_df(5, "VRHs") %>%
 
 
 #Vehicles Operated in Maximum Service (VOMS) aka Peak Service
-VOMS_df <-FTA_df( 6, "VOMS") %>% 
-  gather(key = "Date", value = VOMS, 
-         -`5 digit NTD ID`, 
-         -`4 digit NTD ID`, 
-         -Agency, 
-         -Active, 
-         -`Reporter Type`, 
-         -UZA, 
-         -`UZA Name`, 
-         -Modes, 
-         -TOS) %>% 
-  mutate(VOMS = as.numeric(VOMS)) %>% #convert UPT from characters into doubles
-  mutate(Year = substr(Date, 4, 5)) %>% 
-  group_by(UZA, Year) %>% 
-  mutate(VOMS = sum(VOMS, na.rm = TRUE)) %>% 
-  select(UZA, `UZA Name`, Year, VOMS) %>% 
-  unique()
+# VOMS_df <-FTA_df( 6, "VOMS") %>%
+#   gather(key = "Date", value = VOMS,
+#          -`5 digit NTD ID`,
+#          -`4 digit NTD ID`,
+#          -Agency,
+#          -Active,
+#          -`Reporter Type`,
+#          -UZA,
+#          -`UZA Name`,
+#          -Modes,
+#          -TOS) %>%
+#   mutate(VOMS = as.numeric(VOMS)) %>% #convert UPT from characters into doubles
+#   mutate(Year = substr(Date, 4, 5)) %>%
+#   group_by(UZA, Year) %>%
+#   mutate(VOMS = sum(VOMS, na.rm = TRUE)) %>%
+#   select(UZA, `UZA Name`, Year, VOMS) %>%
+#   unique()
+
+#joining
+final_FTA_df <- full_join(UPT_df, VRM_df, by= c("UZA", "UZA Name", "Year")) %>% 
+  full_join(VRH_df, by= c("UZA", "UZA Name", "Year"))
+
+
 
 ```
