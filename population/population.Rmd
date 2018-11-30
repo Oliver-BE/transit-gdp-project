@@ -53,7 +53,13 @@ pop_2017 <- read_df('2017/ACS_17_1YR_B01003.csv', 2017)
 ```{r}
 pop_all_years <- full_join(pop_2007, pop_2008) %>%
   full_join(pop_2009) %>%
-  full_join(pop_2010)
-
+  full_join(pop_2010) %>%
+  full_join(pop_2011) %>%
+  full_join(pop_2012) %>%
+  full_join(pop_2013) %>%
+  full_join(pop_2014) %>%
+  full_join(pop_2015) %>%
+  full_join(pop_2016) %>%
+  full_join(pop_2017)
 ```
 
