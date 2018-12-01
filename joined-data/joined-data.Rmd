@@ -24,8 +24,11 @@ library(knitr)
 
 data_pop <- pop_all_years
 data_census <- final_census_df
+data_gdp <- gdp_df
 
 data_joined_pop_census <- left_join(data_pop, data_census, by = c("Year", "GEO.id", "GEO.id2", "GEO.display-label"))
+
+data_joined_pop_census_gdp <- left_join(data_joined_pop_census, data_gdp, by = c("GEO.id2", "Year"))
 
 # joined_pop_census <- full_join(population_data, census_data)
 
