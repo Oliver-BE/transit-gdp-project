@@ -29,6 +29,6 @@ micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2,
 coord_df <- rbind(metropolitan_coordinates, micropolitan_coordinates) %>%
   mutate("GEO.id2" = GEOID, "GEO.display-label" = NAME) %>%
   arrange(NAME) %>%
-  select(GEO.id2, `GEO.display-label`, CENTLAT, CENTLON, INTPTLAT, INTPTLON)
+  select(GEO.id2, `GEO.display-label`, CENTLAT, CENTLON, INTPTLAT, INTPTLON) 
 ```
 
