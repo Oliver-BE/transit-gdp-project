@@ -3,6 +3,7 @@ title: "joined-data"
 output: html_document
 ---
 
+## Set up
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
@@ -19,17 +20,21 @@ library(knitr)
 ```
 
 ## Join Census Data
-
 ```{r, message=FALSE}
-population_data <- pop_all_years
-census_data <- final_census_df
 
-joined_census_data <- full_join(population_data, census_data)
+data_pop <- pop_all_years
+data_census <- final_census_df
 
-View(joined_census_data)
+data_joined_pop_census <- left_join(data_pop, data_census, by = c("Year", "GEO.id", "GEO.id2", "GEO.display-label"))
+
+# joined_pop_census <- full_join(population_data, census_data)
+
 
 # full join doesn't work; creates duplicate rows. maybe need inner_join
 # df1 <- gdp_df
 # df2 <- inner_join(joined_census_data, df1)
 # View(df2)
+```
+```{r}
+
 ```
