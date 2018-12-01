@@ -17,9 +17,18 @@ library(readxl)
 
 ```{r pressure, echo=FALSE}
  
-metropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 1)
-micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2)
+metropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 1,
+                                      range = "A2:Q376", col_names = TRUE)
+micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2,
+                                      range = "A2:Q583", col_names = TRUE)
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Joining
+```{r}
+coord_df <- rbind(metropolitan_coordinates, micropolitan_coordinates) %>%
+  mutate("GEO.id2" = GEOID, "GEO.display-label" = NAME) %>%
+  arrange(NAME) %>%
+  select(GEO.id2, `GEO.display-label`, CENTLAT, CENTLON, INTPTLAT, INTPTLON)
+```
+
