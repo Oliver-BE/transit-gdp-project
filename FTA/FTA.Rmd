@@ -235,7 +235,8 @@ final2_FTA_df <- full_join(final1_FTA_df, UZA_transit_stations_2017, by= "UZA")
 
 #Joining Funding Data
  
-final3_FTA_df <- full_join(final2_FTA_df, Joined_Funding_df, by=c("UZA", "Year")) 
+final3_FTA_df <- full_join(final2_FTA_df, Joined_Funding_df, by=c("UZA", "Year")) %>%  
+  filter(Year>=2001)
 ```
 
 
