@@ -46,7 +46,7 @@ df <- df %>%
          -`UZA Name`, 
          -Modes, 
          -TOS)  %>% 
-    mutate(Modes = if((Modes == "HR"| 
+    mutate(nModes = if((Modes == "HR"| 
                   Modes == "LR" | 
                   Modes == "SR" | 
                   Modes ==  "CR" | 
@@ -75,15 +75,21 @@ df <- df %>%
 #END WRANGLE FUNCTION
 
  
-#Unlinked Passenger Trip (UPTs)
+#Unlinked Passenger Trips (UPTs)
 
-#Group by Urbanized Area (UZA) as to collapse areas with multiple agencies and to collapse different kinds of transportation. Group by Date so as to not collapse the time series
-UPT_df<- FTA_df(3, "UPTs") %>% 
-  mutate(UPTs = as.numeric(UPTs))%>% #convert UPT from characters into doubles
+#UPT Rail
+
+
+UPT_df<- FTA_df(3, "UPTs") 
+
+%>% 
+  mutate(UPTs = as.numeric(UPTs))%>% 
   mutate(Year = substr(Date, 4, 5)) %>% 
-  group_by(UZA, Year) %>% 
-  mutate(UPTs = sum(UPTs, na.rm = TRUE)) %>% 
-  select(UZA, `UZA Name`, Year, UPTs) %>% 
+  group_by(UZA, Year, Modes)%>% 
+  mutate(UPTs = sum(UPTs, na.rm = TRUE))
+
+%>% 
+  select(UZA, `UZA Name`, Year, UPTs, Modes) %>% 
   unique()
 
 
