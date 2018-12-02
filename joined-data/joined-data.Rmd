@@ -31,18 +31,16 @@ data_joined_pop_census <- left_join(data_pop, data_census, by = c("Year", "GEO.i
 
 data_joined_pop_census_gdp <- left_join(data_joined_pop_census, data_gdp, by = c("GEO.id2", "Year"))
 
-data_joined_pop_census_gdp_coord <- left_join(data_joined_pop_census_gdp, coord_df, by = c("GEO.id2", "GEO.display-label")) %>% 
+quality_of_life_df <- left_join(data_joined_pop_census_gdp, coord_df, by = c("GEO.id2", "GEO.display-label")) %>% 
   select(-c(GEO.id, GeoName))
 
 ```
 
 ```{r}
-FTA_1 <- left_join(data_joined_pop_census_gdp_coord, census_UZA_MSA_key,
-            by="GEO.id2")
+transit_data <- FTA_df
 
-test_df <- data_joined_pop_census_gdp_coord %>% 
-  group_by(GEO.id2) %>% 
-  arrange(desc(PopEstimate)) 
+FINAL_DF <- left_join(quality_of_life_df, transit_data,
+            by=c("GEO.id2", "Year"))
 
-head(test_df, n = 500)
+View(FINAL_DF)
 ```
