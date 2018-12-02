@@ -17,10 +17,13 @@ library(knitr)
 ```{r, message=FALSE}
 census_UZA_MSA_key <- read_csv("UZA_MSA_join.txt") %>% 
   mutate("GEO.id2" = CBSA) %>% 
+  arrange(desc(UAPOP)) %>% 
   select(GEO.id2, UA, UANAME, UAPOP)
 
 # join FTA dataframes here
-# FTA_df <- final3_FTA_df %>% 
+FTA_df <- left_join(census_UZA_MSA_key, final3_FTA_df,
+                    by = c("UAPOP" = "UZA_Pop_2010")) %>% 
+  filter(UZA < 50)
   
-
+View(FTA_df)
 ```
