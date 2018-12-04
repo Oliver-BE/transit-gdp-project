@@ -4,7 +4,7 @@ output: html_document
 ---
 
 ## Set up
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(jsonlite)
@@ -43,4 +43,5 @@ FINAL_DF <- left_join(quality_of_life_df, transit_data,
             by=c("GEO.id2", "Year"))
 
 View(FINAL_DF)
+
 ```
