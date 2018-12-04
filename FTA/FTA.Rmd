@@ -25,14 +25,14 @@ library(knitr)
 #It contains master info about each transportation agency and the relevant Urbanized Area (UZA)
 #It has  a different spreadsheet design so I don't use the function for it
 
-master_df <- read_xlsx("FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+master_df <- read_xlsx("FTA Data/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
   filter(Active == "Active")
 
 #BEGIN WRANGLE FUNCTION
 FTA_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
+  df <- read_xlsx("FTA Data/FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
   
 rail_abbr <- c('HR', 'LR', 'SR', 'CR', 'IP', 'MG', 'YR', 'AR', 'CC')
 nr_bus_abbr <- c('MB', 'TB', 'CB', 'RB', 'PB', 'JT')
@@ -119,7 +119,7 @@ VRH_df<- FTA_df(5, "VRHs") %>%
 
 ```{r, message=FALSE}
 
-transit_stations_2017 <- read_xlsx("Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
+transit_stations_2017 <- read_xlsx("FTA Data/Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
   filter(`Reporter Type` == "Full Reporter") %>% 
   select(`NTD ID`, `Agency Name`, `Total Stations`)
   
@@ -139,7 +139,7 @@ UZA_transit_stations_2017 <- full_join(master_df, transit_stations_2017, by = c(
 
   # BEGIN WRANGLE FUNCTION\
 funding_df <- function(sheet_number, col_name) {
-df <- read_xlsx("TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
+df <- read_xlsx("FTA Data/TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
   
  df <- df %>% 
    filter(`Reporter Type` == "Full Reporter") %>% 
