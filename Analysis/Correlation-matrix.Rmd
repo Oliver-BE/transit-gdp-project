@@ -1,21 +1,44 @@
 ---
-title: "R Notebook"
-output: html_notebook
-editor_options: 
-  chunk_output_type: inline
+title: "Correlation-matrix"
+output: html_document
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-```{r}
-plot(cars)
+## Set up
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+library(corrplot)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+## Join Census Data
+```{r, message=FALSE}
+correlation_df <- FINAL_DF %>% 
+  select(-X1, -msa_id, -msa, -year, -centlat, -centlon, -intptlat, -intptlon, -ua_census_id, -ua_census_name, -ua_pop_2010, -ua_fta_id, -ua_fta_name, -transit_modes) 
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+correlation_df <-  data.frame(lapply(correlation_df, function(x){ 
+  as.numeric(x)
+}))
 
+cor_matrix <- cor(correlation_df, use = "complete.obs")
+
+corrplot(cor_matrix, type = "upper", order = "hclust", 
+         tl.col = "black", tl.cex = .6)
+
+
+```
+
+```{r}
+
+
+```
