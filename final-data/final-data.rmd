@@ -437,8 +437,8 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
   mutate(gdp = gdp*1000000)
  
 # clarify variables names
-  colnames(final_df)[1:30] <- c("msa_id", 
-                               "msa", 
+  colnames(final_df)[1:28] <- c("msa_id", 
+                               "msa_name", 
                                "pop_estimate_msa", 
                                "year", 
                                "median_household_income_msa",
@@ -452,9 +452,7 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
                                "intptlat",
                                "intptlon",
                                "ua_census_id",
-                               "ua_census_name",
                                "ua_pop_2010",
-                               "ua_fta_id",
                                "ua_sq_miles_2010",
                                "ua_fta_name",
                                "transit_modes",
@@ -468,8 +466,15 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
                                "local_funding",
                                "other_funding")
   
-  head(final_df)
+head(final_df)
   
 # final_df
   
+```
+
+## Write DF 
+```{r, message = FALSE}
+
+write_csv("FINAL_DATA.csv", final_df, row.names=T)
+
 ```
