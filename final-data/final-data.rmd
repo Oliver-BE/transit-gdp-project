@@ -434,10 +434,10 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
 # join final quality of life and fta datasets and filter out non-urban areas 
 final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>% 
   filter(UA != 99999) %>% 
-  mutate(gdp = gdp*1000000)
+  mutate(gdp = gdp*1000000) 
  
 # clarify variables names
-  colnames(final_df)[1:28] <- c("msa_id", 
+  colnames(final_df)[1:30] <- c("msa_id", 
                                "msa_name", 
                                "pop_estimate_msa", 
                                "year", 
@@ -452,7 +452,9 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
                                "intptlat",
                                "intptlon",
                                "ua_census_id",
+                               "ua_census_name",
                                "ua_pop_2010",
+                               "ua_fta_id",
                                "ua_sq_miles_2010",
                                "ua_fta_name",
                                "transit_modes",
@@ -465,6 +467,9 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
                                "state_funding",
                                "local_funding",
                                "other_funding")
+  
+  final_df <- final_df %>% 
+    select(-c("ua_census_name", "ua_fta_id"))
   
 head(final_df)
   
