@@ -1,6 +1,8 @@
 ---
 title: "final-data"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -37,10 +39,10 @@ gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/
 ```{r, message=False}
 
 # coordinates for metropolitan areas
-metropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 1,
+metropolitan_coordinates <- read_xlsx("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 1,
                                       range = "A2:Q376", col_names = TRUE)
 # coordinates for micropolitan areas
-micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2,
+micropolitan_coordinates <- read_xlsx("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 2,
                                       range = "A2:Q583", col_names = TRUE)
 
 # combine metropolitan and micropolitan areas
@@ -171,6 +173,18 @@ census_qol_df <- full_join(census_data_2007, census_data_2008) %>%
 
 ```
 
+### Join All Quality of Life Dataframes
+```{r, message=FALSE}
+
+# join all quality of life dataframes
+qol_df <- left_join(population_df, census_qol_df, by = c("Year", "GEO.id", "GEO.id2", "GEO.display-label")) %>% 
+  left_join(gdp_df, by = c("GEO.id2", "Year")) %>% 
+  left_join(lat_long_df, by = c("GEO.id2", "GEO.display-label")) %>% 
+  select(-c(GEO.id, GeoName))
+
+# qol_df
+
+```
 ## Read in Transit Data
 
 ### Functions to Clean up FTA Dataframes
@@ -179,7 +193,7 @@ census_qol_df <- full_join(census_data_2007, census_data_2008) %>%
 # function to read in and clean up FTA dataframes
 clean_fta_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/FTA-dataframes/FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
+  df <- read_xlsx("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=sheet_number, range="A1:HB2129", col_names=TRUE) 
   
   rail_abbr <- c('HR', 'LR', 'SR', 'CR', 'IP', 'MG', 'YR', 'AR', 'CC')
   nr_bus_abbr <- c('MB', 'TB', 'CB', 'RB', 'PB', 'JT')
@@ -252,9 +266,7 @@ clean_funding_df <- function(sheet_number, col_name) {
 # and the relevant Urbanized Area (UZA)
 master_fta_df <- read_xlsx("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") %>% 
-  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
-  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010)
+  filter(Active == "Active") 
 
 # master_fta_df
 
@@ -370,22 +382,95 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 ### Join All FTA Dataframes
 ```{r, message=FALSE}
 
+final_master_fta_df <- master_fta_df %>% 
+  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
+  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010)
+
 # join master FTA dataframe with UPT, VRM, VRH
-fta_df <- full_join(master_fta_df, UPT_df, by= c("UZA")) %>% 
-  full_join(VRM_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
-  full_join(VRH_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>% 
+  full_join(vrm_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(vrh_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   mutate(temp = 20) %>% 
   unite(Year, c(temp, Year), sep = "", remove = TRUE) %>% 
-  unique()
+  unique() %>% 
+  
+  # join transit stations dataframes
+  # (potentially double counts transit stations that are used by multiple transit networks)
+  full_join(transit_stations_df, by = "UZA") %>% 
 
-# join transit stations dataframes
-# (potentially double counts transit stations that are used by multiple transit networks)
-fta_df <- full_join(fta_df, transit_stations_df, by= "UZA")
-
-# joining FTA funding data
-fta_df <- full_join(fta_df, fta_funding_df, by=c("UZA", "Year")) %>%  
-  filter(Year>=2001)
+  # joining FTA funding data
+  full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
+  filter(Year >= 2001)
 
 # fta_df
 
+```
+
+### Add Identifiers to FTA Dataframe
+``` {r, message=FALSE}
+
+# get census key dataframe
+census_UZA_MSA_key <- read_csv("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/census-FTA-joining-key/UZA_MSA_join.txt") %>% 
+  mutate("GEO.id2" = CBSA) %>% 
+  arrange(desc(UAPOP)) %>% 
+  select(GEO.id2, UA, UANAME, UAPOP)
+
+# join FTA dataframes here
+final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
+                    by = c("UAPOP" = "UZA_Pop_2010")) %>% 
+  filter(Year > 2006) %>% 
+  mutate("Year" = as.double(Year)) %>% 
+  filter(!is.na(`UZA Name`)) %>% 
+  filter(UANAME != "Not in a 2010 urban area" ) %>% 
+  filter(UAPOP>100000)
+  
+# final_fta_df
+ 
+```
+
+## Join Quality of Life and Transit Data
+
+```{r, message=FALSE}
+
+# join final quality of life and fta datasets and filter out non-urban areas 
+final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>% 
+  filter(UA != 99999) %>% 
+  mutate(gdp = gdp*1000000)
+ 
+# clarify variables names
+  colnames(final_df)[1:30] <- c("msa_id", 
+                               "msa", 
+                               "pop_estimate_msa", 
+                               "year", 
+                               "median_household_income_msa",
+                               "percent_workers_commuting_by_public_transit_msa",
+                               "percent_unemployed_msa",
+                               "percent_no_insurance_msa",
+                               "percent_below_poverty_level",
+                               "gdp_msa",
+                               "centlat",
+                               "centlon",
+                               "intptlat",
+                               "intptlon",
+                               "ua_census_id",
+                               "ua_census_name",
+                               "ua_pop_2010",
+                               "ua_fta_id",
+                               "ua_sq_miles_2010",
+                               "ua_fta_name",
+                               "transit_modes",
+                               "passenger_trips",
+                               "vehicle_miles",
+                               "vehicle_hours",
+                               "total_stations_2017",
+                               "total_funding",
+                               "federal_funding",
+                               "state_funding",
+                               "local_funding",
+                               "other_funding")
+  
+  head(final_df)
+  
+# final_df
+  
 ```
