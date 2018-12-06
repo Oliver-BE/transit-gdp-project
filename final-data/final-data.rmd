@@ -20,10 +20,59 @@ library(knitr)
 
 ## Read in Quality of Life Data
 
-### 
+### Read in GDP Data
 ```{r, message=False}
 
+gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, 
+                      range = 'A6:S390', col_names=TRUE) %>% 
+  gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
+  mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
+  select(GEO.id2, GeoName, Year, gdp) 
 
 ```
 
+### Read in Latitude Longitude Data
+```{r, message=False}
 
+# coordinates for metropolitan areas
+metropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 1,
+                                      range = "A2:Q376", col_names = TRUE)
+# coordinates for micropolitan areas
+micropolitan_coordinates <- read_xlsx("StatisticalAreasLatLong.xlsx", sheet = 2,
+                                      range = "A2:Q583", col_names = TRUE)
+
+# combine metropolitan and micropolitan areas
+lat_long_df <- rbind(metropolitan_coordinates, micropolitan_coordinates) %>%
+  mutate("GEO.id2" = GEOID, "GEO.display-label" = NAME) %>%
+  arrange(NAME) %>%
+  select(GEO.id2, `GEO.display-label`, CENTLAT, CENTLON, INTPTLAT, INTPTLON)
+
+```
+
+### Read in Population Data
+```{r, message=False}
+
+# function to read in population DFs efficiently 
+read_population_df <- function(file_name, year) {
+  df <- read_csv(file_name) 
+  colnames(df)[4] <- "PopEstimate" 
+  colnames(df)[5] <- "MOE" 
+  df <- df %>% 
+    mutate("Year" = year) %>% 
+    select(-MOE)
+  return(df)
+}
+
+pop_2007 <- read_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007)
+pop_2008 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008)
+pop_2009 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009)
+pop_2010 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010)
+pop_2011 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011)
+pop_2012 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012)
+pop_2013 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013)
+pop_2014 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014)
+pop_2015 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015)
+pop_2016 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016)
+pop_2017 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017)
+
+```
