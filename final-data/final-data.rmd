@@ -29,6 +29,8 @@ gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
   select(GEO.id2, GeoName, Year, gdp) 
 
+# gdp_df
+
 ```
 
 ### Read in Latitude Longitude Data
@@ -47,6 +49,8 @@ lat_long_df <- rbind(metropolitan_coordinates, micropolitan_coordinates) %>%
   arrange(NAME) %>%
   select(GEO.id2, `GEO.display-label`, CENTLAT, CENTLON, INTPTLAT, INTPTLON)
 
+# lat_long_df
+
 ```
 
 ### Read in Population Data
@@ -63,16 +67,118 @@ read_population_df <- function(file_name, year) {
   return(df)
 }
 
-pop_2007 <- read_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007)
-pop_2008 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008)
-pop_2009 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009)
-pop_2010 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010)
-pop_2011 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011)
-pop_2012 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012)
-pop_2013 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013)
-pop_2014 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014)
-pop_2015 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015)
-pop_2016 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016)
-pop_2017 <- read_df('home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017)
+# read in population data for years 2007 through 2017
+pop_2007 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007)
+pop_2008 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008)
+pop_2009 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009)
+pop_2010 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010)
+pop_2011 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011)
+pop_2012 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012)
+pop_2013 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013)
+pop_2014 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014)
+pop_2015 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015)
+pop_2016 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016)
+pop_2017 <- read_population_df('/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017)
+
+# join all years into one dataframe
+population_df <- full_join(pop_2007, pop_2008) %>%
+  full_join(pop_2009) %>%
+  full_join(pop_2010) %>%
+  full_join(pop_2011) %>%
+  full_join(pop_2012) %>%
+  full_join(pop_2013) %>%
+  full_join(pop_2014) %>%
+  full_join(pop_2015) %>%
+  full_join(pop_2016) %>%
+  full_join(pop_2017)
+
+# population_df
+
+```
+
+### Read in Census Quality of Life Data
+```{r, message=FALSE}
+
+# function to clean up data frames from 2007-2009
+# (the census changed variable names after 2009)
+clean_data_2007_2009 <- function(file_name, year) {
+  df <- read_csv(file_name) %>% 
+    mutate('Median household income (dollars)' = HC01_EST_VC69,
+           'Percent workers commuting by public transportation' = HC02_EST_VC23,
+           'Percent population unemployed' = HC02_EST_VC06,
+           'Year' = year) %>% 
+     select(Year, GEO.id, GEO.id2, `GEO.display-label`, 
+           `Median household income (dollars)`, 
+           `Percent workers commuting by public transportation`,
+           `Percent population unemployed`)
+            
+  return(df)
+}
+
+# function to clean up data frames from 2010-2017
+clean_data_2010_2017 <- function(file_name, year) {
+  df <- read_csv(file_name) %>% 
+    mutate('Median household income (dollars)' = HC01_VC85,
+           'Percent workers commuting by public transportation' = HC03_VC31,
+           'Percent population unemployed' = HC03_VC08,
+           'Percent no health insurance coverage' = HC03_VC134,
+          
+            # for all people 18 years and older:
+           'Percent income below poverty level' = HC03_VC171,
+           'Year' = year ) %>% 
+     select(Year, GEO.id, GEO.id2, `GEO.display-label`, 
+           `Median household income (dollars)`, 
+           `Percent workers commuting by public transportation`,
+           `Percent population unemployed`,
+           `Percent no health insurance coverage`,
+           `Percent income below poverty level`)
+            
+  return(df)
+}
+
+# read in census data for  years 2007 through 2017
+census_data_2007 <- clean_data_2007_2009("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2007/ACS_07_1YR_DP3.csv", 2007)
+census_data_2008 <- clean_data_2007_2009("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2008/ACS_08_1YR_DP3.csv", 2008)
+census_data_2009 <- clean_data_2007_2009("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2009/ACS_09_1YR_DP3.csv", 2009)
+census_data_2010 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2010/ACS_10_1YR_DP03.csv", 2010)
+census_data_2011 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2011/ACS_11_1YR_DP03.csv", 2011)
+census_data_2012 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2012/ACS_12_1YR_DP03.csv", 2012)
+census_data_2013 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2013/ACS_13_1YR_DP03.csv", 2013)
+census_data_2014 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2014/ACS_14_1YR_DP03.csv", 2014)
+census_data_2015 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2015/ACS_15_1YR_DP03.csv", 2015)
+census_data_2016 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2016/ACS_16_1YR_DP03.csv", 2016)
+census_data_2017 <- clean_data_2010_2017("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/census-data/2017/ACS_17_1YR_DP03.csv", 2017)
+
+# join all years into one dataframe
+census_qol_df <- full_join(census_data_2007, census_data_2008) %>% 
+  full_join(census_data_2009) %>% 
+  full_join(census_data_2010) %>% 
+  full_join(census_data_2011) %>% 
+  full_join(census_data_2012) %>% 
+  full_join(census_data_2013) %>% 
+  full_join(census_data_2014) %>% 
+  full_join(census_data_2015) %>% 
+  full_join(census_data_2016) %>% 
+  full_join(census_data_2017) 
+
+  ## If we want to fix GEO.display-label column then need code similar to this:
+  # %>% 
+  # separate(col = `GEO.display-label`, into = c("City","State","Area_type"), 
+  #         sep = c(","), remove = TRUE)
+
+
+# census_qol_df
+
+```
+
+## Read in Transit Data
+
+### 
+```{r, message=FALSE}
+
+
+
+
+
 
 ```
