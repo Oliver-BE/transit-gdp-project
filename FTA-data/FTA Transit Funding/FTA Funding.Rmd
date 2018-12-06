@@ -1,0 +1,62 @@
+---
+title: "FTA Funding"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## FTA Funding
+
+```{r, message=FALSE}
+
+  
+funding_df <- function(sheet_number, col_name) {
+  df <- read_xlsx("TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
+                
+df <- df %>% 
+  filter(`Reporter Type` == "Full Reporter") %>%
+    gather(key = "Year",
+         value = Name_of_Var,
+         -`Last Report Year`,
+         -`NTD ID`,
+         -`Legacy NTD ID`,
+         -`Agency Name`,
+         -`Agency Status`,
+         -`Reporter Type`,
+         -City,
+         -State,
+         `Census Year`,
+         -`Primary UZA Name`,
+         -UZA,
+         -`UZA Area SQ Miles`,
+         -`UZA Population`,
+         -`2017 Status`)
+
+  df[,col_name] <- df[,'Name_of_Var']
+  df[,'Name_of_Var'] <- NULL
+
+  return(df)
+}
+
+#Total Funding
+Total_Funding_df <- funding_df(3, "Total_Funding")
+
+
+  
+
+ 
+
+```

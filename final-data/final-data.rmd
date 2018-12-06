@@ -1,0 +1,27 @@
+---
+title: "final-data"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## Read in Quality of Life Data
+```{r, message=False}
+
+
+```
+
+
