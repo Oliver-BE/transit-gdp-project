@@ -39,9 +39,52 @@ quality_of_life_df <- left_join(data_joined_pop_census_gdp, coord_df, by = c("GE
 ```{r}
 transit_data <- FTA_df
 
-FINAL_DF <- left_join(quality_of_life_df, transit_data,
-            by=c("GEO.id2", "Year"))
+#Join final transit and quality of life datasets and
+#Filter out non-urban areas 
+FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year"))%>% 
+  filter(UA != 99999) %>% 
+  mutate(gdp = gdp*1000000)
+ 
+  
+#clarify variables names
+  colnames(FINAL_DF)[1:30] <- c("msa_id", 
+                               "msa", 
+                               "pop_estimate_msa", 
+                               "year", 
+                               "median_household_income_msa",
+                               "percent_workers_commuting_by_public_transit_msa",
+                               "percent_unemployed_msa",
+                               "percent_no_insurance_msa",
+                               "percent_below_poverty_level",
+                               "gdp_msa",
+                               "centlat",
+                               "centlon",
+                               "intptlat",
+                               "intptlon",
+                               "ua_census_id",
+                               "ua_census_name",
+                               "ua_pop_2010",
+                               "ua_fta_id",
+                               "ua_sq_miles_2010",
+                               "ua_fta_name",
+                               "transit_modes",
+                               "passenger_trips",
+                               "vehicle_miles",
+                               "vehicle_hours",
+                               "total_stations_2017",
+                               "total_funding",
+                               "federal_funding",
+                               "state_funding",
+                               "local_funding",
+                               "other_funding")
+                               
+  
+  
+  
+  
+  
 
 View(FINAL_DF)
+
 
 ```
