@@ -1,0 +1,19 @@
+---
+title: "TreeModel.rmd"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+library(rpart)
+library(partykit)
+library(dplyr)
+```
+
+```{r}
+View(final_df)
+```
+
