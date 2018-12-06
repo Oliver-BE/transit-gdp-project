@@ -41,7 +41,7 @@ transit_data <- FTA_df
 
 #Join final transit and quality of life datasets and
 #Filter out non-urban areas 
-FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year"))%>% 
+FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year")) %>% 
   filter(UA != 99999) %>% 
   mutate(gdp = gdp*1000000)
  
