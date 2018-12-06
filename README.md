@@ -3,6 +3,8 @@ Oliver Baldwin Edwards,
 Nicole Frontero, &
 Martin Glusker
 
+Useful Link for relationship file: https://www.census.gov/geo/maps-data/data/ua_rel_layout.html
+
 ***Documentation regarding the variables included in FINAL_DF***
 
 **msa_id**
