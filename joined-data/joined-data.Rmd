@@ -47,8 +47,8 @@ FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year"))
  
   
 #clarify variables names
-  colnames(FINAL_DF)[1:30] <- c("msa_id", 
-                               "msa", 
+  colnames(FINAL_DF)[1:28] <- c("msa_id", 
+                               "msa_name", 
                                "pop_estimate_msa", 
                                "year", 
                                "median_household_income_msa",
@@ -62,9 +62,7 @@ FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year"))
                                "intptlat",
                                "intptlon",
                                "ua_census_id",
-                               "ua_census_name",
                                "ua_pop_2010",
-                               "ua_fta_id",
                                "ua_sq_miles_2010",
                                "ua_fta_name",
                                "transit_modes",
@@ -79,12 +77,7 @@ FINAL_DF <- left_join(quality_of_life_df, transit_data, by=c("GEO.id2", "Year"))
                                "other_funding")
                                
   
-  
-  
-  
-  
 
-View(FINAL_DF)
 
 
 ```

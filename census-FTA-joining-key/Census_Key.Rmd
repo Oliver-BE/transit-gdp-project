@@ -22,12 +22,20 @@ census_UZA_MSA_key <- read_csv("UZA_MSA_join.txt") %>%
 
 # join FTA dataframes here
 FTA_df <- left_join(census_UZA_MSA_key, final3_FTA_df,
-                    by = c("UAPOP" = "UZA_Pop_2010")) %>% 
-  filter(Year > 2006) %>% 
-  mutate("Year" = as.double(Year)) %>% 
+                    by = c("UAPOP" = "UZA_Pop_2010")) 
+
+#Filter out 1. mismatched data ,
+#2. Before we have census data (before 2007)
+#3. Cities with less than 100000 population in 2010 
+#4. Filter out 2018 data as the year isn't done
+
+FTA_df <- FTA_df %>% mutate(Year = as.numeric(Year))%>% 
+  filter(Year > 2006, Year < 2018) %>% 
   filter(!is.na(`UZA Name`)) %>% 
   filter(UANAME != "Not in a 2010 urban area" ) %>% 
-  filter(UAPOP>100000)
+  filter(UAPOP>100000) %>% 
+  select(-UANAME, -UZA)
+
   
 View(FTA_df)
 ```

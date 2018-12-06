@@ -1,0 +1,47 @@
+---
+title: "Combined Statistical area"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+## Set up
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## CSA
+```{r, message=FALSE}
+newdf <- FINAL_DF
+
+csa_df <- read_csv("csa-est2017-alldata.csv") %>% 
+  select(CSA, CBSA, NAME, LSAD) %>% 
+  filter(LSAD == "Micropolitan Statistical Area" | LSAD == "Metropolitan Statistical Area" | LSAD == "Combined Statistical Area") 
+
+csa_title_df <- csa_df %>% 
+  filter(LSAD == "Combined Statistical Area") %>% 
+  mutate(csa_name = NAME) %>% 
+  select(CSA, csa_name) 
+
+titled_csa_df <- inner_join(csa_df, csa_title_df, by = "CSA") %>% 
+  filter(LSAD != "Combined Statistical Area") %>% 
+  select(CSA, csa_name, CBSA)
+
+colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
+
+csa_msa_df <- inner_join(titled_csa_df, newdf, by = "msa_id") 
+
+View(csa_msa_df)
+```

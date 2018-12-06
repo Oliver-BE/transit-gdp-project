@@ -1,8 +1,8 @@
 ---
 title: "final-data"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -25,8 +25,7 @@ library(knitr)
 ### Read in GDP Data
 ```{r, message=False}
 
-gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, 
-                      range = 'A6:S390', col_names=TRUE) %>% 
+gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
   gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
   select(GEO.id2, GeoName, Year, gdp) 
