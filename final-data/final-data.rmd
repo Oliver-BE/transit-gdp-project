@@ -475,6 +475,6 @@ head(final_df)
 ## Write DF 
 ```{r, message = FALSE}
 
-write_csv("FINAL_DATA.csv", final_df, row.names=T)
+write.csv(final_df, "FINAL_DATA.csv", row.names=F)
 
 ```
