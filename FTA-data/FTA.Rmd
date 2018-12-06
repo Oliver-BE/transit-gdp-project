@@ -211,6 +211,13 @@ Joined_Funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA
   full_join(Other_Funding_df, by = c("UZA", "Year")) 
 ```
 
+#New FTA Data
+```{r, message=FALSE}
+new_FTA_data <- read_xlsx("TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx")
+
+```
+
+
 # Joining Everything 
 
 ```{r, message=FALSE}
