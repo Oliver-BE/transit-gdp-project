@@ -5,13 +5,27 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(gluskr)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
 
 ```
 
 ## Test 
 ```{r, message = FALSE}
 
+df <- transit_qol_df
 
+gdp_over_time <- df 
+  
 
 
 ```
