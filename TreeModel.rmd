@@ -11,9 +11,30 @@ knitr::opts_chunk$set(echo = TRUE)
 library(rpart)
 library(partykit)
 library(dplyr)
+library(pROC)
 ```
 
 ```{r}
-View(final_df)
+
+set.seed(123)
+n <- nrow(final_df)
+final_df <- final_df[complete.cases(final_df),]
+train_id <- sample(1:n, size=round(n*0.8)) # select approx 80% of the row numbers between 1 and n
+train <- final_df[train_id,] # the data set we'll train the model on
+test <- final_df[-train_id,]
+
+tree <- rpart(gdp_msa ~ passenger_trips + vehicle_miles + vehicle_hours + total_stations_2017 + total_funding + federal_funding + state_funding + local_funding + other_funding, data=final_df)
+tree
+
+#### questions here
+pred <- as.vector(predict(tree, test)) # a vector of probabilities
+test <- test %>% mutate(prediction = pred)
+
+results <- test %>%
+  summarise(MSE = 1/n() * sum((gdp_msa - pred)^2, na.rm = T),
+            MAE  = 1/n() * sum(abs(gdp_msa - pred), na.rm = T),
+            R2   = cor(gdp_msa, pred))
+results
+
 ```
 
