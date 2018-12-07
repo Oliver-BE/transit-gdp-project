@@ -486,6 +486,8 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
 
 ## Adding Per Capita Variables 
 ```{r, message = FALSE}
+
+# function to scale from 0 to 1
 scale_0_1 <- function(x) {
   rng <- range(x, na.rm = TRUE)
   (x - rng[1]) / (rng[2] - rng[1])
@@ -513,7 +515,7 @@ scaled_df <- per_capita_df %>%
   mutate(scaled_hours = scale_0_1(per_capita_vehicle_hours)) %>% 
   mutate(avg_scaled = round(((scaled_tot + scaled_trips + scaled_miles +scaled_hours)/4), 4)) 
 
-  per_capita_df$avg_scaled <- round(per_capita_df$avg_scaled, 4)
+  scaled_df$avg_scaled <- round(scaled_df$avg_scaled, 4)
   
  
   
