@@ -18,48 +18,56 @@ library(readr)
 library(knitr)
 ```
 
-## Upload Data
-
-```{r, message=False}
-# HC03_VC134 (percent no health insurance coverage)
-# HC03_VC171 (percentage of people with income below poverty level)
-
-# clean up data frames from 2007-2009
-# (the census changed variable names after 2009)
+## DATA
+```{r}
 data_2007_2009 <- function(file_name, year) {
   df <- read_csv(file_name) %>% 
     mutate('Median household income (dollars)' = HC01_EST_VC69,
-           'Percent workers commuting by public transportation' = HC02_EST_VC23,
-           'Percent population unemployed' = HC02_EST_VC06,
+           'Pop 16 years and over' = HC01_EST_VC02,
+           'Pop 16 years and over, in labor force, civilian labor force, employed' = HC01_EST_VC05,
+           'Workers 16 years and over, commuting to work' = HC01_EST_VC20,
+           'Workers 16 years and over, commuting to work, public transport' = HC01_EST_VC23,
+           'Percent income below poverty level - all people' = HC01_EST_VC112,
            'Year' = year) %>% 
-     select(Year, GEO.id, GEO.id2, `GEO.display-label`, 
-           `Median household income (dollars)`, 
-           `Percent workers commuting by public transportation`,
-           `Percent population unemployed`)
-            
+     select(Year, GEO.id, GEO.id2, `GEO.display-label`, `Median household income (dollars)`,
+           `Pop 16 years and over`,
+           `Pop 16 years and over, in labor force, civilian labor force, employed`,
+           `Workers 16 years and over, commuting to work`,
+           `Workers 16 years and over, commuting to work, public transport`,
+           `Percent income below poverty level - all people`, 
+           `Year`)
+    
+  return(df)
+}
+```
+
+```{r}
+# clean up data frames from 2010-2017
+data_2010_2017 <- function(file_name, year) {
+    df <- read_csv(file_name) %>% 
+    mutate('Median household income (dollars)' = HC01_VC85,
+           'Pop 16 years and over' = HC01_VC04,
+           'Pop 16 years and over, in labor force, civilian labor force, employed' = HC01_VC07,
+           'Workers 16 years and over, commuting to work' = HC01_VC28,
+           'Workers 16 years and over, commuting to work, public transport' = HC01_VC31,
+           'Percent income below poverty level - all people' = HC03_VC171,
+           'Year' = year) %>% 
+    
+     select(Year, GEO.id, GEO.id2, `GEO.display-label`,`Median household income (dollars)`,
+            `Pop 16 years and over`,
+           `Pop 16 years and over, in labor force, civilian labor force, employed`,
+           `Workers 16 years and over, commuting to work`,
+           `Workers 16 years and over, commuting to work, public transport`,
+           `Percent income below poverty level - all people`, 
+           `Year`)
   return(df)
 }
 
-# clean up data frames from 2010-2017
-data_2010_2017 <- function(file_name, year) {
-  df <- read_csv(file_name) %>% 
-    mutate('Median household income (dollars)' = HC01_VC85,
-           'Percent workers commuting by public transportation' = HC03_VC31,
-           'Percent population unemployed' = HC03_VC08,
-           'Percent no health insurance coverage' = HC03_VC134,
-          
-            # for all people 18 years and older:
-           'Percent income below poverty level' = HC03_VC171,
-           'Year' = year ) %>% 
-     select(Year, GEO.id, GEO.id2, `GEO.display-label`, 
-           `Median household income (dollars)`, 
-           `Percent workers commuting by public transportation`,
-           `Percent population unemployed`,
-           `Percent no health insurance coverage`,
-           `Percent income below poverty level`)
-            
-  return(df)
-}
+```
+
+
+```{r}
+
 
 census_2007 <- data_2007_2009("2007/ACS_07_1YR_DP3.csv", 2007)
 census_2008 <- data_2007_2009("2008/ACS_08_1YR_DP3.csv", 2008)
@@ -87,7 +95,5 @@ final_census_df <- full_join(census_2007, census_2008) %>%
   # separate(col = City, into = c("City","State"), sep = ",", remove = TRUE)
 
 View(final_census_df)
-
-# need to fix geo.display-label column
-
 ```
+

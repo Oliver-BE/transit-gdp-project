@@ -185,22 +185,13 @@ $(document).ready(function () {
 <h2>CSA</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3ZGYgPC0gRklOQUxfREZcbmNzYV9kZiA8LSByZWFkX2NzdihcImNzYS1lc3QyMDE3LWFsbGRhdGEuY3N2XCIpICU+JSBcbiAgc2VsZWN0KENTQSwgQ0JTQSwgTkFNRSwgTFNBRCkgJT4lIFxuICBmaWx0ZXIoTFNBRCA9PSBcIk1pY3JvcG9saXRhbiBTdGF0aXN0aWNhbCBBcmVhXCIgfCBMU0FEID09IFwiTWV0cm9wb2xpdGFuIFN0YXRpc3RpY2FsIEFyZWFcIiB8IExTQUQgPT0gXCJDb21iaW5lZCBTdGF0aXN0aWNhbCBBcmVhXCIpIFxuY3NhX3RpdGxlX2RmIDwtIGNzYV9kZiAlPiUgXG4gIGZpbHRlcihMU0FEID09IFwiQ29tYmluZWQgU3RhdGlzdGljYWwgQXJlYVwiKSAlPiUgXG4gIG11dGF0ZShjc2FfbmFtZSA9IE5BTUUpICU+JSBcbiAgc2VsZWN0KENTQSwgY3NhX25hbWUpIFxudGl0bGVkX2NzYV9kZiA8LSBpbm5lcl9qb2luKGNzYV9kZiwgY3NhX3RpdGxlX2RmLCBieSA9IFwiQ1NBXCIpICU+JSBcbiAgZmlsdGVyKExTQUQgIT0gXCJDb21iaW5lZCBTdGF0aXN0aWNhbCBBcmVhXCIpICU+JSBcbiAgc2VsZWN0KENTQSwgY3NhX25hbWUsIENCU0EpXG5jb2xuYW1lcyh0aXRsZWRfY3NhX2RmKVsxOjNdIDwtIGMoXCJjc2FfaWRcIiwgXCJjc2FfbmFtZVwiLCBcIm1zYV9pZFwiKVxuY3NhX21zYV9kZiA8LSBpbm5lcl9qb2luKHRpdGxlZF9jc2FfZGYsIG5ld2RmLCBieSA9IFwibXNhX2lkXCIpIFxuVmlldyhjc2FfbXNhX2RmKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3ZGYgPC0gRklOQUxfREZcblxuYGBgIn0= -->
 <pre class="r"><code>newdf &lt;- FINAL_DF
-csa_df &lt;- read_csv(&quot;csa-est2017-alldata.csv&quot;) %&gt;% 
-  select(CSA, CBSA, NAME, LSAD) %&gt;% 
-  filter(LSAD == &quot;Micropolitan Statistical Area&quot; | LSAD == &quot;Metropolitan Statistical Area&quot; | LSAD == &quot;Combined Statistical Area&quot;) 
-csa_title_df &lt;- csa_df %&gt;% 
-  filter(LSAD == &quot;Combined Statistical Area&quot;) %&gt;% 
-  mutate(csa_name = NAME) %&gt;% 
-  select(CSA, csa_name) 
-titled_csa_df &lt;- inner_join(csa_df, csa_title_df, by = &quot;CSA&quot;) %&gt;% 
-  filter(LSAD != &quot;Combined Statistical Area&quot;) %&gt;% 
-  select(CSA, csa_name, CBSA)
-colnames(titled_csa_df)[1:3] &lt;- c(&quot;csa_id&quot;, &quot;csa_name&quot;, &quot;msa_id&quot;)
-csa_msa_df &lt;- inner_join(titled_csa_df, newdf, by = &quot;msa_id&quot;) 
-View(csa_msa_df)</code></pre>
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IG9iamVjdCAnRklOQUxfREYnIG5vdCBmb3VuZFxuIn0= -->
+<pre><code>Error: object 'FINAL_DF' not found</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 </div>
 
