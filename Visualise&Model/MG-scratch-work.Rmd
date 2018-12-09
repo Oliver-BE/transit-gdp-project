@@ -1,7 +1,10 @@
 ---
 title: "R Notebook"
-output: html_notebook
-editor_options: 
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
   chunk_output_type: inline
 ---
  
@@ -21,13 +24,7 @@ library(ggplot2)
 library(readr)
 library(knitr)
 
-df <- final_df %>% 
-  filter(pop_estimate_msa > 5000000)
 
-
-ggplot(df, aes(y= passenger_trips/1000000, x= year, color = transit_modes)) + geom_point() + geom_smooth() + labs(y="Trips (in Millons)")
-
-ggplot(final_df, aes(y= percent_workers_commuting_by_public_transit_msa, x= passenger_trips)) + geom_point() 
 
 
 #Total Trips Over Time
@@ -42,40 +39,50 @@ df <- final_df %>%
   mutate(log10_gdp= log10(gdp_msa))  %>% 
   mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
 
+
+
   ggplot(df, aes(x =log10_gdp, y = log10_commuting)) +geom_point(alpha= .8) + labs(x= "GDP by City (Log 10)", y = "Percent Workers Commuting via Public Transit") + geom_smooth(method = 'lm')
 
 #percent commuting and trips ggplot
-df <- final_df %>% 
+commuting_trips_model_df <- final_df %>% 
+  mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
+  mutate(percent_workers_commuting_by_public_transit_msa = ifelse(percent_workers_commuting_by_public_transit_msa==0, NA, percent_workers_commuting_by_public_transit_msa)) %>%
   mutate(log10_trips= log10(passenger_trips))  %>% 
   mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
 
-ggplot(df, aes(y = log10_commuting, x = log10_trips)) + geom_point(alpha= .2)+ labs(y= "log10(Percent Commuting)", x = "log10(Trips)") + geom_smooth(method = 'lm') + facet_grid(.~transit_modes)
+commuting_trips_model <-lm(formula = log10_commuting~ log10_trips, data = commuting_trips_model_df)
 
-ggplot(df, aes(x = log10_commuting, y = log10_trips)) + geom_point(alpha= .2)+ labs(x= "log10(Percent Commuting)", y = "log10(Trips)") + geom_smooth(method = 'lm') + facet_grid(.~transit_modes)
-  
+ggplot(commuting_trips_model_df, aes(y = log10_commuting, x = log10_trips)) + geom_point(alpha= .2)+ labs(y= "log10(Percent Commuting)", x = "log10(Trips)") + geom_smooth(method = 'lm') + facet_grid(.~transit_modes)
 
-#percent commuting and miles ggplot
-df <- final_df %>% 
-  mutate(log10_miles= log10(vehicle_miles))  %>% 
-  mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
-
-ggplot(df, aes(x = log10_commuting, y = log10_miles)) + geom_jitter(alpha= .2)+ labs(x= "log10(Percent Commuting)", y = "log10(Vehicle Miles)") + geom_smooth(method = 'lm') 
 
 #trips and gdp
-
-df <- final_df %>% 
+trips_gdp_model_df <-final_df %>% 
+  mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
+  mutate(gdp_msa = ifelse(gdp_msa==0, NA, gdp_msa)) %>% 
   mutate(log10_trips= log10(passenger_trips))  %>% 
   mutate(log10_gdp = log10(gdp_msa)) 
 
-ggplot(df, aes(x = log10_trips, y = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(GDP)") + geom_smooth(method = 'lm') 
-  
+trips_gdp_model <-lm(formula = log10_gdp ~ log10_trips, data = trips_gdp_model_df)
+
+ggplot(trips_gdp_model_df, aes(x = log10_trips, y = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(GDP)") + geom_smooth(method = 'lm', formula = y~x) 
+```
+
+
+```{r} 
+
 #Funding and Trips ggplot
-df <- final_df %>% 
+funding_trips_model_df <- final_df %>% 
+  mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
+  mutate(total_funding = ifelse(total_funding==0, NA, total_funding)) %>% 
   mutate(log10_trips= log10(passenger_trips))  %>% 
   mutate(log10_funding = log10(total_funding)) %>% 
-  filter(transit_modes == "Rail")
+  filter(transit_modes == "Non-Rail Bus")  
 
-ggplot(df, aes(x = log10_trips, y = log10_funding)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(Total Funding)") + geom_smooth(method = 'lm') 
+funding_trips_model <- lm(formula = log10_funding ~ log10_trips, data = funding_trips_model_df)
+
+ggplot(df,aes(x = log10_trips, y = log10_funding)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(Total Funding)") + geom_smooth(method = 'lm', formula = y~x) 
+
+
 ```
 
 
