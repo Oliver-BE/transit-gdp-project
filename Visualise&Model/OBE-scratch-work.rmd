@@ -24,8 +24,37 @@ library(knitr)
 
 df <- transit_qol_df
 
-gdp_over_time <- df 
+test1 <- df %>% 
+  filter(msa_id == 16980 | msa_id == 47900 | msa_id == 17460
+         | msa_id == 41860 | msa_id == 33100) %>%  # msa_id == 35620 |) %>% 
+  group_by(msa_id, year, median_household_income_msa, gdp_msa) %>% 
+  summarize(tot_trips = sum(passenger_trips),
+            tot_fund = sum(total_funding)) %>% 
+  arrange(year) %>% 
+  mutate(msa_id_final = as.character(msa_id),
+         year_final = lubridate::ymd(year, truncated = 2L)) %>% 
+  select(msa_id_final, year_final, tot_trips, tot_fund, median_household_income_msa,
+         gdp_msa)
+  # mutate("New York City" = 35620,
+  #      "Chicago" = 16980,
+  #      "DC Area" = 47900
+ # Cleveland = 17460)
+# 33100 = miami
+# 41860 = san fran / oakland
   
+View(test1)
+
+ggplot(test1, aes(x=gdp_msa, y=tot_fund, #size = gdp_msa,
+                  color = msa_id_final)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+  
+
+
+#scale_y_log10() 
+  #labs(title= "Trips over time", x = "Year", y = "Total trips",
+  #     color = "City") 
+  # scale_color_manual(labels = c("Chicago", "NYC", "DC"), values = c("blue", "red", "green"))
 
 
 ```
