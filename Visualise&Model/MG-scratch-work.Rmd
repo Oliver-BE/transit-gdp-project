@@ -44,7 +44,7 @@ df <- final_df %>%
 
   ggplot(df, aes(x =log10_gdp, y = log10_commuting)) +geom_point(alpha= .8) + labs(x= "GDP by City (Log 10)", y = "Percent Workers Commuting via Public Transit") + geom_smooth(method = 'lm')
 
-#percent commuting and trips
+#percent commuting and trips ggplot
 df <- final_df %>% 
   mutate(log10_trips= log10(passenger_trips))  %>% 
   mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
@@ -54,7 +54,7 @@ ggplot(df, aes(y = log10_commuting, x = log10_trips)) + geom_point(alpha= .2)+ l
 ggplot(df, aes(x = log10_commuting, y = log10_trips)) + geom_point(alpha= .2)+ labs(x= "log10(Percent Commuting)", y = "log10(Trips)") + geom_smooth(method = 'lm') + facet_grid(.~transit_modes)
   
 
-#percent commuting and miles
+#percent commuting and miles ggplot
 df <- final_df %>% 
   mutate(log10_miles= log10(vehicle_miles))  %>% 
   mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
@@ -67,8 +67,15 @@ df <- final_df %>%
   mutate(log10_trips= log10(passenger_trips))  %>% 
   mutate(log10_gdp = log10(gdp_msa)) 
 
-ggplot(df, aes(x = log10_trips, y = log10_gdp, color= as.character(year))) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(GDP)") + geom_smooth(method = 'lm') 
+ggplot(df, aes(x = log10_trips, y = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(GDP)") + geom_smooth(method = 'lm') 
   
+#Funding and Trips ggplot
+df <- final_df %>% 
+  mutate(log10_trips= log10(passenger_trips))  %>% 
+  mutate(log10_funding = log10(total_funding)) %>% 
+  filter(transit_modes == "Rail")
+
+ggplot(df, aes(x = log10_trips, y = log10_funding)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(Total Funding)") + geom_smooth(method = 'lm') 
 ```
 
 
