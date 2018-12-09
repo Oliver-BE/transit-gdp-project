@@ -26,7 +26,7 @@ df <- transit_qol_df
 
 test1 <- df %>% 
   filter(msa_id == 16980 | msa_id == 47900 | msa_id == 17460
-         | msa_id == 41860 | msa_id == 33100) %>%  # msa_id == 35620 |) %>% 
+         | msa_id == 41860 | msa_id == 33100 | msa_id == 35620) %>%  # msa_id == 35620 |) %>% 
   group_by(msa_id, year, median_household_income_msa, gdp_msa) %>% 
   summarize(tot_trips = sum(passenger_trips),
             tot_fund = sum(total_funding)) %>% 
@@ -44,14 +44,37 @@ test1 <- df %>%
   
 View(test1)
 
-ggplot(test1, aes(x=gdp_msa, y=tot_fund, #size = gdp_msa,
+
+# gdp vs transit trips
+ggplot(test1, aes(x=gdp_msa, y=tot_trips, #size = gdp_msa,
                   color = msa_id_final)) +
   geom_point() +
+  geom_smooth(method = lm, se = FALSE) +
+  facet_wrap(~msa_id_final)
+
+
+# median house hold income vs transit trips
+ggplot(test1, aes(x=median_household_income_msa, y=tot_trips, #size = gdp_msa,
+                  color = msa_id_final)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE) +
+  facet_wrap(~msa_id_final)
+
+
+
+# stuff over time by city
+ggplot(test1, aes(x = year, y = tot_fund, col = msa_id_final)) +
+  geom_point() +
   geom_smooth(method = lm, se = FALSE)
-  
 
 
-#scale_y_log10() 
+
+# NYC data stuff
+nyc_df %>% test1 %>% 
+  filter(msa_id_final ==)
+
+
+# #scale_y_log10() 
   #labs(title= "Trips over time", x = "Year", y = "Total trips",
   #     color = "City") 
   # scale_color_manual(labels = c("Chicago", "NYC", "DC"), values = c("blue", "red", "green"))

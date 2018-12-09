@@ -45,7 +45,7 @@ colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
 ### Read in GDP Data
 ```{r, message=False}
 
-gdp_df <- read_xls("quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 3
+gdp_df <- read_xls("quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
   gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
   select(GEO.id2, GeoName, Year, gdp) 
