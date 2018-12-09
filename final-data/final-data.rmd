@@ -20,12 +20,32 @@ library(readr)
 library(knitr)
 ```
 
+
+### Wrangle and Read Combined Statistical Area Data
+``` {r, message=FALSE}
+
+csa_df <- read_csv("csa-est2017-alldata.csv") %>% 
+  select(CSA, CBSA, NAME, LSAD) %>% 
+  filter(LSAD == "Micropolitan Statistical Area" | LSAD == "Metropolitan Statistical Area" | LSAD == "Combined Statistical Area") 
+
+csa_title_df <- csa_df %>% 
+  filter(LSAD == "Combined Statistical Area") %>% 
+  mutate(csa_name = NAME) %>% 
+  select(CSA, csa_name) 
+
+titled_csa_df <- inner_join(csa_df, csa_title_df, by = "CSA") %>% 
+  filter(LSAD != "Combined Statistical Area") %>% 
+  select(CSA, csa_name, CBSA)
+
+colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
+```
+
 ## Read in Quality of Life Data
 
 ### Read in GDP Data
 ```{r, message=False}
 
-gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
+gdp_df <- read_xls("/home/class21/obaldwinedwards21/Amherst_classes/STAT231-F18/Final-Project/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 3
   gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
   select(GEO.id2, GeoName, Year, gdp) 
@@ -331,7 +351,6 @@ transit_stations_df <- left_join(master_fta_df, transit_stations_df1, by = c("5 
   filter(!is.na(modes_clean)) %>% 
   unique() 
 
-# transit_stations_df
 
 ```
 
@@ -401,15 +420,15 @@ fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>%
   full_join(vrh_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   mutate(temp = 20) %>% 
   unite(Year, c(temp, Year), sep = "", remove = TRUE) %>% 
-  unique() %>% 
+  unique() 
   
   # join transit stations dataframes
   # (potentially double counts transit stations that are used by multiple transit networks)
-  full_join(transit_stations_df, by = c("UZA", "modes_clean")) %>% 
+  full_join(transit_stations_df, by = c("UZA", "modes_clean")) 
 
   # joining FTA funding data
-  full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
-  filter(Year >= 2001)
+  # full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
+  # filter(Year >= 2001)
 
 # fta_df
 
@@ -425,7 +444,7 @@ census_UZA_MSA_key <- read_csv("census-FTA-joining-key/UZA_MSA_join.txt") %>%
   select(GEO.id2, UA, UANAME, UAPOP)
 
 # join FTA dataframes here
-final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
+final_fta_df1 <- left_join(census_UZA_MSA_key, fta_df,
                     by = c("UAPOP" = "UZA_Pop_2010")) %>% 
   mutate(Year = as.numeric(Year))%>% 
   filter(Year > 2006, Year < 2018) %>% 
@@ -434,12 +453,17 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   filter(UAPOP>100000) %>% 
   select(-UANAME, -UZA)
 
-
-
+final_fta_df <- inner_join(titled_csa_df, final_fta_df1, by = c("msa_id"= "GEO.id2")) %>% 
+  group_by(csa_id) %>% 
+  mutate(`UZA Area SQ Miles` = sum(`UZA Area SQ Miles`)) %>%
+  group_by(Year, modes_clean) %>% 
+  mutate(UPTs = sum(UPTs)) %>%
+  mutate(VRMs = sum(VRMs)) %>%
+  mutate(VRHs = sum(VRHs)) 
   
-# final_fta_df
- 
 ```
+
+`
 
 ## Join Quality of Life and Transit Data
 
@@ -522,7 +546,7 @@ scaled_df <- per_capita_df %>%
 
 ```
 
-## Head(df) &Write DF 
+## Head(df) & Write DF 
 ```{r, message = FALSE}
 
 head(final_df)

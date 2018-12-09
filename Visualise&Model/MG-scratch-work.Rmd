@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+ 
+
+```{r}
+
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+
+df <- final_df %>% 
+  filter(pop_estimate_msa > 5000000)
+
+
+ggplot(df, aes(y= passenger_trips/1000000, x= year, color = transit_modes)) + geom_point() + geom_smooth() + labs(y="Trips (in Millons)")
+
+ggplot(final_df, aes(y= percent_workers_commuting_by_public_transit_msa, x= passenger_trips)) + geom_point() 
+
+
+#Total Trips Over Time
+final_df %>% 
+  group_by(year, transit_modes) %>% 
+  summarise(sum_trips = sum(passenger_trips)) %>% 
+  ggplot( aes(x = year, y = sum_trips/1000000000, color = transit_modes)) +geom_point() + labs(x= "Year", y= "Total Trips (in Billions)")
+
+#gdp and percent workers commuting
+df <- final_df %>% 
+  filter(transit_modes == "Rail") %>% 
+  mutate(log10_gdp= log10(gdp_msa))  %>% 
+  mutate(log10_commuting = log10(percent_workers_commuting_by_public_transit_msa))
+
+  ggplot(df, aes(x =log10_gdp, y = log10_commuting)) +geom_point(alpha= .8) + labs(x= "GDP by City (Log 10)", y = "Percent Workers Commuting via Public Transit") + geom_smooth(method = 'lm')
+
+#percent commuting and trips
+df <- final_df 
+
+ggplot(df, aes(x = percent_workers_commuting_by_public_transit_msa, y = passenger_trips)) +geom_point(alpha= .8) + labs(x= "Percent Commuting", y = "Trips") + geom_smooth(method = 'lm')
+  
+  
+#percent commuting and trips
+
+```
+
+

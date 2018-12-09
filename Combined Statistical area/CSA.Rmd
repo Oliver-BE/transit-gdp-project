@@ -41,7 +41,7 @@ titled_csa_df <- inner_join(csa_df, csa_title_df, by = "CSA") %>%
 
 colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
 
-csa_msa_df <- inner_join(titled_csa_df, newdf, by = "msa_id") 
+csa_msa_df <- inner_join(titled_csa_df, newdf, by = "msa_id")
 
 View(csa_msa_df)
 ```
