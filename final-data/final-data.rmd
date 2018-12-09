@@ -112,7 +112,6 @@ clean_data_2007_2009 <- function(file_name, year) {
            `Median household income (dollars)`, 
            `Percent workers commuting by public transportation`,
            `Percent population unemployed`)
-            
   return(df)
 }
 
