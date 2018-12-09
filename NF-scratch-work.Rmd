@@ -182,8 +182,8 @@ results
 ## This is our example of our function that won't work 
 ```{r}
 
-tree_diagram <- function(formula) {
-  tree <- rpart(formula, data=train)
+tree_diagram <- function(outcome_variable) {
+  tree <- rpart(outcome_variable ~ passenger_trips + vehicle_miles + total_funding, data=train)
 
 pred <- as.vector(predict(tree, test))
 test <- test %>% mutate(prediction = pred)
@@ -195,7 +195,8 @@ results <- test %>%
 return(results)
 }
 
-tree_diagram(as.formula(gdp_msa ~ passenger_trips + vehicle_miles + vehicle_hours + total_stations_2017 + total_funding + federal_funding + state_funding + local_funding + other_funding))
+tree_diagram(as.data.frame(train[10]))
+tree_diagram(as.formula(gdp_msa ))
 
 tree_diagram(nicole_df_master$gdp_msa)
  
