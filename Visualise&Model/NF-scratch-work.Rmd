@@ -17,7 +17,6 @@ library(pROC)
 library(readr)
 library(ggplot2)
 library(tidyverse)
-options(scipen=999)
 ```
 
 ## ggplots comparing gdp to passenger trips  
@@ -203,9 +202,9 @@ round_df <- function(x, digits) {
     return(x)
 }
 
-round_df(table, 2)
+testdf <- round_df(table, 2)
 
-kable(x = table, digits = 1, caption = "hi")
+kable(x = testdf, caption = "hi")
 ```
 
 
