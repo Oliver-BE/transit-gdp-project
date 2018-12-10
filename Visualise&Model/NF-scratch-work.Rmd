@@ -198,6 +198,31 @@ hours_tree <- tree_diagram("vehicle_hours")
  
 ```
 
+## rbind
+```{r}
+table <- rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree, hours_tree)
+
+# source: https://stackoverflow.com/questions/29875914/rounding-values-in-a-dataframe-in-rs
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    return(x)
+}
+
+testdf <- round_df(table, 2)
+
+asdf <- table %>%
+  mutate(MSE = signif(MSE, digits = 3),
+         MAE = signif(MAE, digits = 3),
+         R2 = signif(R2, digits = 3)) %>% 
+  select(`Response Variable`, MSE, MAE, R2)
+
+
+asdf
+```
 
 ## NEW MODEL
 ```{r}
@@ -239,32 +264,8 @@ NEW_table <- rbind(pass_trips, workers, pop, pass_trips_workers,
                    pass_trips_pop, workers_pop, pass_trips_workers_pop)
 
 View(NEW_table)
+
 ```
 
 
 
-## rbind
-```{r}
-table <- rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree, hours_tree)
-
-# source: https://stackoverflow.com/questions/29875914/rounding-values-in-a-dataframe-in-rs
-round_df <- function(x, digits) {
-    # round all numeric variables
-    # x: data frame 
-    # digits: number of digits to round
-    numeric_columns <- sapply(x, mode) == 'numeric'
-    x[numeric_columns] <-  round(x[numeric_columns], digits)
-    return(x)
-}
-
-testdf <- round_df(table, 2)
-
-asdf <- table %>%
-  mutate(MSE = signif(MSE, digits = 3),
-         MAE = signif(MAE, digits = 3),
-         R2 = signif(R2, digits = 3)) %>% 
-  select(`Response Variable`, MSE, MAE, R2)
-
-
-asdf
-```
