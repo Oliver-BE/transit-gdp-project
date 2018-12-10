@@ -17,7 +17,8 @@ library(pROC)
 library(readr)
 library(ggplot2)
 library(tidyverse)
-options(scipen=999)
+library(tidyr)
+options(scipen = 0)
 ```
 
 ## ggplots comparing gdp to passenger trips  
@@ -185,13 +186,15 @@ med_household_tree <- tree_diagram("median_household_income_msa")
 unemployed_tree <- tree_diagram("percent_unemployed_msa")
 commuting_tree <- tree_diagram("percent_workers_commuting_by_public_transit_msa")
 poverty_tree <- tree_diagram("percent_below_poverty_level")
+hours_tree <- tree_diagram("vehicle_hours")
+
  
 ```
 
 
 ## rbind
 ```{r}
-table <- rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree)
+table <- rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree, hours_tree)
 
 # source: https://stackoverflow.com/questions/29875914/rounding-values-in-a-dataframe-in-rs
 round_df <- function(x, digits) {
@@ -205,5 +208,12 @@ round_df <- function(x, digits) {
 
 testdf <- round_df(table, 2)
 
-kable(x = table, digits = 1, caption = "hi")
+asdf <- table %>%
+  mutate(MSE = signif(MSE, digits = 3),
+         MAE = signif(MAE, digits = 3),
+         R2 = signif(R2, digits = 3)) %>% 
+  select(`Response Variable`, MSE, MAE, R2)
+
+
+asdf
 ```
