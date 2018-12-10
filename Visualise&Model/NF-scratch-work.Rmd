@@ -153,7 +153,8 @@ results
 
 #nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
 
-nicole_df <- readRDS("../final-data/final_data.RDA")
+nicole_df <- readRDS("../final-data/final_data.RDA") %>% 
+  mutate(avg_speed = vehicle_miles / vehicle_hours)
 
 set.seed(123)
 nicole_df_master <- nicole_df[complete.cases(nicole_df),]
@@ -196,6 +197,54 @@ hours_tree <- tree_diagram("vehicle_hours")
 
  
 ```
+
+
+## NEW MODEL
+```{r}
+
+NEW_tree_diagram <- function(explanatory_variables) {
+  train1 <- train %>% drop_na("gdp_msa")
+  formula <- paste0("gdp_msa ~ ", explanatory_variables)
+  tree <- rpart(formula, data=train1)
+  
+  pred <- as.vector(predict(tree, test)) # a vector of probabilities
+  test <- test %>% mutate(prediction = pred)
+  
+  test$truth <- test[,"gdp_msa"]
+  results <- test %>%
+    summarise("Response Variable" = explanatory_variables,
+              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
+              MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
+              R2   = cor(truth, pred))
+          
+  
+  return(results)
+}
+
+# percent_workers_commuting_by_public_transit_msa
+# passenger_trips
+# pop_estimate_msa
+
+# transit_modes
+# vehicle_miles / vehicle_hours (avg_speed)
+
+pass_trips <- NEW_tree_diagram("passenger_trips")
+workers <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa")
+pop <- NEW_tree_diagram("pop_estimate_msa")
+
+pass_trips_workers <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + passenger_trips")
+pass_trips_pop <- NEW_tree_diagram("passenger_trips + pop_estimate_msa")
+workers_pop <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + pop_estimate_msa")
+
+
+pass_trips_workers_pop <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + passenger_trips + pop_estimate_msa")
+
+NEW_table <- rbind(pass_trips, workers, pop, pass_trips_workers, 
+                   pass_trips_pop, workers_pop, pass_trips_workers_pop)
+
+View(NEW_table)
+```
+
 
 
 ## rbind
