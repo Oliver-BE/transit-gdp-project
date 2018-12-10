@@ -17,6 +17,7 @@ library(pROC)
 library(readr)
 library(ggplot2)
 library(tidyverse)
+options(scipen=999)
 ```
 
 ## ggplots comparing gdp to passenger trips  
@@ -143,7 +144,9 @@ results
 ## Run this each time:
 ```{r}
 
-nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
+#nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
+
+nicole_df <- readRDS("../final-data/final_data.RDA")
 
 set.seed(123)
 nicole_df_master <- nicole_df[complete.cases(nicole_df),]
@@ -188,7 +191,21 @@ poverty_tree <- tree_diagram("percent_below_poverty_level")
 
 ## rbind
 ```{r}
-rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree)
+table <- rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree)
+
+# source: https://stackoverflow.com/questions/29875914/rounding-values-in-a-dataframe-in-rs
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    return(x)
+}
+
+round_df(table, 2)
+
+kable(x = table, digits = 1, caption = "hi")
 ```
 
 
