@@ -553,5 +553,7 @@ head(final_df)
 
 write.csv(final_df, "FINAL_DATA.csv", row.names=F)
 
+saveRDS(final_df, file = "final_data.RDA")
 
+readRDS("../final-data/final_data.RDA")
 ```
