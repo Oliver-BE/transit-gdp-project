@@ -212,7 +212,7 @@ NEW_tree_diagram <- function(explanatory_variables) {
   
   test$truth <- test[,"gdp_msa"]
   results <- test %>%
-    summarise("Response Variable" = explanatory_variables,
+    summarise("Explanatory Variables" = explanatory_variables,
               MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
               MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
               R2   = cor(truth, pred))
@@ -225,9 +225,6 @@ NEW_tree_diagram <- function(explanatory_variables) {
 # passenger_trips
 # pop_estimate_msa
 
-# transit_modes
-# vehicle_miles / vehicle_hours (avg_speed)
-
 pass_trips <- NEW_tree_diagram("passenger_trips")
 workers <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa")
 pop <- NEW_tree_diagram("pop_estimate_msa")
@@ -235,7 +232,6 @@ pop <- NEW_tree_diagram("pop_estimate_msa")
 pass_trips_workers <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + passenger_trips")
 pass_trips_pop <- NEW_tree_diagram("passenger_trips + pop_estimate_msa")
 workers_pop <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + pop_estimate_msa")
-
 
 pass_trips_workers_pop <- NEW_tree_diagram("percent_workers_commuting_by_public_transit_msa + passenger_trips + pop_estimate_msa")
 
