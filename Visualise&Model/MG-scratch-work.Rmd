@@ -32,7 +32,9 @@ final_df %>%
   group_by(year, transit_modes) %>% 
   summarise(sum_trips = sum(passenger_trips)) %>% 
   ggplot( aes(x = year, y = sum_trips/1000000000, color = transit_modes)) +geom_point() + labs(x= "Year", y= "Total Trips (in Billions)")
+```
 
+```{r}
 #gdp and percent workers commuting
 gdp_commuting_model_df <- final_df %>% 
   mutate(percent_workers_commuting_by_public_transit_msa = ifelse(percent_workers_commuting_by_public_transit_msa==0, NA, percent_workers_commuting_by_public_transit_msa))%>%
@@ -43,8 +45,10 @@ gdp_commuting_model_df <- final_df %>%
 
 gdp_commuting_model <- lm(formula = log10_commuting~ log10_gdp, data = gdp_commuting_model_df)
 
-  ggplot(gdp_commuting_model_df, aes(x =log10_gdp, y = log10_commuting)) +geom_jitter(alpha= .1) + labs(x= "GDP by City (Log 10)", y = "Percent Workers Commuting via Public Transit") + geom_smooth(method = 'lm') 
-
+  ggplot(gdp_commuting_model_df, aes(x =log10_gdp, y = log10_commuting)) +geom_jitter(alpha= .2) + labs(x= "GDP by City (Scaled by log 10)", y = " % Workers Commuting via Public Transit (Scaled log 10)" , title = "Relationship between GDP and Commuting by Public Transit") + geom_smooth(method = 'lm') 
+```
+  
+```{r}
 #Commuting & Passenger Trips Model 
 commuting_trips_model_df <- final_df %>% 
   mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
@@ -69,9 +73,10 @@ non_rail_only_model <-lm(formula = log10_commuting~ log10_trips, data = non_rail
 
 commuting_trips_model <-lm(formula = log10_commuting~ log10_trips, data = commuting_trips_model_df)
 
-ggplot(commuting_trips_model_df, aes(x = log10_commuting, y = log10_trips)) + geom_jitter(alpha= .2)+ labs(x= "log10(Percent Commuting)", y = "log10(Trips)") + geom_smooth(method = 'lm', formula = y~x) + facet_grid(.~transit_modes) 
+ggplot(commuting_trips_model_df, aes(x = log10_commuting, y = log10_trips)) + geom_jitter(alpha= .2)+ labs(x= "Percent Workers Commuting by Public Transit (scaled  log10)", y = "Passenger Trips (scaled to log10)", title="Relationship between Percent of Workers Commuting and Trips") + geom_smooth(method = 'lm', formula = y~x, se = FALSE) + facet_grid(.~transit_modes) 
+```
 
-
+```{r}
 #Trips & GDP model
 trips_gdp_model_df <-final_df %>% 
   mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
@@ -81,9 +86,8 @@ trips_gdp_model_df <-final_df %>%
 
 trips_gdp_model <-lm(formula = log10_gdp ~ log10_trips, data = trips_gdp_model_df)
 
-ggplot(trips_gdp_model_df, aes(x = log10_trips, y = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(GDP)") + geom_smooth(method = 'lm', formula = y~x) 
+ggplot(trips_gdp_model_df, aes(y = log10_trips, x = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "Passenger Trips (scaled to log10)", y = "City GDP (scaled to log10)", title = "Trips and GDP ") + geom_smooth(method = 'lm', formula = y~x) 
 
-#
 ```
 
 
@@ -141,11 +145,12 @@ gdp_speed_model_df <- final_df %>%
   mutate(avg_speed = vehicle_miles/vehicle_hours) %>% 
   mutate(passenger_trips = ifelse(passenger_trips==0, NA, passenger_trips)) %>% 
   mutate(gdp_msa = ifelse(avg_speed==0, NA, gdp_msa))%>% 
-  mutate(log10_gdp= log10(gdp_msa))  %>% 
+  mutate(log10_gdp_per_cap= log10(gdp_msa/pop_estimate_msa))  %>% 
   mutate(log10_speed = log10(avg_speed))
 
-ggplot(gdp_speed_model_df,aes(x =log10_speed, y = log10_gdp)) + geom_jitter(alpha= .2)+ labs(x= "Average Speed", y = "GDP") + geom_smooth(method = 'lm', formula = y~x)+ facet_grid(~transit_modes)
 
+
+ggplot(gdp_speed_model_df,aes(x =log10_speed, y = log10_gdp_per_cap)) + geom_jitter(alpha= .2)+ labs(x= "Average Speed", y = "GDP") + geom_smooth(method = 'lm', formula = y~x)+ facet_grid(~transit_modes)
 
 ```
 
