@@ -24,7 +24,7 @@ library(knitr)
 ### Wrangle and Read Combined Statistical Area Data
 ``` {r, message=FALSE}
 
-csa_df <- read_csv("csa-est2017-alldata.csv") %>% 
+csa_df <- read_csv("../Combined Statistical area/csa-est2017-alldata.csv") %>% 
   select(CSA, CBSA, NAME, LSAD) %>% 
   filter(LSAD == "Micropolitan Statistical Area" | LSAD == "Metropolitan Statistical Area" | LSAD == "Combined Statistical Area") 
 
@@ -38,6 +38,9 @@ titled_csa_df <- inner_join(csa_df, csa_title_df, by = "CSA") %>%
   select(CSA, csa_name, CBSA)
 
 colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
+
+# titled_csa_df
+
 ```
 
 ## Read in Quality of Life Data
@@ -144,7 +147,7 @@ clean_data_2010_2017 <- function(file_name, year) {
            'Percent no health insurance coverage' = HC03_VC134,
           
             # for all people 18 years and older:
-           'Percent income below poverty level' = HC03_VC171,
+           'Percent income below poverty level' = as.numeric(HC03_VC171),
            'Year' = year ) %>% 
      select(Year, GEO.id, GEO.id2, `GEO.display-label`, 
            `Median household income (dollars)`, 
@@ -419,15 +422,13 @@ fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>%
   full_join(vrh_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   mutate(temp = 20) %>% 
   unite(Year, c(temp, Year), sep = "", remove = TRUE) %>% 
-  unique() 
-  
+  unique() %>% 
   # join transit stations dataframes
   # (potentially double counts transit stations that are used by multiple transit networks)
-  full_join(transit_stations_df, by = c("UZA", "modes_clean")) 
-
+  full_join(transit_stations_df, by = c("UZA", "modes_clean")) %>% 
   # joining FTA funding data
-  # full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
-  # filter(Year >= 2001)
+  full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
+    filter(Year >= 2001)
 
 # fta_df
 
@@ -443,7 +444,7 @@ census_UZA_MSA_key <- read_csv("../census-FTA-joining-key/UZA_MSA_join.txt") %>%
   select(GEO.id2, UA, UANAME, UAPOP)
 
 # join FTA dataframes here
-final_fta_df1 <- left_join(census_UZA_MSA_key, fta_df,
+final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
                     by = c("UAPOP" = "UZA_Pop_2010")) %>% 
   mutate(Year = as.numeric(Year))%>% 
   filter(Year > 2006, Year < 2018) %>% 
@@ -452,7 +453,7 @@ final_fta_df1 <- left_join(census_UZA_MSA_key, fta_df,
   filter(UAPOP>100000) %>% 
   select(-UANAME, -UZA)
 
-final_fta_df <- inner_join(titled_csa_df, final_fta_df1, by = c("msa_id"= "GEO.id2")) %>% 
+final_fta_df_csa <- inner_join(titled_csa_df, final_fta_df, by = c("msa_id"= "GEO.id2")) %>% 
   group_by(csa_id) %>% 
   mutate(`UZA Area SQ Miles` = sum(`UZA Area SQ Miles`)) %>%
   group_by(Year, modes_clean) %>% 
@@ -462,7 +463,7 @@ final_fta_df <- inner_join(titled_csa_df, final_fta_df1, by = c("msa_id"= "GEO.i
   
 ```
 
-`
+
 
 ## Join Quality of Life and Transit Data
 
