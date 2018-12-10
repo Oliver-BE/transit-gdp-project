@@ -17,11 +17,13 @@ library(pROC)
 library(readr)
 library(ggplot2)
 library(tidyverse)
+
+nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
 ```
 
 ## ggplots comparing gdp to passenger trips  
 ```{r}
-gdp_passengertrips <- ggplot(nicole_df, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
+gdp_passengertrips <- ggplot(nicole_df, aes(y = gdp_msa, x = passenger_trips)) + geom_point()
 plot(gdp_passengertrips)
 
 # Yielded clusters of data.  Going to split into under 1.0x10^12 GDP and above that. 
@@ -32,16 +34,53 @@ nicole_df_gdp_under <- nicole_df %>%
 nicole_df_gdp_over <- nicole_df %>%
   filter(gdp_msa >= 1000000000000)
 
-gdp_passengertrips_under <- ggplot(nicole_df_gdp_under, aes(x = gdp_msa, y = passenger_trips)) +
+gdp_passengertrips_under <- ggplot(nicole_df_gdp_under, aes(y = gdp_msa, x = passenger_trips)) +
   geom_point() +
   geom_smooth(method = lm, se=FALSE)
 
 plot(gdp_passengertrips_under)
 
-gdp_passengertrips_over <- ggplot(nicole_df_gdp_over, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
+gdp_passengertrips_over <- ggplot(nicole_df_gdp_over, aes(y = gdp_msa, x = passenger_trips)) + geom_point()
 plot(gdp_passengertrips_over)
 
 ```
+## Log scale of the above 
+```{r}
+## ggplots comparing gdp to passenger trips 
+nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
+trips.x_gdp_under.y <- as.numeric(nicole_df) %>% 
+  mutate(log10_trips = log10(passenger_trips)) %>%
+  mutate(log10_gdp_under = log10(nicole_df_gdp_under)) %>%
+  ggplot(aes(x = log10_trips, y = log10_gdp_under)) + geom_jitter(alpha = .1) + facet_grid(.~transit_modes) + geom_smooth(method = 'lm') 
+plot(trips.x_gdp_under.y)
+
+trips.x_gdp_over.y <- nicole_df %>% 
+  mutate(log10_trips = log10(passenger_trips)) %>%
+  mutate(log10_gdp_over = log10((nicole_df_gdp_over ))) %>%
+  ggplot(aes(x = log10_trips, y = log10_gdp_over)) + geom_jitter(alpha = .1) + facet_grid(.~transit_modes) + geom_smooth(method = 'lm') 
+plot(trips.x_gdp_over.y)
+
+gdp_passengertrips <- ggplot(nicole_df, aes(y = gdp_msa, x = passenger_trips)) + geom_point()
+plot(gdp_passengertrips)
+
+# Yielded clusters of data.  Going to split into under 1.0x10^12 GDP and above that. 
+
+nicole_df_gdp_under <- nicole_df %>% 
+  filter(gdp_msa < 1000000000000)
+
+nicole_df_gdp_over <- nicole_df %>%
+  filter(gdp_msa >= 1000000000000)
+
+gdp_passengertrips_under <- ggplot(nicole_df_gdp_under, aes(y = gdp_msa, x = passenger_trips)) +
+  geom_point() +
+  geom_smooth(method = lm, se=FALSE)
+
+plot(gdp_passengertrips_under)
+
+gdp_passengertrips_over <- ggplot(nicole_df_gdp_over, aes(y = gdp_msa, x = passenger_trips)) + geom_point()
+plot(gdp_passengertrips_over)
+```
+
 ## Employment against trips 
 ```{r}
 
