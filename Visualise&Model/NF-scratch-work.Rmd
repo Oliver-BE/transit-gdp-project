@@ -19,12 +19,6 @@ library(ggplot2)
 library(tidyverse)
 ```
 
-## Creating my own df because the other one isn't working 
-```{r}
-nicole_df <- read_csv("/home/class20/nfrontero20/STAT231-F18/Projects/Final Project/final-project/final-data/FINAL_DATA.csv")
-View(nicole_df)                    
-```
-
 ## ggplots comparing gdp to passenger trips  
 ```{r}
 gdp_passengertrips <- ggplot(nicole_df, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
@@ -149,7 +143,7 @@ results
 ## Run this each time:
 ```{r}
 
-nicole_df <- read_csv("final-data/FINAL_DATA.csv")
+nicole_df <- read_csv("../final-data/FINAL_DATA.csv")
 
 set.seed(123)
 nicole_df_master <- nicole_df[complete.cases(nicole_df),]
@@ -161,64 +155,40 @@ test <- nicole_df_master[-train_id,]
 ```
 
 
-## This is the part that goes in the function
+## This is our example of our function WORKS
 ```{r}
 
-tree <- rpart(gdp_msa ~ passenger_trips + vehicle_miles + vehicle_hours + total_stations_2017 + total_funding + federal_funding + state_funding + local_funding + other_funding, data=train)
-tree
-
-pred <- as.vector(predict(tree, test)) # a vector of probabilities
-test <- test %>% mutate(prediction = pred)
-
-results <- test %>%
-  summarise(MSE = 1/n() * sum((gdp_msa - pred)^2, na.rm = T),
-            MAE  = 1/n() * sum(abs(gdp_msa - pred), na.rm = T),
-            R2   = cor(gdp_msa, pred))
-results
-
-```
-
-
-## This is our example of our function that won't work 
-```{r}
-
-  
 tree_diagram <- function(outcome_variable) {
-  
+  train1 <- train %>% drop_na(outcome_variable)
   formula <- paste0(outcome_variable, " ~ passenger_trips + vehicle_miles + total_funding")
-  tree <- rpart(formula, data=train)
-
-  pred <- as.vector(predict(tree, test))
-  test <- test %>% mutate(prediction = pred)
-
-  results <- test %>%
-  summarise(MSE = 1/n() * sum((outcome_variable - pred)^2, na.rm = T),
-            MAE  = 1/n() * sum(abs(outcome_variable - pred), na.rm = T),
-            R2   = cor(outcome_variable, pred))
-  return(results)
-}
-
-tree_diagram <- function(outcome_variable) {
-  
-  formula <- paste0(outcome_variable, " ~ passenger_trips + vehicle_miles + total_funding")
-  tree <- rpart(formula, data=train)
+  tree <- rpart(formula, data=train1)
   
   pred <- as.vector(predict(tree, test)) # a vector of probabilities
   test <- test %>% mutate(prediction = pred)
   
   test$truth <- test[,outcome_variable]
   results <- test %>%
-    summarise(MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
+    summarise("Response Variable" = outcome_variable,
+              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
               MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
               R2   = cor(truth, pred))
+          
   
   return(results)
 }
 
 gdp_msa_tree <- tree_diagram("gdp_msa")
-
 med_household_tree <- tree_diagram("median_household_income_msa")
+unemployed_tree <- tree_diagram("percent_unemployed_msa")
+commuting_tree <- tree_diagram("percent_workers_commuting_by_public_transit_msa")
+poverty_tree <- tree_diagram("percent_below_poverty_level")
  
+```
+
+
+## rbind
+```{r}
+rbind(gdp_msa_tree, med_household_tree, unemployed_tree, commuting_tree, poverty_tree)
 ```
 
 
