@@ -24,6 +24,7 @@ options(scipen = 0)
 ## Importing data set 
 ```{r}
 nicole_df <- readRDS("../final-data/final_data.RDA")
+
 ```
 
 
@@ -158,8 +159,9 @@ summary(pop_gdp_over_model)
 ## Per capita = x, passenger trips = y
 ```{r}
 
-ggplot(nicole_df, aes(x = ))
-
+capita_trips_model <- lm(formula = passenger_trips ~ per_capita_gdp, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_gdp, y = passenger_trips)) + geom_point()
+summary(capita_trips_model)
 ```
 
 
