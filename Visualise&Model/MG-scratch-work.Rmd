@@ -167,6 +167,69 @@ gdp_speed_model_df <- final_df %>%
 
 
 ggplot(gdp_speed_model_df,aes(x =log10_speed, y = log10_gdp_per_cap)) + geom_jitter(alpha= .2)+ labs(x= "Average Speed", y = "GDP") + geom_smooth(method = 'lm', formula = y~x)+ facet_grid(~transit_modes)
+```
+
+```{r}
+martin_df <- readRDS("final-data/final_data.RDA") %>% 
+  mutate(avg_speed = vehicle_miles / vehicle_hours) %>% 
+
+set.seed(123)
+martin_df_master <- martin_df[complete.cases(martin_df),]
+n <- nrow(martin_df_master)
+train_id <- sample(1:n, size=round(n*0.8)) # select approx 80% of the row numbers between 1 and n
+train <- martin_df_master[train_id,] # the data set we'll train the model on
+test <- martin_df_master[-train_id,]
+```
+
+```{r}
+pop_trips_diagram <- function() {
+  train1 <- train #%>% drop_na()
+  formula <- paste0("gdp_msa ~ pop_estimate_msa + passenger_trips ")
+  tree <- rpart(formula, data=train1)
+  
+  pred <- as.vector(predict(tree, test)) # a vector of probabilities
+  test <- test %>% mutate(prediction = pred)
+  
+  test$truth <- test[,"gdp_msa"]
+  results <- test %>%
+    summarise("Explanatory Variables" = "pop_estimate_msa + passenger_trips",
+              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
+              MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
+              R2   = cor(truth, pred))
+          
+  
+  return(results)
+}
+pop_trips <- pop_trips_diagram()
+pop_trips
 
 ```
 
+```{r}
+trips_diagram <- function() {
+  train1 <- train %>% drop_na("gdp_msa")
+  formula <- paste0("gdp_msa ~ passenger_trips")
+  tree <- rpart(formula, data=train1)
+  
+  pred <- as.vector(predict(tree, test)) # a vector of probabilities
+  test <- test %>% mutate(prediction = pred)
+  
+  test$truth <- test[,"gdp_msa"]
+  results <- test %>%
+    summarise("Explanatory Variables" = "passenger_trips",
+              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
+              MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
+              R2   = cor(truth, pred))
+          
+  
+  return(results)
+}
+trips <- trips_diagram()
+trips
+```
+
+```{r}
+table <- rbind(pop_comm_trips, pop_comm_trips_funding)
+                
+View(table)
+```
