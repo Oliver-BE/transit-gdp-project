@@ -70,8 +70,8 @@ ggplot(test1, aes(x = year, y = tot_fund, col = msa_id_final)) +
 
 
 # NYC data stuff
-nyc_df %>% test1 %>% 
-  filter(msa_id_final ==)
+#nyc_df %>% test1 %>% 
+#  filter(msa_id_final ==)
 
 
 # #scale_y_log10() 
@@ -79,5 +79,19 @@ nyc_df %>% test1 %>%
   #     color = "City") 
   # scale_color_manual(labels = c("Chicago", "NYC", "DC"), values = c("blue", "red", "green"))
 
+
+```
+
+
+
+# leaflet
+```{r}
+library(leaflet)
+
+m <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=-73.87376, lat=40.77493, popup="new york") %>% 
+  setView(lng=-98.5795, lat=39.8283, zoom=4)
+m
 
 ```
