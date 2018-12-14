@@ -519,14 +519,7 @@ scale_0_1 <- function(x) {
 
 #Per Capita Transit Variables
 per_capita_df <- final_df %>% 
-  mutate(per_capita_total_funding = total_funding/pop_estimate_msa) %>% 
-  mutate(per_capita_federal_funding = federal_funding/pop_estimate_msa)%>% 
-  mutate(per_capita_state_funding = state_funding/pop_estimate_msa)%>% 
-  mutate(per_capita_local_funding = local_funding/pop_estimate_msa)%>% 
-  mutate(per_capita_other_funding = other_funding/pop_estimate_msa)%>%
-  mutate(per_capita_passenger_trips = passenger_trips/pop_estimate_msa) %>% 
-  mutate(per_capita_vehicle_miles = vehicle_miles/pop_estimate_msa) %>% 
-  mutate(per_capita_vehicle_hours = vehicle_hours/pop_estimate_msa) 
+  mutate(per_capita_gdp =  gdp_msa/pop_estimate_msa)
 
 scaled_df <- per_capita_df %>% 
   mutate(scaled_tot = scale_0_1(per_capita_total_funding)) %>% 
