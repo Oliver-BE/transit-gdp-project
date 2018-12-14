@@ -518,7 +518,7 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
 # }
 
 #Per Capita Transit Variables
-per_capita_df <- final_df %>% 
+final_df <- final_df %>% 
   mutate(per_capita_gdp =  gdp_msa/pop_estimate_msa)
 
 # scaled_df <- per_capita_df %>% 
