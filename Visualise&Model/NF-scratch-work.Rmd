@@ -119,6 +119,49 @@ plot(trips.x_unemployment.y_transitmode.facet)
 
 ```
 
+## ggplot of GDP=x, population=y
+```{r}
+
+pop_gdp_model <- lm(formula = pop_estimate_msa ~ gdp_msa, data = nicole_df)
+
+ggplot(pop_gdp_model, aes(x = gdp_msa, y = pop_estimate_msa)) + geom_smooth(method = 'lm') + geom_point()
+# Generates a graph with a pretty strong correlation. 
+
+summary(pop_gdp_model)
+```
+
+## Population and GDP
+```{r}
+
+# filtering
+pop_under <- nicole_df %>% 
+  filter(pop_estimate_msa < 10000000 & pop_estimate_msa <= 5000000)
+
+pop_over <- nicole_df %>% 
+  filter(pop_estimate_msa < 10000000 & pop_estimate_msa > 5000000)
+
+# ggplotting
+
+ggplot(pop_under, aes(x = gdp_msa, y = pop_estimate_msa)) + geom_smooth(method = 'lm') + geom_point()
+
+ggplot(pop_over, aes(x = gdp_msa, y = pop_estimate_msa)) + geom_smooth(method = 'lm') + geom_point()
+
+# model
+pop_gdp_under_model <- lm(formula = pop_estimate_msa ~ gdp_msa, data = pop_under)
+summary(pop_gdp_under_model)
+
+pop_gdp_over_model <- lm(formula = pop_estimate_msa ~ gdp_msa, data = pop_over)
+summary(pop_gdp_over_model)
+
+```
+
+## Per capita = x, passenger trips = y
+```{r}
+
+ggplot(nicole_df, aes(x = ))
+
+```
+
 
 ## Regression tree model example
 ```{r}
