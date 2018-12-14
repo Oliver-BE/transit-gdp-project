@@ -12,10 +12,13 @@ library(knitr)
 library(shiny)
 library(leaflet)
 
-df <- nicole_df %>% 
+df <- transit_qol_df %>% 
+  filter(year == 2010) %>% 
   mutate("latitude" = intptlat, "longitude" = intptlon) %>% 
-  group_by(msa_id, latitude, longitude, msa_name) %>% 
+  group_by(msa_id, latitude, longitude, msa_name, pop_estimate_msa) %>% 
   summarize() %>% 
-  select(latitude, longitude, msa_name, msa_id, pop_estimate_msa)
+  select(latitude, longitude, msa_name, msa_id, pop_estimate_msa) %>% 
+  drop_na()
 
 saveRDS(df, "../df.rds")
+

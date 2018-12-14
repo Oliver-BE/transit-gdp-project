@@ -5,8 +5,8 @@ library(dplyr)
 server <- function(input, output, session){
   
   lat_long_df <- reactive({
-    x <- df #%>% 
-      #filter(pop_estimate_msa < input$population)
+    x <- df %>% 
+      filter(pop_estimate_msa < input$max_pop)
   })
   
   output$mymap <- renderLeaflet({

@@ -6,8 +6,9 @@ ui <- fluidPage(
   headerPanel('Leaflet Map'),
   
   sidebarPanel(
-    sliderInput('population', 'Metropolitan Statistical Area Poulation: ', 
-                 min = 0, max = 21000000, value = 21000000, step = 1000000, ticks = F)
+    numericInput('max_pop', 
+                'Maximum Metropolitan Statistical Area (MSA) Poulation (based on 2010 values): ', 
+                value = 700000, min = 0, max = 20000000, step = 100000)
   ),
   
   mainPanel(
