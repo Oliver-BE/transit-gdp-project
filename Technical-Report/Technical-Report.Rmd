@@ -398,7 +398,7 @@ Other_Funding_df <- clean_funding_df(7, "Other_Funding") %>%
 ```
 
 ### Join FTA Funding Dataframes
-Joins the four different dataframes. 
+Joins the four funding different dataframes. 
 ```{r, message=FALSE}
 
 # join all Funding dataframes
@@ -439,6 +439,7 @@ fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>%
 ```
 
 ### Add Identifiers to FTA Dataframe Through Relationship File
+Read in relationship file between urbanized areas in transit data and metropolitan statistical areas in census data. Also cleans the joined dataframe. 
 ``` {r, message=FALSE}
 
 # get census key dataframe
@@ -456,14 +457,6 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   filter(UANAME != "Not in a 2010 urban area" ) %>% 
   filter(UAPOP>100000) %>% 
   select(-UANAME, -UZA)
-
-final_fta_df_csa <- inner_join(titled_csa_df, final_fta_df, by = c("msa_id"= "GEO.id2")) %>% 
-  group_by(csa_id) %>% 
-  mutate(`UZA Area SQ Miles` = sum(`UZA Area SQ Miles`)) %>%
-  group_by(Year, modes_clean) %>% 
-  mutate(UPTs = sum(UPTs)) %>%
-  mutate(VRMs = sum(VRMs)) %>%
-  mutate(VRHs = sum(VRHs)) 
   
 ```
 
