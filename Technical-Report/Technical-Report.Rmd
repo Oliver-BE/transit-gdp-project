@@ -23,7 +23,15 @@ library(knitr)
 
 ## Abstract:
 
+This project seeks to better understand the relationship between quality of life and transit in micropolitan and metropolitan areas in the United States.  While the original intention was to create a quality of life score or statistic utilizing multiple variables, this is beyond the scope of this project.  Upon such a realization, it was decided to pivot to explore how well transit statistics can predict gdp in U.S. micropolitan and metropolitan areas.  IT WAS FOUND THAT...
+
 ## Introduction:
+
+The research question at hand is if a U.S. metropolitan or micropolitan area's transit system can predict the gdp of that area.  This question is interesting because, as gdp is a valued metric of a city's well-being, understanding the relationship between gdp and a city's transit may shed insight on how to possibly increase gdp. 
+
+In order to answer this question, one large dataframe had to be created that combined gdp and transit system information by metropolitan and micropolitan statistic areas.  This dataframe can be accessed via the R package, "gluskr" created during the course of this project. A readme is available for this package.  
+
+With this dataframe, it was possible to ... FINISH THIS.
 
 ## Data:
 
