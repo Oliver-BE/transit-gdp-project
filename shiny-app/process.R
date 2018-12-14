@@ -12,7 +12,7 @@ library(knitr)
 library(shiny)
 library(leaflet)
 
-df <- transit_qol_df %>% 
+df <- nicole_df %>% 
   mutate("latitude" = intptlat, "longitude" = intptlon) %>% 
   group_by(msa_id, latitude, longitude, msa_name) %>% 
   summarize() %>% 
