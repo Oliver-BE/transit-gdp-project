@@ -13,6 +13,7 @@ library(knitr)
 library(rpart)
 library(partykit)
 library(pROC)
+library(rpart.plot)
 
 # seperate train and test data 
 nicole_df <- readRDS("./final-data/final_data.RDA") %>% 
@@ -46,20 +47,26 @@ gdp_model <- function(explanatory_variables) {
               MAE  = 1/n() * sum(abs(truth - predictions), na.rm = T),
               R2   = cor(truth, predictions))
   
-  return(results)
+  return(regression_tree)
 }
+
 
 # use our function on different explanatory variables
 pass_trips <- gdp_model("passenger_trips")
+rpart.plot(pass_trips)
+
 workers <- gdp_model("percent_workers_commuting_by_public_transit_msa")
+rpart.plot(workers)
+
 pass_trips_workers <- gdp_model("percent_workers_commuting_by_public_transit_msa + passenger_trips")
 tot_funding <- gdp_model("total_funding")
 fund_trips_workers <- gdp_model("percent_workers_commuting_by_public_transit_msa + passenger_trips + total_funding")
 
 all_transit <- gdp_model("passenger_trips + avg_speed + total_funding")
+rpart.plot(all_transit)
 
 # combine results of each combination of explanatory variables
-model_results <- rbind(pass_trips, workers,pass_trips_workers, tot_funding,
+model_results <- rbind(pass_trips, workers, pass_trips_workers, tot_funding,
                        fund_trips_workers, all_transit)
 
 View(model_results)

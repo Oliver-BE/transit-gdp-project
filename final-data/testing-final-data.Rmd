@@ -266,7 +266,7 @@ clean_funding_df <- function(sheet_number, col_name) {
 
 new_clean_fta_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
+  df <- read_xlsx("../FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
   
   df <- df %>% 
     filter(`Reporter Type` == "Full Reporter") %>% 
@@ -358,11 +358,12 @@ pmt_fta_df <- new_clean_fta_df(13, "pmt") %>%
 
 # read in DF with master information about each transportation agency 
 # and the relevant Urbanized Area (UZA)
-master_fta_df <- read_xlsx("FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
   filter(Active == "Active") %>% 
   mutate( UZA_Pop_2010 = `UZA Population`) %>% 
-  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010, `Service Area SQ Miles`, `Service Area Population`, `Passenger Miles FY`, `Unlinked Passenger Trips FY`, `Fares FY`, `Operating Expenses FY`)
+  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010, `Service Area SQ Miles`, `Service Area Population`, `Passenger Miles FY`, `Unlinked Passenger Trips FY`, `Fares FY`, `Operating Expenses FY`, 
+         `5 digit NTD ID`)
 ```
 
 
