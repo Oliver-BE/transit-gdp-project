@@ -21,27 +21,6 @@ library(knitr)
 ```
 
 
-### Wrangle and Read Combined Statistical Area Data
-``` {r, message=FALSE}
-
-csa_df <- read_csv("../Combined Statistical area/csa-est2017-alldata.csv") %>% 
-  select(CSA, CBSA, NAME, LSAD) %>% 
-  filter(LSAD == "Micropolitan Statistical Area" | LSAD == "Metropolitan Statistical Area" | LSAD == "Combined Statistical Area") 
-
-csa_title_df <- csa_df %>% 
-  filter(LSAD == "Combined Statistical Area") %>% 
-  mutate(csa_name = NAME) %>% 
-  select(CSA, csa_name) 
-
-titled_csa_df <- inner_join(csa_df, csa_title_df, by = "CSA") %>% 
-  filter(LSAD != "Combined Statistical Area") %>% 
-  select(CSA, csa_name, CBSA)
-
-colnames(titled_csa_df)[1:3] <- c("csa_id", "csa_name", "msa_id")
-
-# titled_csa_df
-
-```
 
 ## Read in Quality of Life Data
 
@@ -284,20 +263,114 @@ clean_funding_df <- function(sheet_number, col_name) {
     return(df)
 }
 
+
+new_clean_fta_df <- function(sheet_number, col_name) {
+  
+  df <- read_xlsx("FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
+  
+  df <- df %>% 
+    filter(`Reporter Type` == "Full Reporter") %>% 
+    filter(`Agency Status` == "Active") %>% 
+     gather(key = "Year", 
+          value = Name_of_Var, 
+           -`Last Report Year`,
+           -`NTD ID`, 
+           -`Legacy NTD ID`, 
+           -`Agency Name`, 
+           -`Agency Status`, 
+           -`Reporter Type`, 
+           -City, 
+           -State, 
+           -`Census Year`,
+           -UZA,
+           -`UZA Name`,
+           -`UZA Area SQ Miles`,
+           -`UZA Population`,
+           -`2017 Status`,
+          -Mode,
+          -Service, 
+          -`Mode Status`)  %>% 
+    mutate(Modes = Mode) %>% 
+    clean_modes() %>% 
+      select(-Mode)
+
+    df[,col_name] <- df[,'Name_of_Var']
+    df[,'Name_of_Var'] <- NULL
+
+    return(df)
+}
+
 ```
+
+## New Stuff
+```{r, message=FALSE}
+expenses_fta_df <- new_clean_fta_df(3, "total_expenses") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(total_expenses = sum(total_expenses, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, total_expenses) %>% 
+  unique()
+
+fares_fta_df <- new_clean_fta_df(8, "total_fares") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(total_fares = sum(total_fares, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, total_fares) %>% 
+  unique()
+
+drm_fta_df <- new_clean_fta_df(9, "drm") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(drm = sum(drm, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, drm) %>% 
+  unique()
+
+new_vrm_fta_df <- new_clean_fta_df(11, "new_vrm") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(new_vrm = sum(new_vrm, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, new_vrm) %>% 
+  unique()
+
+new_vrh_fta_df <- new_clean_fta_df(12, "new_vrh") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(new_vrh = sum(new_vrh, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, new_vrh) %>% 
+  unique()
+
+new_upt_fta_df <- new_clean_fta_df(13, "new_upt") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(new_upt = sum(new_upt, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, new_upt) %>% 
+  unique()
+
+pmt_fta_df <- new_clean_fta_df(13, "pmt") %>% 
+  group_by(UZA, Year, modes_clean) %>% 
+  mutate(pmt = sum(pmt, na.rm = TRUE)) %>% 
+  select(UZA, `UZA Name`, Year, modes_clean, pmt) %>% 
+  unique()
+
+
+
+
+```
+
+
 
 ### Read in Master FTA Dataframe
 ```{r, message=FALSE}
 
 # read in DF with master information about each transportation agency 
 # and the relevant Urbanized Area (UZA)
-master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+master_fta_df <- read_xlsx("FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") 
-
-# master_fta_df
-
+  filter(Active == "Active") %>% 
+  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
+  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010, `Service Area SQ Miles`, `Service Area Population`, `Passenger Miles FY`, `Unlinked Passenger Trips FY`, `Fares FY`, `Operating Expenses FY`)
 ```
+
+
+
+
+
+
+
 
 ### Read in UPT, VRM, & VRH from Master FTA Dataframe
 ```{r, message=FALSE}
@@ -343,13 +416,13 @@ transit_stations_df1 <- read_xlsx("../FTA-data/FTA-dataframes/Transit Stations_0
   clean_modes() %>% 
   select(-Modes)
   
-# join transit stations dataframe with master FTA dataframe
+# join transit stations dataframe with master FTA dataframe in order to join to main FTA dataframe by "UZA"
 # (note that this potentially double counts transit stations by used by multiple transit networks)
 transit_stations_df <- left_join(master_fta_df, transit_stations_df1, by = c("5 digit NTD ID" = "NTD ID" )) %>% 
   select(Agency, UZA, `UZA Name`,`Agency Name`, modes_clean, `Total Stations`) %>% 
   group_by(UZA, modes_clean) %>% 
   mutate(Total_Stations_2017 = sum(`Total Stations`, na.rm = TRUE)) %>% 
-  select(UZA, modes_clean,Total_Stations_2017) %>% 
+  select(UZA, modes_clean, Total_Stations_2017) %>% 
   filter(!is.na(modes_clean)) %>% 
   unique() 
 
@@ -412,9 +485,6 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 ### Join All FTA Dataframes
 ```{r, message=FALSE}
 
-final_master_fta_df <- master_fta_df %>% 
-  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
-  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010)
 
 # join master FTA dataframe with UPT, VRM, VRH
 fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>% 
@@ -422,13 +492,17 @@ fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>%
   full_join(vrh_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   mutate(temp = 20) %>% 
   unite(Year, c(temp, Year), sep = "", remove = TRUE) %>% 
+  full_join(expenses_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(fares_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(drm_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(new_vrh_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(new_vrm_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  full_join(pmt_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>%
   unique() %>% 
-  # join transit stations dataframes
-  # (potentially double counts transit stations that are used by multiple transit networks)
   full_join(transit_stations_df, by = c("UZA", "modes_clean")) %>% 
   # joining FTA funding data
   full_join(fta_funding_df, by=c("UZA", "Year")) %>%  
-    filter(Year >= 2001)
+    filter(Year >= 2001) 
 
 # fta_df
 
@@ -452,14 +526,6 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   filter(UANAME != "Not in a 2010 urban area" ) %>% 
   filter(UAPOP>100000) %>% 
   select(-UANAME, -UZA)
-
-final_fta_df_csa <- inner_join(titled_csa_df, final_fta_df, by = c("msa_id"= "GEO.id2")) %>% 
-  group_by(csa_id) %>% 
-  mutate(`UZA Area SQ Miles` = sum(`UZA Area SQ Miles`)) %>%
-  group_by(Year, modes_clean) %>% 
-  mutate(UPTs = sum(UPTs)) %>%
-  mutate(VRMs = sum(VRMs)) %>%
-  mutate(VRHs = sum(VRHs)) 
   
 ```
 
