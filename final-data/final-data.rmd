@@ -193,14 +193,14 @@ qol_df <- left_join(population_df, census_qol_df, by = c("Year", "GEO.id", "GEO.
 #function to clean the modes of transit
 clean_modes <- function(df) {
   rail_abbr <- c('HR', 'LR', 'SR', 'CR', 'IP', 'MG', 'YR', 'AR', 'CC')
-  nr_bus_abbr <- c('MB', 'TB', 'CB', 'RB', 'PB', 'JT')
-  nr_other_abbr <- c('VP', 'DR', 'DT', 'TR', 'FB')
+  bus_abbr <- c('MB', 'TB', 'CB', 'RB', 'PB', 'JT')
+  other_abbr <- c('VP', 'DR', 'DT', 'TR', 'FB', 'OT', 'OR')
   
   mutate(df, modes_clean = 
       case_when(
         Modes %in% rail_abbr ~ "Rail",
-        Modes %in% nr_bus_abbr ~ "Non-Rail Bus",
-        Modes %in% nr_other_abbr ~ "Non-Rail Other",
+        Modes %in% bus_abbr ~ "Bus",
+        Modes %in% other_abbr ~ "Other",
         TRUE ~ "OTHER"))  %>% 
       filter(modes_clean != "OTHER")
   
@@ -266,7 +266,7 @@ clean_funding_df <- function(sheet_number, col_name) {
 
 new_clean_fta_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
+  df <- read_xlsx("../FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
   
   df <- df %>% 
     filter(`Reporter Type` == "Full Reporter") %>%
@@ -339,7 +339,7 @@ new_upt_fta_df <- new_clean_fta_df(13, "new_upt") %>%
   select(UZA, `UZA Name`, Year, modes_clean, new_upt) %>% 
   unique()
 
-pmt_fta_df <- new_clean_fta_df(13, "pmt") %>% 
+pmt_fta_df <- new_clean_fta_df(14, "pmt") %>% 
   group_by(UZA, Year, modes_clean) %>% 
   mutate(pmt = sum(pmt, na.rm = TRUE)) %>% 
   select(UZA, `UZA Name`, Year, modes_clean, pmt) %>% 
@@ -349,26 +349,6 @@ pmt_fta_df <- new_clean_fta_df(13, "pmt") %>%
 
 
 ```
-
-
-
-### Read in Master FTA Dataframe
-```{r, message=FALSE}
-
-# read in DF with master information about each transportation agency 
-# and the relevant Urbanized Area (UZA)
-master_fta_df <- read_xlsx("FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
-  filter(`Reporter Type` == "Full Reporter") %>% 
-  filter(Active == "Active") %>% 
-  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
-  select(UZA, `UZA Area SQ Miles`, UZA_Pop_2010, `Service Area SQ Miles`, `Service Area Population`, `Passenger Miles FY`, `Unlinked Passenger Trips FY`, `Fares FY`, `Operating Expenses FY`)
-```
-
-
-
-
-
-
 
 
 ### Read in UPT, VRM, & VRH from Master FTA Dataframe
@@ -406,6 +386,15 @@ vrh_df<- clean_fta_df(5, "VRHs") %>%
 
 ### Read in Transit Stations Dataframe
 ```{r, message=FALSE}
+
+### Read in Master FTA Dataframe
+# read in DF with master information about each transportation agency 
+# and the relevant Urbanized Area (UZA)
+master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+  filter(`Reporter Type` == "Full Reporter") %>% 
+  filter(Active == "Active") %>% 
+  mutate( UZA_Pop_2010 = `UZA Population`) %>% 
+  select(UZA, `UZA Name`, `UZA Area SQ Miles`, UZA_Pop_2010, Agency, `5 digit NTD ID`)
 
 # read in transit stations dataframe
 transit_stations_df1 <- read_xlsx("../FTA-data/FTA-dataframes/Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
@@ -484,9 +473,8 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 ### Join All FTA Dataframes
 ```{r, message=FALSE}
 
-
 # join master FTA dataframe with UPT, VRM, VRH
-fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>% 
+fta_df <- full_join(master_fta_df, upt_df, by= c("UZA", "UZA Name")) %>% 
   full_join(vrm_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   full_join(vrh_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   mutate(temp = 20) %>% 
@@ -497,6 +485,7 @@ fta_df <- full_join(final_master_fta_df, upt_df, by= c("UZA")) %>%
   full_join(new_vrh_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   full_join(new_vrm_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   full_join(pmt_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>%
+  full_join(new_upt_fta_df, by= c("UZA", "UZA Name", "Year", "modes_clean")) %>%
   unique() %>% 
   full_join(transit_stations_df, by = c("UZA", "modes_clean")) %>% 
   # joining FTA funding data
@@ -539,36 +528,37 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
   filter(UA != 99999) %>% 
   mutate(gdp = gdp*1000000) 
  
+# figure out which columns we want and rename columns accordingly
 # clarify variables names
-  colnames(final_df)[1:28] <- c("msa_id", 
-                               "msa_name", 
-                               "pop_estimate_msa", 
-                               "year", 
-                               "median_household_income_msa",
-                               "percent_workers_commuting_by_public_transit_msa",
-                               "percent_unemployed_msa",
-                               "percent_no_insurance_msa",
-                               "percent_below_poverty_level",
-                               "gdp_msa",
-                               "centlat",
-                               "centlon",
-                               "intptlat",
-                               "intptlon",
-                               "ua_census_id",
-                               "ua_pop_2010",
-                               "ua_sq_miles_2010",
-                               "ua_fta_name",
-                               "transit_modes",
-                               "passenger_trips",
-                               "vehicle_miles",
-                               "vehicle_hours",
-                               "total_stations_2017",
-                               "total_funding",
-                               "federal_funding",
-                               "state_funding",
-                               "local_funding",
-                               "other_funding")
-  
+  # colnames(final_df)[1:28] <- c("msa_id", 
+  #                              "msa_name", 
+  #                              "pop_estimate_msa", 
+  #                              "year", 
+  #                              "median_household_income_msa",
+  #                              "percent_workers_commuting_by_public_transit_msa",
+  #                              "percent_unemployed_msa",
+  #                              "percent_no_insurance_msa",
+  #                              "percent_below_poverty_level",
+  #                              "gdp_msa",
+  #                              "centlat",
+  #                              "centlon",
+  #                              "intptlat",
+  #                              "intptlon",
+  #                              "ua_census_id",
+  #                              "ua_pop_2010",
+  #                              "ua_sq_miles_2010",
+  #                              "ua_fta_name",
+  #                              "transit_modes",
+  #                              "passenger_trips",
+  #                              "vehicle_miles",
+  #                              "vehicle_hours",
+  #                              "total_stations_2017",
+  #                              "total_funding",
+  #                              "federal_funding",
+  #                              "state_funding",
+  #                              "local_funding",
+  #                              "other_funding")
+  # 
   
   
 ```
@@ -584,7 +574,8 @@ final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>%
 
 #Per Capita Transit Variables
 final_df <- final_df %>% 
-  mutate(per_capita_gdp =  gdp_msa/pop_estimate_msa)
+  mutate(per_capita_gdp =  gdp/PopEstimate)
+# gdp_msa / pop_estimate_msa
 
 # scaled_df <- per_capita_df %>% 
 #   mutate(scaled_tot = scale_0_1(per_capita_total_funding)) 
