@@ -269,8 +269,7 @@ new_clean_fta_df <- function(sheet_number, col_name) {
   df <- read_xlsx("FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
   
   df <- df %>% 
-    filter(`Reporter Type` == "Full Reporter") %>% 
-    filter(`Agency Status` == "Active") %>% 
+    filter(`Reporter Type` == "Full Reporter") %>%
      gather(key = "Year", 
           value = Name_of_Var, 
            -`Last Report Year`,
