@@ -117,6 +117,7 @@ funding_trips_model <- lm(formula = log10_funding ~ log10_trips, data = funding_
 
 ggplot(funding_trips_model_df,aes(x = log10_trips, y = log10_funding)) + geom_jitter(alpha= .2)+ labs(x= "log10(Passenger Trips)", y = "log10(Total Funding)") + geom_smooth(method = 'lm', formula = y~x) 
 
+summary(funding_trips_model)
 
 ```
 
@@ -181,55 +182,3 @@ train <- martin_df_master[train_id,] # the data set we'll train the model on
 test <- martin_df_master[-train_id,]
 ```
 
-```{r}
-pop_trips_diagram <- function() {
-  train1 <- train #%>% drop_na()
-  formula <- paste0("gdp_msa ~ pop_estimate_msa + passenger_trips ")
-  tree <- rpart(formula, data=train1)
-  
-  pred <- as.vector(predict(tree, test)) # a vector of probabilities
-  test <- test %>% mutate(prediction = pred)
-  
-  test$truth <- test[,"gdp_msa"]
-  results <- test %>%
-    summarise("Explanatory Variables" = "pop_estimate_msa + passenger_trips",
-              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
-              MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
-              R2   = cor(truth, pred))
-          
-  
-  return(results)
-}
-pop_trips <- pop_trips_diagram()
-pop_trips
-
-```
-
-```{r}
-trips_diagram <- function() {
-  train1 <- train %>% drop_na("gdp_msa")
-  formula <- paste0("gdp_msa ~ passenger_trips")
-  tree <- rpart(formula, data=train1)
-  
-  pred <- as.vector(predict(tree, test)) # a vector of probabilities
-  test <- test %>% mutate(prediction = pred)
-  
-  test$truth <- test[,"gdp_msa"]
-  results <- test %>%
-    summarise("Explanatory Variables" = "passenger_trips",
-              MSE = 1/n() * sum((truth - pred)^2, na.rm = T),
-              MAE  = 1/n() * sum(abs(truth - pred), na.rm = T),
-              R2   = cor(truth, pred))
-          
-  
-  return(results)
-}
-trips <- trips_diagram()
-trips
-```
-
-```{r}
-table <- rbind(pop_comm_trips, pop_comm_trips_funding)
-                
-View(table)
-```
