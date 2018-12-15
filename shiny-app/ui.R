@@ -1,6 +1,10 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
+# library(mapview)
+# devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
+# devtools::install_github("r-spatial/mapview@develop")
+# devtools::install_github('r-lib/later')
 
 ui <- fluidPage(
   headerPanel('Leaflet Map'),
@@ -12,7 +16,7 @@ ui <- fluidPage(
   ),
   
   mainPanel(
-    leafletOutput("mymap",height = 600)
+    leafletOutput("mymap", height = 600)
   )
  
   
