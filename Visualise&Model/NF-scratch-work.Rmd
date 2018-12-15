@@ -149,9 +149,11 @@ ggplot(pop_over, aes(x = gdp_msa, y = pop_estimate_msa)) + geom_smooth(method = 
 
 # model
 pop_gdp_under_model <- lm(formula = pop_estimate_msa ~ gdp_msa, data = pop_under)
+
 summary(pop_gdp_under_model)
 
 pop_gdp_over_model <- lm(formula = pop_estimate_msa ~ gdp_msa, data = pop_over)
+
 summary(pop_gdp_over_model)
 
 ```
