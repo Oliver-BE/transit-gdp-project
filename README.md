@@ -41,14 +41,6 @@ For the years 2010-2017, this variable exists.  This is the percentage of all pe
 **`gdp_msa`**
 A measure of gross domestic product across all industries in millions of current dollars.  
 
-
-
-**`centlat`**
-Centroid latitude.  The centroid latitude of the census block that the metropolitan or micropolitan area is associated with.  
-
-**`centlon`**
-Centroid longitude. The centroid longitude of the census block that the metropolitan or micropolitan area is associated with.  
-
 **`intptlat`**
 Internal point latitude for each specific metropolitan and micropolitan statistical entity. 
 
@@ -58,8 +50,6 @@ Internal point longitudefor each specific metropolitan and micropolitan statisti
 **`ua_census_id`**
 The census' unique id code for every urbanized area in the US. 
 
-**`ua_pop_2010`**
-The urbanized area's population from the 2010 census
 
 **`ua_sq_miles_2010`**
 The size of the urbanized area in 2010
@@ -68,16 +58,24 @@ The size of the urbanized area in 2010
 The urbanized area's name. 
 
 **`transit_modes`**
-The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), Hybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CBx), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DRx), Demand Response – Taxi (DT). 
+The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), Hybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CB), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DR), Demand Response – Taxi (DT). 
 
-**`passenger_trips`**    
-Also known as Unlinked Passenger Trips. It is defined by the FTA as: "The number of passengers who board public transportation vehicles. Passengers are counted each time they board vehicles no matter how many vehicles they use to travel from their origin to their destination."
+**total_transit_expenses**
+
+**total_fares**
+
+**directional_route_miles**
+
+**`vehicle_hours`** 
+Also known as Vehicle Revenue Hours. It is defined by the FTA as: "The hours that vehicles are scheduled to or actually travel while in revenue service."
 
 **`vehicle_miles`**  
 Also known as Vehicle Revenue Miles. It is defined by the FTA as: "The miles that vehicles are scheduled to or actually travel while in revenue service.""
 
-**`vehicle_hours`** 
-Also known as Vehicle Revenue Hours. It is defined by the FTA as: "The hours that vehicles are scheduled to or actually travel while in revenue service."
+**passenger_miles**
+
+**`passenger_trips`**    
+Also known as Unlinked Passenger Trips. It is defined by the FTA as: "The number of passengers who board public transportation vehicles. Passengers are counted each time they board vehicles no matter how many vehicles they use to travel from their origin to their destination."
 
 **`total_stations_2017`**
 The total number of stations within the given urbanized area in 2017.
@@ -96,6 +94,34 @@ Funding for the transit agencies in the given urbanized area from the relevant l
 
 **`other_funding`**
 Funding for the transit agencies in the given urbanized area that is derived from other sources. This can include fares, advertising, parking fees, etc. 
+
+**`per_capita_gdp`**
+
+**`pmt_per_vrm`**
+
+**`pmt_per_vrh`**
+
+**`upt_per_vrh`**
+
+**`per_capita_vrm`**
+
+**`per_capita_vrh`**
+
+**`per_capita_pmt`**
+
+**`per_capita_upt`**
+
+**`recovery_ratio`**
+
+**`fares_per_upt`**
+
+**`cost_per_hour`**
+
+**`cost_per_trip`**
+
+**`cost_per_pmt`**
+
+
 
  --- 
 
@@ -125,7 +151,7 @@ The variables `ua_census_id`, `ua_pop_2010`, `ua_sq_miles_2010`, `ua_fta_name`, 
 The National Transportation Database, Federal Transit Administration
 Period: 2007-2017
 
-The variables `centlat`, `centlon`, `intptlat`, `intptlon` were obtained from: 
+The variables `intptlat`, `intptlon` were obtained from: 
 
 The United Census Bureau, TigerWeb
 Tab: Nation-Based DataFiles
@@ -135,7 +161,5 @@ Tables: Metropolitan Statistical Areas - Census 2010, Micropolitan Statistical A
 
 ***Appendix of Relevant Definitions***
 
-*Centroid*
-The centroids of census blocks are the smallest entity for which the Census Bureau collects and tabulates decennial census information within the United States; bounded by visible features such as streets, streams, and railroad tracks, and by nonvisible boundaries such as selected property lines and city, township, school district, and county limits. 
 
 *Internal Points:* The Census Bureau calculates an internal point (latitude and longitude coordinates) for each geographic entity.  For many geographic entities, the internal point is at or near the geographic center of the entity.  For some irregularly shaped entities (such as those shaped like a crescent), the calculated geographic center may be located outside the boundaries of the entity.  In such instances, the internal point is identified as a point inside the entity boundaries nearest to the calculated geographic center and, if possible, within a land polygon (https://www.census.gov/geo/reference/gtc/gtc_area_attr.html).
