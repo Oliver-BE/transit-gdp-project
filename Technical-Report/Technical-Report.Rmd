@@ -20,6 +20,7 @@ library(tidyr)
 library(ggplot2)
 library(readr)
 library(knitr)
+library(roxygen2) #needed for gluskr documentation
 ```
 
 ## Abstract:
@@ -360,10 +361,10 @@ primary_variable_fta_df <-
   inner_join(master_fta_df, expenses_fta_df, by= c("UZA")) %>% 
   inner_join(fares_fta_df,    by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   inner_join(drm_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
-  inner_join(vrh_fta_df,  by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
-  inner_join(vrm_fta_df,  by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  inner_join(vrh_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  inner_join(vrm_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   inner_join(pmt_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>%
-  inner_join(upt_fta_df,  by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
+  inner_join(upt_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   unique()
 ```
 
@@ -372,7 +373,7 @@ Reads in the transit stations dataframe from the FTA and cleans it. Then joins t
 ```{r, message=FALSE}
 
 # Read in Master FTA Dataframe to use 
-# as joining key from agency to UZA
+# as joining key from transit agency to UZA
 
 transit_stations_master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>%  
@@ -490,7 +491,7 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
 
 ```{r, message=FALSE}
 
-# join final quality of life and fta datasets and filter out non-urban areas 
+# join final quality of life and fta datasets and filter out non-urban areas and metro areas below 1 million population 
 final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>% 
   filter(UA != 99999) %>% 
   mutate(gdp = gdp*1000000) %>% 
@@ -535,7 +536,7 @@ colnames(final_df)[1:29] <- c("msa_id",
 ```{r, message = FALSE}
 
 ## Adding Per Capita Variables 
-```{r, message = FALSE}
+
 
 
 #Per Capita Transit Variables
@@ -550,11 +551,6 @@ final_df <- final_df %>%
     
 
 ```
-  
- 
-  
-
-
 
 ## Head(df) & Write DF 
 ```{r, message = FALSE}
@@ -568,7 +564,8 @@ saveRDS(final_df, file = "final_data.RDA")
 readRDS("../final-data/final_data.RDA")
 ```
 
-#Modeling
+#Modeling Function
+This function takes in the variables needed and select the columns of said variables and then eliminates rows with incomplete data (aka)
 ```{r, message=FALSE}
 final_df <- readRDS("./final-data/final_data.RDA") 
 
@@ -588,19 +585,15 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
   select5 <- substitute(input5)
   
   if(is.null(input2)){
-    print("2")
     cleaned_data <- final_df %>% 
     select(per_capita_gdp, select1)
   }else if(is.null(input3)){
-    print("3")
     cleaned_data <- final_df %>% 
     select(per_capita_gdp, select1, select2)
   }else if(is.null(input4)){
-    print("4")
     cleaned_data <- final_df %>% 
     select(per_capita_gdp, select1, select2, select3)
   }else if(is.null(input5)){
-    print("5")
     cleaned_data <- final_df %>% 
     select(per_capita_gdp, select1, select2, select3, select4)
   }else{
@@ -641,6 +634,7 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
 ```
 
 #Begin Modeling
+Because our ggplots showed very weak relationships between we did some exploratory modeling to determine the best metrics to predict gdp.
 ```{r, messages=FALSE}
 
 # use our function on different explanatory variables
@@ -665,10 +659,11 @@ r <- gdp_model("cost_per_trip", "cost_per_trip")
 s <- gdp_model("cost_per_pmt", "cost_per_pmt")
 
 model_results <- rbind(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s)
+kable(model_results)
+```
 
-View(model_results)
+```{r, message=FALSE}
 
-View(gdp_model("per_capita_vrm + percent_commuting_msa", "per_capita_vrm, percent_commuting_msa"))
 # get model results 
 # one explanatory variable
 model1 <- gdp_model( input1 = "per_capita_vrm", explanatory_variables_eq = "per_capita_vrm")
@@ -699,13 +694,13 @@ model16 <- gdp_model("per_capita_vrm + per_capita_vrh + recovery_ratio", "per_ca
 model17 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_vrh + transit_modes", "per_capita_vrm","percent_commuting_msa","per_capita_vrh", "transit_modes")
 model18 <- gdp_model("percent_commuting_msa + per_capita_pmt + transit_modes", "percent_commuting_msa", "per_capita_pmt", "transit_modes")
 model19 <- gdp_model("per_capita_vrm + per_capita_vrh + transit_modes", "per_capita_vrm", "per_capita_vrh", "transit_modes")
-
+model20 <- gdp_model("per_capita_vrm + per_capita_vrh + transit_modes + percent_below_poverty_level", "per_capita_vrm","per_capita_vrh", "transit_modes","percent_below_poverty_level")
 # 17 is best
 
 final_model <- rbind(model1, model2, model3, model4, model5, model6, model7,
                      model8, model9, model10, model11, model12, model13, model14, model15,
-                     model16, model17, model18, model19)
-View(final_model)
+                     model16, model17, model18, model19, model20)
+kable(final_model)
 ```
 ## Results
 
