@@ -1,9 +1,10 @@
 ---
 title: "Technical Report"
-output: html_document
 author: "Martin Glusker, Nicole Frontero, Oliver Baldwin-Edwards"
-date: "Due: 12/18/18"
-
+date: 'Due: 12/18/18'
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -36,6 +37,11 @@ In order to answer this question, one large dataframe had to be created that com
 With this dataframe, it was possible to ... FINISH THIS.
 
 ## Data:
+The final_df represents a compilation of quality of life related variables and transit related variables by metropolitan and micropolitan statistica areas in the U.S. between 2007 and 2017. 
+
+For a more detailed explanation of where these data came from and what each variable name stands for, consult the readme.  
+
+Within this "data" section, there are subsections.  The first is "Quality of Life Data", pertaining to variables that came from the U.S. Census and the Bureau of Economic Analysis.  The second is the "Transit Data" section, which includes all variables derived from the FTA/National Transit Database.  Then, there is...INCLUDE ADDITIONAL SECTIONS HERE.
 
 ## Quality of Life Data
 
@@ -545,6 +551,8 @@ readRDS("../final-data/final_data.RDA")
 ```
 
 ## Results
+
+## Diagnostics
 
 ## Conclusion
 
