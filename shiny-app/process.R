@@ -12,6 +12,8 @@ library(knitr)
 library(shiny)
 library(leaflet)
 
+per_capita_vrm + percent_commuting_msa + per_capita_vrh
+
 df <- transit_qol_df %>% 
   filter(year == 2010) %>% 
   mutate("latitude" = intptlat, "longitude" = intptlon) %>% 
@@ -20,5 +22,5 @@ df <- transit_qol_df %>%
   select(latitude, longitude, msa_name, msa_id, pop_estimate_msa) %>% 
   drop_na()
 
-saveRDS(df, "../shiny-app/df.rds")
+saveRDS(df, "../df.rds")
 
