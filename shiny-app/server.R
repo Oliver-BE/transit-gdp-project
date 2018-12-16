@@ -1,6 +1,7 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
+library(knitr)
 
 server <- function(input, output, session){
   
@@ -15,6 +16,7 @@ server <- function(input, output, session){
       theme(legend.position = "none", axis.title = element_text(size = 15))
   })
   
+
   output$mymap <- renderLeaflet({
     df <- lat_long_df()
     
@@ -22,8 +24,9 @@ server <- function(input, output, session){
       addTiles() %>%
       addCircleMarkers(lng = ~longitude,
                  lat = ~latitude,
-                 popup = paste(df$msa_name, "<br>",
-                               "ID #: ", df$msa_id)) %>% 
+                 popup = paste(lat_long_df())) %>% 
+                 #popup = paste(df$msa_name, "<br>",
+                 #              "ID #: ", df$msa_id)) %>% 
                  #icon = list(iconUrl = "") 
       setView(lng=-98.5795, lat=39.8283, zoom=4) #%>% 
       #mapview(popup = popupGraph(test_plot(), width = 300, height = 300))

@@ -12,7 +12,7 @@ library(knitr)
 library(shiny)
 library(leaflet)
 
-per_capita_vrm + percent_commuting_msa + per_capita_vrh
+# per_capita_vrm + percent_commuting_msa + per_capita_vrh
 
 df <- transit_qol_df %>% 
   filter(year == 2010) %>% 
