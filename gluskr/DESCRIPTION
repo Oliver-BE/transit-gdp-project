@@ -1,0 +1,15 @@
+Package: gluskr
+Title: Contains Quality of Life and Transit Data From 2007 - 2017
+Version: 0.0.0.9000
+Authors@R: c(
+  person("Oliver", "Baldwin Edwards", email = "obaldwinedwards21@amherst.edu", role = c("aut", "cre")),
+  person("Martin", "Glusker", email = "mglusker21@amherst.edu", role = "aut"),
+  person("Nicole", "Frontero", email = "nfrontero20@amherst.edu", role = "aut"))
+Description: This package combines quality of life data such as unemployment rate and median household income with transit data (funding, passenger miles, etc.) for metropolitan areas in the United States for the years 2007 through 2017. 
+Depends: R (>= 3.5.0)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    readr
+RoxygenNote: 6.1.1
