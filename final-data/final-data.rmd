@@ -464,7 +464,8 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
 final_df <- left_join(qol_df, final_fta_df, by=c("GEO.id2", "Year"))%>% 
   filter(UA != 99999) %>% 
   mutate(gdp = gdp*1000000) %>% 
-  select(-CENTLON, -CENTLAT, -UAPOP)
+  select(-CENTLON, -CENTLAT, -UAPOP) %>% 
+  filter(PopEstimate>=1000000)
  
 # figure out which columns we want and rename columns accordingly
 # clarify variables names
