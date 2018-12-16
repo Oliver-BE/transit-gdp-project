@@ -22,8 +22,8 @@ library(corrplot)
 
 ## Join Census Data
 ```{r, message=FALSE}
-correlation_df <- FINAL_DF %>% 
-  select(-X1, -msa_id, -msa, -year, -centlat, -centlon, -intptlat, -intptlon, -ua_census_id, -ua_census_name, -ua_pop_2010, -ua_fta_id, -ua_fta_name, -transit_modes) 
+correlation_df <- final_df %>% 
+  select( -msa_id, -msa_name, -year,  -intptlat, -intptlon, -ua_census_id, -ua_fta_name, -transit_modes) 
 
 
 correlation_df <-  data.frame(lapply(correlation_df, function(x){ 
@@ -38,7 +38,3 @@ corrplot(cor_matrix, type = "upper", order = "hclust",
 
 ```
 
-```{r}
-
-
-```

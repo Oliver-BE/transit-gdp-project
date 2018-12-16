@@ -50,7 +50,6 @@ Internal point longitudefor each specific metropolitan and micropolitan statisti
 **`ua_census_id`**
 The census' unique id code for every urbanized area in the US. 
 
-
 **`ua_sq_miles_2010`**
 The size of the urbanized area in 2010
 
@@ -61,10 +60,13 @@ The urbanized area's name.
 The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), Hybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CB), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DR), Demand Response – Taxi (DT). 
 
 **total_transit_expenses**
+Total expenses for all transit agencies in the urbanized area. 
 
 **total_fares**
+Total fares collected by all transit agencies in the urbanized area. 
 
 **directional_route_miles**
+Defined by the FTA as: "The mileage in each direction over which public transportation vehicles travel while in revenue service."
 
 **`vehicle_hours`** 
 Also known as Vehicle Revenue Hours. It is defined by the FTA as: "The hours that vehicles are scheduled to or actually travel while in revenue service."
@@ -73,6 +75,7 @@ Also known as Vehicle Revenue Hours. It is defined by the FTA as: "The hours tha
 Also known as Vehicle Revenue Miles. It is defined by the FTA as: "The miles that vehicles are scheduled to or actually travel while in revenue service.""
 
 **passenger_miles**
+Defined by the FTA as: "The cumulative sum of the distances ridden by each passenger."
 
 **`passenger_trips`**    
 Also known as Unlinked Passenger Trips. It is defined by the FTA as: "The number of passengers who board public transportation vehicles. Passengers are counted each time they board vehicles no matter how many vehicles they use to travel from their origin to their destination."
@@ -96,33 +99,59 @@ Funding for the transit agencies in the given urbanized area from the relevant l
 Funding for the transit agencies in the given urbanized area that is derived from other sources. This can include fares, advertising, parking fees, etc. 
 
 **`per_capita_gdp`**
+The `gdp_msa` divided by `pop_estimate_msa` to get a gdp per capita statistic.
 
 **`pmt_per_vrm`**
+A metric. Defined as `passenger_miles` divided by `vehicle_miles`. 
 
 **`pmt_per_vrh`**
+A metric. Defined as `passenger_miles` divided by `vehicle_hours`. 
 
 **`upt_per_vrh`**
+A metric. Defined as `passenger_trips` divided by `vehicle_hours`. 
 
 **`per_capita_vrm`**
+A metric. Defined as `vehicle_miles` divided by `pop_estimate_msa`. 
 
 **`per_capita_vrh`**
+A metric. Defined as `vehicle_hours` divided by `pop_estimate_msa`. 
 
 **`per_capita_pmt`**
+A metric. Defined as `passenger_miles` divided by `pop_estimate_msa`. 
 
 **`per_capita_upt`**
+A metric. Defined as `passenger_trips` divided by `pop_estimate_msa`. 
 
 **`recovery_ratio`**
+A metric. Defined as `total_fares` divided by `total_transit_expenses`. Almost always below 1 as each individual fares doesn't cover the whole cost of public transit. Essentially measures the percent loss a transit agency takes per passenger trip. 
 
 **`fares_per_upt`**
+A metric. Defined as `total_fares` divided by `passenger_trips`. 
 
 **`cost_per_hour`**
+A metric. Defined as `total_transit_expenses` divided by `vehicle_hours`. 
 
 **`cost_per_trip`**
+A metric. Defined as `total_transit_expenses` divided by `passenger_trips`. 
 
 **`cost_per_pmt`**
+A metric. Defined as `total_transit_expenses` divided by `passenger_miles`.
 
 
+ --- 
 
+***Notes***
+
+
+*Internal Points* 
+The Census Bureau calculates an internal point (latitude and longitude coordinates) for each geographic entity.  For many geographic entities, the internal point is at or near the geographic center of the entity.  For some irregularly shaped entities (such as those shaped like a crescent), the calculated geographic center may be located outside the boundaries of the entity.  In such instances, the internal point is identified as a point inside the entity boundaries nearest to the calculated geographic center and, if possible, within a land polygon.  (https://www.census.gov/geo/reference/gtc/gtc_area_attr.html).
+
+*Metrics*
+The Federal Transit Adminastration uses all these metrics. The FTA's Small Transit Intensive Cities (STIC) Formula to determine funding allocation uses the following metrics: 1. Passenger miles traveled per vehicle revenue mile, 2. Passenger miles traveled per vehicle revenue hour 3. Vehicle revenue miles per capita, 4.Vehicle revenue hours per capita, 5.Passenger miles traveled per capita, and 6.Passengers per capita. 
+
+The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger Trip", "Fare Revenues per Total Operating Expense (Recovery Ratio)", "Cost per
+ Hour",	"Passengers per Hour",	"Cost per Passenger", and	"Cost per Passenger Mile." That was how we decided to use these statistics as metrics. 
+ 
  --- 
 
 ***Sources***
@@ -157,9 +186,4 @@ The United Census Bureau, TigerWeb
 Tab: Nation-Based DataFiles
 Tables: Metropolitan Statistical Areas - Census 2010, Micropolitan Statistical Areas - Census 2010
 
- --- 
 
-***Appendix of Relevant Definitions***
-
-
-*Internal Points:* The Census Bureau calculates an internal point (latitude and longitude coordinates) for each geographic entity.  For many geographic entities, the internal point is at or near the geographic center of the entity.  For some irregularly shaped entities (such as those shaped like a crescent), the calculated geographic center may be located outside the boundaries of the entity.  In such instances, the internal point is identified as a point inside the entity boundaries nearest to the calculated geographic center and, if possible, within a land polygon (https://www.census.gov/geo/reference/gtc/gtc_area_attr.html).
