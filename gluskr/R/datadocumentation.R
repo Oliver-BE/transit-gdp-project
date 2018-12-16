@@ -9,7 +9,7 @@
 #'   \item{\code{median_household_income_msa}}{integer Median household income is recorded in dollars.  It refers to the income and benefits for a household in inflation-adjusted dollars.  These data came from a table for each year, so the value was calculated in inflation-adjusted dollars for any given year.}
 #'   \item{\code{percent_commuting_msa}}{double A percentage of the number of workers who commuted by public transportation (which excludes taxicabs) divided by the total number of workers 16 years and older.  Workers include members of the Armed Forces and civilians who were at work the week before the survey was given out.  }
 #'   \item{\code{percent_unemployed_msa}}{double A percentage of the number of unemployed individuals in the civilian labor force who are counted in the population 16 years and older.}
-#'   \item{\code{percent_no_insurance_msa}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{percent_no_insurance_msa}}{double Percentage of the noninstitutionalized civilian population without health insurance coverage.}
 #'   \item{\code{percent_below_poverty_level}}{double For the years 2010-2017, this variable exists.  This is the percentage of all people in the United States who have income below the poverty level.  }
 #'   \item{\code{gdp_msa}}{double A measure of gross domestic product across all industries in millions of current dollars. }
 #'   \item{\code{intptlat}}{double Internal point latitude for each specific metropolitan and micropolitan statistical entity. }
