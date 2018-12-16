@@ -68,7 +68,7 @@ The size of the urbanized area in 2010
 The urbanized area's name. 
 
 **`transit_modes`**
-The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), mHybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CB), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DR), Demand Response – Taxi (DT). 
+The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), Hybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CBx), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DRx), Demand Response – Taxi (DT). 
 
 **`passenger_trips`**    
 Also known as Unlinked Passenger Trips. It is defined by the FTA as: "The number of passengers who board public transportation vehicles. Passengers are counted each time they board vehicles no matter how many vehicles they use to travel from their origin to their destination."

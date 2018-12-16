@@ -274,7 +274,7 @@ clean_funding_df <- function(sheet_number, col_name) {
 }
 ```
 
-## New Stuff
+## Main Transit Variables
 ```{r, message=FALSE}
 expenses_fta_df <- clean_fta_df(3, "total_expenses") %>% 
   group_by(UZA, Year, modes_clean) %>% 
@@ -345,7 +345,7 @@ primary_variable_fta_df <-
 ### Read in Transit Stations Dataframe
 ```{r, message=FALSE}
 
-### Read in Master FTA Dataframe to use a
+# Read in Master FTA Dataframe to use 
 # read in DF with master information about each transportation agency 
 # and the relevant Urbanized Area (UZA)
 transit_stations_master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
@@ -431,8 +431,7 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 ### Add Joining Identifiers to FTA Dataframe
 ``` {r, message=FALSE}
 
-fta_df <- left_join(primary_variable_fta_df, final_transit_stations_df, by = c("UZA", "modes_clean")) %>% 
-
+fta_df <- left_join(primary_variable_fta_df, final_transit_stations_df, by = c("UZA", "modes_clean"))%>%
   left_join(fta_funding_df, by=c("UZA", "Year")) %>% 
   unique()
 
@@ -511,13 +510,17 @@ final_df <- final_df %>%
   mutate(per_capita_gdp = gdp_msa / pop_estimate_msa, 
          pmt_per_vrm = passenger_miles / vehicle_miles,
          pmt_per_vrh = passenger_miles / vehicle_hours,
+         upt_per_vrh = passenger_trips/vehicle_hours,
          per_capita_vrm = vehicle_miles / pop_estimate_msa,
          per_capita_vrh = vehicle_hours / pop_estimate_msa,
          per_capita_pmt = passenger_miles / pop_estimate_msa,
-         per_capita_upt = passenger_trips / pop_estimate_msa)
+         per_capita_upt = passenger_trips / pop_estimate_msa,
+         recovery_ratio = total_fares/total_transit_expenses,
+         fares_per_upt = total_fares/passenger_trips,
+         cost_per_hour = total_transit_expenses/vehicle_hours,
+         cost_per_trip = total_transit_expenses/passenger_trips,
+         cost_per_pmt = total_transit_expenses/passenger_miles)
     
-
-
 ```
 
 ## Head(df) & Write DF 
