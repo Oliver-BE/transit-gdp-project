@@ -1,5 +1,5 @@
 ---
-title: "Technical Report"
+title: "STAT-231 Final Project: Technical Report"
 author: "Martin Glusker, Nicole Frontero, Oliver Baldwin-Edwards"
 date: 'Due: 12/18/18'
 output:
@@ -26,24 +26,12 @@ options(warn=-1)
 
 ## Abstract:
 
-This project seeks to better understand the relationship between GDP per capita and transit in micropolitan and metropolitan areas in the United States.  While the original intention was to create a quality of life score or statistic utilizing multiple variables to see how a city's transit may predict that score, this is beyond the scope of this project (see introduction for an elaboration of motivation behind altering project scope).  Upon such a realization, it was decided to pivot to explore how well transit statistics can predict gdp in U.S. micropolitan and metropolitan areas.  IT WAS FOUND THAT...
 
 ## Introduction:
 
-The research question at hand is if a U.S. metropolitan or micropolitan area's transit system can predict the GDP of that area.  This question is interesting because, as GDP is a valued metric of a city's well-being, understanding the relationship between GDP and a city's transit may shed insight on how to possibly increase GDP. 
-
-It's important to note that the question stated above was not the initial question that the researchers sought to address.  In fact, the researchers initially wanted to analyze the relationship between a city's transit system and the quality of life in that city.  However, this question presented various difficulties.  For example, creating a model that predicted various response variables pertaining to quality of life would prove to be beyond the scope of the researchers' capabilities.  An alternative option for predicting quality of life for a given city would be to utilize only one variable as a response variable.  However, this would necessitate a reframing of the question at hand, as choosing one variable to represent quality of life at large would be misleading.  To resolve these problems, the researchers decided to alter the research question to ask the question "how a city's transit system predict the GDP per capita of that city".  The researchers decided upon GDP per capita as a response variable to analyze because generally speaking, it is a broad metric of the health of a city's economy.  The researchers selected GDP per capita specifically to avoid population of a city skewing the GDP.  
-
-In order to answer this question, one large dataframe had to be created that combined gdp and transit system information by metropolitan and micropolitan statistic areas.  This dataframe can be accessed via the R package, "gluskr" created during the course of this project. A readme is available for this package.  
-
-With this dataframe, it was possible to ... FINISH THIS.
 
 ## Data:
-The final_df represents a compilation of quality of life related variables and transit related variables by metropolitan and micropolitan statistica areas in the U.S. between 2007 and 2017. 
 
-For a more detailed explanation of where these data came from and what each variable name stands for, consult the readme.  
-
-Within this "data" section, there are subsections.  The first is "Quality of Life Data", pertaining to variables that came from the U.S. Census and the Bureau of Economic Analysis.  The second is the "Transit Data" section, which includes all variables derived from the FTA/National Transit Database.  Then, there is...INCLUDE ADDITIONAL SECTIONS HERE.
 
 ## Quality of Life Data
 
@@ -381,7 +369,7 @@ pmt_fta_df <- clean_fta_df(14, "pmt") %>%
 
 ### Join FTA Variable Dataframes
 ```{r, messages=FALSE}
-#create file with master info
+# create file with master info
 master_fta_df <- clean_fta_df(3, "total_expenses") %>% 
   select(UZA, `UZA Area SQ Miles`, `UZA Population`)
 
@@ -492,8 +480,6 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 
 ### Add Identifiers to FTA Dataframe Through Relationship File and Join FTA dataframes
 Read in relationship file between urbanized areas in transit data and metropolitan statistical areas in census data. Also cleans the joined dataframe. 
-
-
 ``` {r, messages=FALSE}
 
 fta_df <- left_join(primary_variable_fta_df, 
@@ -521,10 +507,7 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   
 ```
 
-
-
 ## Join Quality of Life and Transit Data
-
 ```{r, messages=FALSE}
 
 # join final quality of life and fta datasets 
@@ -570,6 +553,7 @@ colnames(final_df)[1:29] <- c("msa_id",
 ```
 
 ## Adding Per Capita Variables 
+ADD A DESCRIPTION
 ```{r, messages = FALSE}
 
 #Per Capita Transit Variables
@@ -590,7 +574,8 @@ final_df <- final_df %>%
   
 ```
 
-#Removing Inf & NaN Values
+# Removing Inf & NaN Values
+ADD A DESCRIPTION
 ```{r, messages=FALSE}
 
 
@@ -618,7 +603,7 @@ saveRDS(final_df, file = "final_data.RDA")
 #readRDS("../final-data/final_data.RDA")
 ```
 
-#Modeling Function
+# Modeling Function
 This function takes in the variables needed and select the columns of said variables and then eliminates rows with incomplete data (aka)
 ```{r, messages=FALSE}
 
@@ -683,7 +668,7 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
 
 ```
 
-#Begin Modeling
+# Begin Modeling
 Because our ggplots showed very weak relationships between we did some exploratory modeling to determine the best metrics to predict gdp.
 ```{r, messages=FALSE}
 
@@ -714,6 +699,8 @@ kable(arrange(model_results, desc(as.numeric(R2))),
       caption = "Exploratory Models")
 ```
 
+## WHAT IS THE TITLE OF THIS
+WRITE A DESCRIPTION
 ```{r, messages=FALSE}
 
 # get model results 
@@ -790,24 +777,8 @@ final_model <- rbind(model1, model2, model3, model4, model5,
 kable(arrange(final_model, desc(as.numeric(MAE))), caption="Final Models, Arranged by MAE")
 
 ```
-## Results
+## Results:
 
-## Diagnostics
+## Diagnostics:
 
-## Conclusion
-
-Conclusion: a summary of your findings and a discussion of their limitations. First, remind the reader of the question that you originally set out to answer, and summarize your findings. Second, discuss the limitations of your model, and what could be done to improve it. You might also want to do the same for your data. This is your last opportunity to clarify the scope of your findings before a journalist misinterprets them and makes wild extrapolations! Protect yourself by being clear about what is not implied by your research.
-
-
-There are several limitations/sources of error to this current exploration of the relationship between transit variables and GDP per capita for U.S. cities.  For example, the overlap between the urbanized areas and the metropolitan/micropolitan statistical areas is not perfect.  MARTIN ELABORATE HERE.  
-
-Additionally, the researchers did not calculate a transit score that could serve as single explanatory variable.  This transit score would have incorporated various transit-related variables and weighed them accordingly.  The researchers did not pursue this avenue for data analysis because they lacked the transit knowledge necessary to create such a score as they are not transit experts.  
-
-
-HDI > GDP 
-
-Furthermore, it would have been ideal if the researchers had had access to transit data regarding fares and expenses. 
-
-There are multiple directions for future research available following this study.  Working with the data utilized for this study is made accessible through the creation of the gluskr package.  
-
-One suggestion for future research would involve resolving the discrepancy between urbanized areas and metropolitan/micropolitan statistical areas.  Another suggestion includes finding human development index (HDI) data that can be joined to the final dataframe so as to explore the relationship between transit and HDI instead of transit and GDP per capita.  Finally, it would be valuable to create a transit score for data analysis purposes. 
+## Conclusion:
