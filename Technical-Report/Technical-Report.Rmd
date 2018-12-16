@@ -568,6 +568,145 @@ saveRDS(final_df, file = "final_data.RDA")
 readRDS("../final-data/final_data.RDA")
 ```
 
+#Modeling
+```{r, message=FALSE}
+final_df <- readRDS("./final-data/final_data.RDA") 
+
+set.seed(2)
+
+# only take rows with all data present
+# nicole_df_master <- final_df[complete.cases(final_df),]
+
+
+# function to make a regression tree model with response variable per_capita_gdp
+gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL, input4=NULL, input5=NULL) {
+  
+  select1 <- substitute(input1)
+  select2 <- substitute(input2)
+  select3 <- substitute(input3)
+  select4 <- substitute(input4)
+  select5 <- substitute(input5)
+  
+  if(is.null(input2)){
+    print("2")
+    cleaned_data <- final_df %>% 
+    select(per_capita_gdp, select1)
+  }else if(is.null(input3)){
+    print("3")
+    cleaned_data <- final_df %>% 
+    select(per_capita_gdp, select1, select2)
+  }else if(is.null(input4)){
+    print("4")
+    cleaned_data <- final_df %>% 
+    select(per_capita_gdp, select1, select2, select3)
+  }else if(is.null(input5)){
+    print("5")
+    cleaned_data <- final_df %>% 
+    select(per_capita_gdp, select1, select2, select3, select4)
+  }else{
+    cleaned_data <- final_df %>% 
+    select(per_capita_gdp, select1, select2, select3, select4, select5)}
+  
+  
+  final_cleaned_data <- cleaned_data[complete.cases(cleaned_data),]
+  
+  n <- nrow(final_cleaned_data)
+  train_id <- sample(1:n, size=round(n*0.8)) # select approx 80% of the row numbers between 1 and n
+
+  # the data we'll train the model on
+  train_data <- final_cleaned_data[train_id,]
+
+  # the data we'll test the model on 
+  test_data <- final_cleaned_data[-train_id,]
+  
+  # final_train_data <- train_data %>% drop_na("per_capita_gdp")
+  
+  regression_formula <- paste0("per_capita_gdp ~ ", explanatory_variables_eq)
+  
+  regression_tree <- rpart(regression_formula, data=train_data)
+  predictions <- as.vector(predict(regression_tree, test_data)) # a vector of probabilities
+  final_test_data <- test_data %>% mutate(prediction = predictions)
+  final_test_data$truth <- final_test_data[,"per_capita_gdp"]
+  results <- final_test_data %>%
+    summarise("Explanatory Variables" = explanatory_variables_eq,
+              Percent_Rows = n/3416,
+              MSE = 1/n() * sum((truth - predictions)^2, na.rm = T),
+              MAE  = 1/n() * sum(abs(truth - predictions), na.rm = T),
+              R2   = cor(truth, predictions))
+  
+  return(results)
+}
+
+
+```
+
+#Begin Modeling
+```{r, messages=FALSE}
+
+# use our function on different explanatory variables
+a <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
+b <- gdp_model("total_transit_expenses", "total_transit_expenses")
+c <- gdp_model("directional_route_miles", "directional_route_miles")
+d <- gdp_model("vehicle_hours", "vehicle_hours")
+e <- gdp_model("passenger_miles", "passenger_miles")
+f <- gdp_model("passenger_trips", "passenger_trips")
+g <- gdp_model("total_funding", "total_funding")
+h <- gdp_model("pmt_per_vrm", "pmt_per_vrm")
+i <- gdp_model("pmt_per_vrh", "pmt_per_vrh")
+j <- gdp_model("upt_per_vrh", "upt_per_vrh")
+k <- gdp_model("per_capita_vrm", "per_capita_vrm")
+l <- gdp_model("per_capita_vrh", "per_capita_vrh")
+m <- gdp_model("per_capita_pmt", "per_capita_pmt")
+n <- gdp_model("per_capita_upt", "per_capita_upt")
+o <- gdp_model("recovery_ratio", "recovery_ratio")
+p <- gdp_model("fares_per_upt", "fares_per_upt")
+q <- gdp_model("cost_per_hour", "cost_per_hour")
+r <- gdp_model("cost_per_trip", "cost_per_trip")
+s <- gdp_model("cost_per_pmt", "cost_per_pmt")
+
+model_results <- rbind(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s)
+
+View(model_results)
+
+View(gdp_model("per_capita_vrm + percent_commuting_msa", "per_capita_vrm, percent_commuting_msa"))
+# get model results 
+# one explanatory variable
+model1 <- gdp_model( input1 = "per_capita_vrm", explanatory_variables_eq = "per_capita_vrm")
+model2 <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
+model3 <- gdp_model("per_capita_pmt","per_capita_pmt")
+model4 <- gdp_model("per_capita_vrh", "per_capita_vrh")
+
+# two explanatory variables
+model4 <- gdp_model("per_capita_vrm + percent_commuting_msa", "per_capita_vrm", "percent_commuting_msa")
+model5 <- gdp_model("per_capita_vrm + per_capita_pmt", "per_capita_vrm", "per_capita_pmt")
+model6 <- gdp_model("per_capita_vrm + per_capita_vrh", "per_capita_vrm", "per_capita_vrh")
+model7 <- gdp_model("percent_commuting_msa + per_capita_pmt", "percent_commuting_msa", "per_capita_pmt")
+model8 <- gdp_model("percent_commuting_msa + per_capita_vrh", "percent_commuting_msa", "per_capita_vrh")
+model9 <- gdp_model("percent_commuting_msa + per_capita_vrh", "percent_commuting_msa", "per_capita_vrh")
+
+# three explanatory variables
+model10 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_pmt", "per_capita_vrm", "percent_commuting_msa", "per_capita_pmt")
+model11 <- gdp_model("per_capita_vrm + per_capita_pmt + per_capita_vrh", "per_capita_vrm","per_capita_pmt", "per_capita_vrh")
+model12 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_vrh", "per_capita_vrm", "percent_commuting_msa", "per_capita_vrh")
+model13 <- gdp_model("percent_commuting_msa + per_capita_pmt + per_capita_vrh", "percent_commuting_msa","per_capita_pmt", "per_capita_vrh")
+
+# all four explanatory variables
+model14 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh", "per_capita_vrm", "percent_commuting_msa","per_capita_pmt","per_capita_vrh")
+
+#extras
+model15 <- gdp_model("per_capita_vrm + per_capita_vrh + per_capita_upt", "per_capita_vrm", "per_capita_vrh","per_capita_upt")
+model16 <- gdp_model("per_capita_vrm + per_capita_vrh + recovery_ratio", "per_capita_vrm", "per_capita_vrh","recovery_ratio")
+model17 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_vrh + transit_modes", "per_capita_vrm","percent_commuting_msa","per_capita_vrh", "transit_modes")
+model18 <- gdp_model("percent_commuting_msa + per_capita_pmt + transit_modes", "percent_commuting_msa", "per_capita_pmt", "transit_modes")
+model19 <- gdp_model("per_capita_vrm + per_capita_vrh + transit_modes", "per_capita_vrm", "per_capita_vrh", "transit_modes")
+
+# 17 is best
+
+final_model <- rbind(model1, model2, model3, model4, model5, model6, model7,
+                     model8, model9, model10, model11, model12, model13, model14, model15,
+                     model16, model17, model18, model19)
+View(final_model)
+```
 ## Results
 
 ## Diagnostics
