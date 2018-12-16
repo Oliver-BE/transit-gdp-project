@@ -525,6 +525,13 @@ final_df <- final_df %>%
 final_df <- as.data.frame(lapply(final_df, function(x) {
   replace(x, is.infinite(x) | is.nan(x), NA)
   }))
+
+# convert factorial columns back into characters
+final_df <- final_df %>% 
+  mutate(msa_name = as.character(msa_name),
+         ua_census_id = as.character(ua_census_id),
+         ua_fta_name = as.character(ua_fta_name),
+         transit_modes = as.character(transit_modes))
     
 ```
 

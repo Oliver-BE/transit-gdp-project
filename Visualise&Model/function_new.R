@@ -47,16 +47,15 @@ gdp_model <- function(explanatory_variables) {
               MAE  = 1/n() * sum(abs(truth - predictions), na.rm = T),
               R2   = cor(truth, predictions))
   
-  return(regression_tree)
+  return(results)
 }
 
 
 # use our function on different explanatory variables
 pass_trips <- gdp_model("passenger_trips")
-rpart.plot(pass_trips)
+# rpart.plot(pass_trips)
 
 workers <- gdp_model("percent_workers_commuting_by_public_transit_msa")
-rpart.plot(workers)
 
 pass_trips_workers <- gdp_model("percent_workers_commuting_by_public_transit_msa + passenger_trips")
 tot_funding <- gdp_model("total_funding")
