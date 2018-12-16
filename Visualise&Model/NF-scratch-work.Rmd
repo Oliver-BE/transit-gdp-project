@@ -26,6 +26,66 @@ options(scipen = 0)
 nicole_df <- readRDS("../final-data/final_data.RDA")
 ```
 
+## exploring the relationships between the final explanatory variables (per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh):
+
+```{r}
+
+# x = per_capita_vrm
+# y = percent_commuting_msa
+# R2 is very very small
+model_a <- lm(formula = percent_commuting_msa ~ per_capita_vrm, data = nicole_df)
+
+ggplot(nicole_df, aes(x = per_capita_vrm, y = percent_commuting_msa )) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_a)
+
+# x = per_capita_vrm
+# y = per_capita_pmt
+# R2 = .746
+model_b <- lm(formula = per_capita_pmt ~ per_capita_vrm, data = nicole_df)
+
+ggplot(nicole_df, aes(x = per_capita_vrm, y = per_capita_pmt)) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_b)
+
+# x = per_capita_vrm
+# y = per_capita_vrh
+# R2 = .865
+model_c <- lm(formula = per_capita_vrh ~ per_capita_vrm, data = nicole_df)
+
+ggplot(nicole_df, aes(x = per_capita_vrm, y = per_capita_vrh)) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_c)
+
+# x = percent_commuting_msa
+# y = per_capita_pmt
+# R2 = very poor
+model_d <- lm(formula = per_capita_pmt ~ percent_commuting_msa, data = nicole_df)
+
+ggplot(nicole_df, aes(x = percent_commuting_msa, y = per_capita_pmt)) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_d)
+
+# x = percent_commuting_msa
+# y = per_capita_vrh
+# R2 = very bad
+model_e <- lm(formula = per_capita_vrh ~ percent_commuting_msa, data = nicole_df)
+
+ggplot(nicole_df, aes(x = percent_commuting_msa, y = per_capita_vrh)) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_e)
+
+# x = per_capita_pmt
+# y = per_capita_vrh
+# y = .488
+model_f <- lm(formula = per_capita_vrh ~ per_capita_pmt, data = nicole_df)
+
+ggplot(nicole_df, aes(x = per_capita_pmt, y = per_capita_vrh)) + geom_point() + geom_smooth(method = 'lm', se = F)
+
+summary(model_f)
+```
+
+
 ## ggplots comparing y = per_capita_gdp to transit variables
 
 ```{r}
