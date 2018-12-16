@@ -33,7 +33,8 @@ A percentage of the number of workers who commuted by public transportation (whi
 **`percent_unemployed_msa`**
 A percentage of the number of unemployed individuals in the civilian labor force who are counted in the population 16 years and older.
 
-REVISIT **`percent_no_insurance_msa`**
+**`percent_no_insurance_msa`**
+Percentage of the noninstitutionalized civilian population without health insurance coverage.
 
 **`percent_below_poverty_level`**
 For the years 2010-2017, this variable exists.  This is the percentage of all people in the United States who have income below the poverty level.  
