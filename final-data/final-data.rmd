@@ -520,6 +520,11 @@ final_df <- final_df %>%
          cost_per_hour = total_transit_expenses/vehicle_hours,
          cost_per_trip = total_transit_expenses/passenger_trips,
          cost_per_pmt = total_transit_expenses/passenger_miles)
+
+#Removing NaN and Infinite values caused by mutations and replace them with NA
+final_df <- as.data.frame(sapply(final_df, function(x) {
+  replace(x, is.infinite(x) | is.nan(x), NA)
+  }))
     
 ```
 
