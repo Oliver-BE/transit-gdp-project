@@ -429,7 +429,7 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
 
 
 ### Add Joining Identifiers to FTA Dataframe
-``` {r, message=FALSE}
+```{r, message=FALSE}
 
 fta_df <- left_join(primary_variable_fta_df, final_transit_stations_df, by = c("UZA", "modes_clean"))%>%
   left_join(fta_funding_df, by=c("UZA", "Year")) %>% 

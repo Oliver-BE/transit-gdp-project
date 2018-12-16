@@ -20,5 +20,5 @@ df <- transit_qol_df %>%
   select(latitude, longitude, msa_name, msa_id, pop_estimate_msa) %>% 
   drop_na()
 
-saveRDS(df, "../df.rds")
+saveRDS(df, "../shiny-app/df.rds")
 
