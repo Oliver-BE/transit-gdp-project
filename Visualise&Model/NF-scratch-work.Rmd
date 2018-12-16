@@ -24,6 +24,106 @@ options(scipen = 0)
 ## Importing data set 
 ```{r}
 nicole_df <- readRDS("../final-data/final_data.RDA")
+```
+
+## ggplots comparing y = per_capita_gdp to transit variables
+
+```{r}
+
+# x = pmt_per_vrm; y = per_capita_gdp
+model_pmt_per_vrm <- lm(formula = per_capita_gdp ~ pmt_per_vrm, data = nicole_df)
+ggplot(nicole_df, aes(x = pmt_per_vrm, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_pmt_per_vrm)
+# .00477
+
+# x = pmt_per_vrh; y = per_capita_gdp
+model_pmt_per_vrh <- lm(formula = per_capita_gdp ~ pmt_per_vrh, data = nicole_df)
+ggplot(nicole_df, aes(x = pmt_per_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_pmt_per_vrh)
+# .0027 
+
+# upt_per_vrh
+model_upt_per_vrh <- lm(formula = per_capita_gdp ~ upt_per_vrh, data = nicole_df)
+ggplot(nicole_df, aes(x = upt_per_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_upt_per_vrh)
+# .00192
+
+# x = per_capita_vrm; y = per_capita_gdp
+model_per_capita_vrm <- lm(formula = per_capita_gdp ~ per_capita_vrm, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_vrm, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_per_capita_vrm)
+# .0007561
+
+# x = per_capita_vrh; y = per_capita_gdp
+model_per_capita_vrh <- lm(formula = per_capita_gdp ~ per_capita_vrh, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_per_capita_vrh)
+# .001225
+
+# x = per_capita_pmt
+model_per_capita_pmt <- lm(formula = per_capita_gdp ~ per_capita_pmt, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_pmt, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_per_capita_pmt )
+# .0070
+
+# x = per_capita_upt
+model_per_capita_upt <- lm(formula = per_capita_gdp ~ per_capita_upt, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_upt, y = per_capita_gdp)) + geom_point()
+summary(model_per_capita_upt)
+# .005
+
+# recovery_ratio
+model_recovery_ratio <- lm(formula = per_capita_gdp ~ recovery_ratio, data = nicole_df)
+ggplot(nicole_df, aes(x = recovery_ratio, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_recovery_ratio)
+# .0036
+
+# fares_per_upt
+model_fares_per_upt <- lm(formula = per_capita_gdp ~ fares_per_upt, data = nicole_df)
+ggplot(nicole_df, aes(x = fares_per_upt, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_fares_per_upt)
+# .001
+
+# cost_per_hour
+model_cost_per_hour <- lm(formula = per_capita_gdp ~ cost_per_hour, data = nicole_df)
+ggplot(nicole_df, aes(x = cost_per_hour, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_cost_per_hour)
+#.00345 
+
+# cost_per_pmt
+model_cost_per_hour <- lm(formula = per_capita_gdp ~ cost_per_hour, data = nicole_df)
+ggplot(nicole_df, aes(x = cost_per_hour, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_cost_per_hour)
+# .0035
+
+# percent_commuting_msa
+model_percent_commuting_msa <- lm(formula = per_capita_gdp ~ percent_commuting_msa, data = nicole_df)
+ggplot(nicole_df, aes(x = percent_commuting_msa, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_percent_commuting_msa)
+# .09
+```
+
+## ggplots comparing gdp to passenger trips  
+```{r}
+gdp_passengertrips <- ggplot(nicole_df, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
+plot(gdp_passengertrips)
+
+# Yielded clusters of data.  Going to split into under 1.0x10^12 GDP and above that. 
+
+nicole_df_gdp_under <- nicole_df %>% 
+  filter(gdp_msa < 1000000000000)
+
+nicole_df_gdp_over <- nicole_df %>%
+  filter(gdp_msa >= 1000000000000)
+
+gdp_passengertrips_under <- ggplot(nicole_df_gdp_under, aes(x = gdp_msa, y = passenger_trips)) +
+  geom_point() +
+  geom_smooth(method = lm, se=FALSE)
+
+plot(gdp_passengertrips_under)
+
+gdp_passengertrips_over <- ggplot(nicole_df_gdp_over, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
+plot(gdp_passengertrips_over)
 
 ```
 
@@ -34,30 +134,6 @@ nicole_df <- readRDS("../final-data/final_data.RDA")
 nicole_df <- as.data.frame(lapply(nicole_df, function(x) {
   replace(x, is.infinite(x) | is.nan(x), NA)}))
 
-# upt_per_vrh
-model_upt_per_vrh <- lm(formula = per_capita_gdp ~ upt_per_vrh, data = nicole_df)
-ggplot(nicole_df, aes(x = upt_per_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_upt_per_vrh)
-
-# recovery_ratio
-model_recovery_ratio <- lm(formula = per_capita_gdp ~ recovery_ratio, data = nicole_df)
-ggplot(nicole_df, aes(x = recovery_ratio, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_recovery_ratio)
-
-# fares_per_upt
-model_fares_per_upt <- lm(formula = per_capita_gdp ~ fares_per_upt, data = nicole_df)
-ggplot(nicole_df, aes(x = fares_per_upt, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_fares_per_upt)
-
-# cost_per_hour
-model_cost_per_hour <- lm(formula = per_capita_gdp ~ cost_per_hour, data = nicole_df)
-ggplot(nicole_df, aes(x = cost_per_hour, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_cost_per_hour)
-
-# cost_per_pmt
-model_cost_per_hour <- lm(formula = per_capita_gdp ~ cost_per_hour, data = nicole_df)
-ggplot(nicole_df, aes(x = cost_per_hour, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_cost_per_hour)
 
 ```
 
@@ -98,69 +174,7 @@ summary_function("pop_estimate_msa")
 
 
 
-## ggplots comparing y = per_capita_gdp; x = pmt_per_vrm, pmt_per_vrh, per_capita_vrm, per_capita_vrh, per_capita_pmt, per_capita_upt
 
-```{r}
-
-# x = pmt_per_vrm; y = per_capita_gdp
-model_pmt_per_vrm <- lm(formula = per_capita_gdp ~ pmt_per_vrm, data = nicole_df)
-ggplot(nicole_df, aes(x = pmt_per_vrm, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_pmt_per_vrm)
-
-# x = pmt_per_vrh; y = per_capita_gdp
-model_pmt_per_vrh <- lm(formula = per_capita_gdp ~ pmt_per_vrh, data = nicole_df)
-ggplot(nicole_df, aes(x = pmt_per_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_pmt_per_vrh)
-# poor r2
-
-# x = per_capita_vrm; y = per_capita_gdp
-model_per_capita_vrm <- lm(formula = per_capita_gdp ~ per_capita_vrm, data = nicole_df)
-ggplot(nicole_df, aes(x = per_capita_vrm, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_per_capita_vrm)
-# poor r2
-
-# x = per_capita_vrh; y = per_capita_gdp
-model_per_capita_vrh <- lm(formula = per_capita_gdp ~ per_capita_vrh, data = nicole_df)
-ggplot(nicole_df, aes(x = per_capita_vrh, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_per_capita_vrh)
-# poor r2
-
-# x = per_capita_pmt
-model_per_capita_pmt <- lm(formula = per_capita_gdp ~ per_capita_pmt, data = nicole_df)
-ggplot(nicole_df, aes(x = per_capita_pmt, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
-summary(model_per_capita_pmt )
-# poor r2
-
-# x = per_capita_upt
-model_per_capita_upt <- lm(formula = per_capita_gdp ~ per_capita_upt, data = nicole_df)
-ggplot(nicole_df, aes(x = per_capita_upt, y = per_capita_gdp)) + geom_point()
-summary(model_per_capita_upt)
-# poor r2
-```
-
-## ggplots comparing gdp to passenger trips  
-```{r}
-gdp_passengertrips <- ggplot(nicole_df, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
-plot(gdp_passengertrips)
-
-# Yielded clusters of data.  Going to split into under 1.0x10^12 GDP and above that. 
-
-nicole_df_gdp_under <- nicole_df %>% 
-  filter(gdp_msa < 1000000000000)
-
-nicole_df_gdp_over <- nicole_df %>%
-  filter(gdp_msa >= 1000000000000)
-
-gdp_passengertrips_under <- ggplot(nicole_df_gdp_under, aes(x = gdp_msa, y = passenger_trips)) +
-  geom_point() +
-  geom_smooth(method = lm, se=FALSE)
-
-plot(gdp_passengertrips_under)
-
-gdp_passengertrips_over <- ggplot(nicole_df_gdp_over, aes(x = gdp_msa, y = passenger_trips)) + geom_point()
-plot(gdp_passengertrips_over)
-
-```
 ## Employment against trips 
 ```{r}
 
