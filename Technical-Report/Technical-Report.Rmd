@@ -580,12 +580,12 @@ final_df <- final_df %>%
 ```
 
 ### Save Final Data Frame 
-This converts our final data frame into a CSV as well as saving it as an RDS. This set of data is what the `transit_qol_df` in `gluskr` uses. 
+This converts our final data frame into a CSV as well as saving it as an RDS. This set of data is what the `transit_qol_df` in `gluskr` uses. Lines are commented out so as to not create duplicate data frames. 
 ```{r, messages = FALSE}
 
-write.csv(final_df, "FINAL_DATA.csv", row.names=F)
+# write.csv(final_df, "FINAL_DATA.csv", row.names=F)
 
-saveRDS(final_df, file = "final_data.RDA")
+# saveRDS(final_df, file = "final_data.RDA")
 
 ```
 
