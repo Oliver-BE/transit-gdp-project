@@ -568,7 +568,7 @@ final_df <- final_df %>%
 ```
 
 ### Save Final Data Frame 
-This convert our final data frame into a CSV as well as saving it as an RDS. This set of data is what the `transit_qol_df` in `gluskr` uses. 
+This converts our final data frame into a CSV as well as saving it as an RDS. This set of data is what the `transit_qol_df` in `gluskr` uses. 
 ```{r, messages = FALSE}
 
 write.csv(final_df, "FINAL_DATA.csv", row.names=F)
@@ -579,7 +579,7 @@ saveRDS(final_df, file = "final_data.RDA")
 
 # Visualizations and Modeling
 ## Initial ggplots
-These are two examples of ggplots that we created.  We created 20 ggplots with different transit variables as explanatory variables.  These two ggplots, in which percent_commuting_msa and per_capita_pmt were utilized, had the highest r2 outputs.    
+These are two examples of ggplots that we created. We created 20 ggplots with different transit variables as explanatory variables. These two ggplots, in which `percent_commuting_msa` and `per_capita_pmt` were utilized, had the highest R2 outputs.    
 ```{r, messages=FALSE}
 
 ## linear models with per_capita_gdp as response variable and different transit variables as explanatory variables
@@ -605,17 +605,18 @@ ggplot(final_df, aes(x = per_capita_pmt, y = per_capita_gdp)) +
 
 summary(model_per_capita_pmt)$adj.r.squared
 summary(model_per_capita_pmt)$r.squared
+
 ```
 
 ## Modeling
-This function takes in the variables needed and select the columns of said variables and then eliminates rows with incomplete data (aka)
+This function take in up to five variables and uses them as explanatory variables in a regression tree with per capita GDP as the response variable. To create the regression tree we first selected out all columns in the final data frame that weren't being used in this model. We then split up our data 80-20 into training and testing subsets. We then were able to get the resulting MAE, MSE, and R2 from our regression tree. This function returns a data frame with the resulting MAE, MSE, and R2 of the regression tree model for the given explanatory variables.
 ```{r, messages=FALSE}
-
-set.seed(2)
 
 # function to make a regression tree model with response variable per_capita_gdp
 gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL, input4=NULL, input5=NULL) {
   
+  set.seed(2)
+
   select1 <- substitute(input1)
   select2 <- substitute(input2)
   select3 <- substitute(input3)
@@ -642,6 +643,7 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
   final_cleaned_data <- cleaned_data[complete.cases(cleaned_data),]
   
   n <- nrow(final_cleaned_data)
+  
   # select approx 80% of the row numbers between 1 and n
   train_id <- sample(1:n, size=round(n*0.8)) 
 
@@ -672,11 +674,11 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
 
 ```
 
-# Begin Modeling
-Because our ggplots showed very weak relationships between we did some exploratory modeling to determine the best metrics to predict gdp.
+## Begin Modeling
+Because our ggplots (of transit variables vs. per capita GDP) had very weak R2 values, we did further exploratory modeling using the above function to determine the best transit variables to predict per capita GDP. 
 ```{r, messages=FALSE}
 
-# use our function on different explanatory variables
+# use above function on each transit variable as an explanatory variable
 a <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
 b <- gdp_model("total_transit_expenses", "total_transit_expenses")
 c <- gdp_model("directional_route_miles", "directional_route_miles")
@@ -701,82 +703,106 @@ model_results <- rbind(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s)
 
 kable(arrange(model_results, desc(as.numeric(R2))), 
       caption = "Exploratory Models")
+
 ```
 
-## WHAT IS THE TITLE OF THIS
-WRITE A DESCRIPTION
+## Refined Modeling
+Based on our above modeling we determined that we should do further modeling on `percent_commuting_msa`, `per_capita_vrm`, `per_capita_upt`, `per_capita_vrh` and `per_capita_pmt`. In this code chunk we use our `gdp_model` function with every possible combination of these five explanatory variables and return the results in a data frame with each model's resulting MAE, MSE, and R2.s
 ```{r, messages=FALSE}
 
 # get model results 
+
+# `percent_commuting_msa`, 
+# `per_capita_vrm`, 
+# `per_capita_upt`, 
+# `per_capita_vrh` and
+# `per_capita_pmt`
+
 # one explanatory variable
-model1 <- gdp_model( input1 = "per_capita_vrm", explanatory_variables_eq = "per_capita_vrm")
-model2 <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
-model3 <- gdp_model("per_capita_pmt","per_capita_pmt")
-model4 <- gdp_model("per_capita_vrh", "per_capita_vrh")
+model0 <- gdp_model("per_capita_vrm", "per_capita_vrm")
+model1 <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
+model2 <- gdp_model("per_capita_pmt","per_capita_pmt")
+model3 <- gdp_model("per_capita_vrh", "per_capita_vrh")
+model4 <- gdp_model("per_capita_upt", "per_capita_upt")
 
 # two explanatory variables
-model4 <- gdp_model("per_capita_vrm + percent_commuting_msa", 
+model5 <- gdp_model("per_capita_vrm + percent_commuting_msa", 
                     "per_capita_vrm", "percent_commuting_msa")
-model5 <- gdp_model("per_capita_vrm + per_capita_pmt", 
+model6 <- gdp_model("per_capita_vrm + per_capita_pmt", 
                     "per_capita_vrm", "per_capita_pmt")
-model6 <- gdp_model("per_capita_vrm + per_capita_vrh", 
+model7 <- gdp_model("per_capita_vrm + per_capita_vrh", 
                     "per_capita_vrm", "per_capita_vrh")
-model7 <- gdp_model("percent_commuting_msa + per_capita_pmt",
+model8 <- gdp_model("per_capita_vrm + per_capita_upt", 
+                    "per_capita_vrm", "per_capita_upt")
+model9 <- gdp_model("percent_commuting_msa + per_capita_pmt",
                     "percent_commuting_msa", "per_capita_pmt")
-model8 <- gdp_model("percent_commuting_msa + per_capita_vrh", 
+model10 <- gdp_model("percent_commuting_msa + per_capita_vrh", 
                     "percent_commuting_msa", "per_capita_vrh")
-model9 <- gdp_model("percent_commuting_msa + per_capita_vrh", 
-                    "percent_commuting_msa", "per_capita_vrh")
+model11 <- gdp_model("percent_commuting_msa + per_capita_upt", 
+                    "percent_commuting_msa", "per_capita_upt")
+model12 <- gdp_model("per_capita_upt + per_capita_vrh", 
+                    "per_capita_upt", "per_capita_vrh")
+model13 <- gdp_model("per_capita_upt + per_capita_pmt", 
+                    "per_capita_upt", "per_capita_pmt")
+model14 <- gdp_model("per_capita_vrh + per_capita_pmt", 
+                    "per_capita_vrh", "per_capita_pmt")
 
 # three explanatory variables
-model10 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_pmt", 
-                     "per_capita_vrm", "percent_commuting_msa", "per_capita_pmt")
-model11 <- gdp_model("per_capita_vrm + per_capita_pmt + per_capita_vrh", 
+model15 <- gdp_model("per_capita_vrm + per_capita_pmt + percent_commuting_msa", 
+                     "per_capita_vrm", "per_capita_pmt", "percent_commuting_msa")
+model16 <- gdp_model("per_capita_vrm + per_capita_pmt + per_capita_vrh", 
                      "per_capita_vrm","per_capita_pmt", "per_capita_vrh")
-model12 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_vrh",
+model17 <- gdp_model("per_capita_vrm + per_capita_pmt + per_capita_upt", 
+                     "per_capita_vrm","per_capita_pmt", "per_capita_upt")
+model18 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_vrh",
                      "per_capita_vrm", "percent_commuting_msa", "per_capita_vrh")
-model13 <- gdp_model("percent_commuting_msa + per_capita_pmt + per_capita_vrh",
-                     "percent_commuting_msa","per_capita_pmt", "per_capita_vrh")
+model19 <- gdp_model("per_capita_vrm + percent_commuting_msa + per_capita_upt",
+                     "per_capita_vrm", "percent_commuting_msa", "per_capita_upt")
+model20 <- gdp_model("per_capita_vrm + per_capita_upt + per_capita_vrh",
+                     "per_capita_vrm", "per_capita_upt", "per_capita_vrh")
+model21 <- gdp_model("percent_commuting_msa + per_capita_upt + per_capita_vrh",
+                     "percent_commuting_msa", "per_capita_upt", "per_capita_vrh")
+model22 <- gdp_model("percent_commuting_msa + per_capita_upt + per_capita_pmt",
+                     "percent_commuting_msa", "per_capita_upt", "per_capita_pmt")
+model23 <- gdp_model("percent_commuting_msa + per_capita_vrh + per_capita_pmt",
+                     "percent_commuting_msa", "per_capita_vrh", "per_capita_pmt")
+model24 <- gdp_model("per_capita_vrh + per_capita_upt + per_capita_pmt",
+                     "per_capita_vrh", "per_capita_upt", "per_capita_pmt")
 
-# all four explanatory variables
-model14 <- gdp_model(
+# four explanatory variables
+model25 <- gdp_model(
   "per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh", 
   "per_capita_vrm", "percent_commuting_msa",
   "per_capita_pmt","per_capita_vrh")
+model26 <- gdp_model(
+  "per_capita_upt + percent_commuting_msa + per_capita_pmt + per_capita_vrh", 
+  "per_capita_upt", "percent_commuting_msa",
+  "per_capita_pmt","per_capita_vrh")
+model27 <- gdp_model(
+  "per_capita_upt + per_capita_vrm + per_capita_pmt + per_capita_vrh", 
+  "per_capita_upt", "per_capita_vrm",
+  "per_capita_pmt","per_capita_vrh")
+model28 <- gdp_model(
+  "per_capita_upt + per_capita_vrm + percent_commuting_msa + per_capita_vrh", 
+  "per_capita_upt", "per_capita_vrm",
+  "percent_commuting_msa","per_capita_vrh")
+model29 <-  gdp_model(
+  "per_capita_upt + per_capita_vrm + percent_commuting_msa + per_capita_pmt", 
+  "per_capita_upt", "per_capita_vrm",
+  "percent_commuting_msa","per_capita_pmt")
 
-#extras
-model15 <- gdp_model(
-  "per_capita_vrm + per_capita_vrh + per_capita_upt",
-  "per_capita_vrm", "per_capita_vrh","per_capita_upt")
+# all five explanatory variables
+model30 <-  gdp_model(
+  "per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh + per_capita_upt", 
+  "per_capita_vrm", "percent_commuting_msa",
+  "per_capita_pmt","per_capita_vrh","per_capita_upt")
 
-model16 <- gdp_model(
-  "per_capita_vrm + per_capita_vrh + recovery_ratio", 
-   "per_capita_vrm", "per_capita_vrh","recovery_ratio")
-
-model17 <- gdp_model(
-  "per_capita_vrm + percent_commuting_msa + per_capita_vrh + transit_modes", 
-  "per_capita_vrm","percent_commuting_msa",
-  "per_capita_vrh", "transit_modes")
-
-model18 <- gdp_model(
-  "percent_commuting_msa + per_capita_pmt + transit_modes", 
-                     "percent_commuting_msa", 
-                     "per_capita_pmt", "transit_modes")
-
-model19 <- gdp_model(
-  "per_capita_vrm + per_capita_vrh + transit_modes", 
-  "per_capita_vrm", "per_capita_vrh", "transit_modes")
-
-model20 <- gdp_model(
-  "per_capita_vrm + per_capita_vrh + transit_modes + percent_below_poverty_level", 
-  "per_capita_vrm","per_capita_vrh", 
-  "transit_modes","percent_below_poverty_level")
-
-
-final_model <- rbind(model1, model2, model3, model4, model5, 
+final_model <- rbind(model0, model1, model2, model3, model4, model5, 
                      model6, model7, model8, model9, model10, 
                      model11, model12, model13, model14, model15,
-                     model16, model17, model18, model19, model20)
+                     model16, model17, model18, model19, model20,
+                     model21, model22, model23, model24, model25, 
+                     model26, model27, model28, model29, model30)
 
 kable(arrange(final_model, as.numeric(MAE)), caption="Final Models, Arranged by MAE")
 
