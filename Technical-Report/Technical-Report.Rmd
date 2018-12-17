@@ -579,7 +579,32 @@ saveRDS(final_df, file = "final_data.RDA")
 
 # Visualizations and Modeling
 ## Initial ggplots
+These are two examples of ggplots that we created.  We created 20 ggplots with different transit variables as explanatory variables.  These two ggplots, in which percent_commuting_msa and per_capita_pmt were utilized, had the highest r2 outputs.    
 ```{r, messages=FALSE}
+
+## linear models with per_capita_gdp as response variable and different transit variables as explanatory variables
+
+# explanatory variable: percent_commuting_msa
+model_percent_commuting_msa <- lm(formula = per_capita_gdp ~ percent_commuting_msa, 
+                                  data = final_df)
+
+ggplot(final_df, aes(x = percent_commuting_msa, y = per_capita_gdp)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+
+summary(model_percent_commuting_msa)$adj.r.squared
+summary(model_percent_commuting_msa)$r.squared
+
+# explanatory variable: per_capita_pmt
+model_per_capita_pmt <- lm(formula = per_capita_gdp ~ per_capita_pmt,
+                           data = final_df)
+
+ggplot(final_df, aes(x = per_capita_pmt, y = per_capita_gdp)) + 
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+
+summary(model_per_capita_pmt)$adj.r.squared
+summary(model_per_capita_pmt)$r.squared
 ```
 
 ## Modeling
