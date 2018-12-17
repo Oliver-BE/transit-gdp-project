@@ -473,7 +473,9 @@ Joins the five above funding data frames into one comprehensive funding data fra
 ```{r, messages=FALSE}
 
 # join all Funding dataframes
-fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", "Year")) %>% 
+fta_funding_df <- full_join(Total_Funding_df, 
+                            Federal_Funding_df, 
+                            by = c("UZA", "Year")) %>% 
   full_join(State_Funding_df, by = c("UZA", "Year")) %>% 
   full_join(Local_Funding_df, by = c("UZA", "Year")) %>% 
   full_join(Other_Funding_df, by = c("UZA", "Year")) 
@@ -592,7 +594,8 @@ saveRDS(final_df, file = "final_data.RDA")
 These are two examples of ggplots that we created. We created 20 ggplots with different transit variables as explanatory variables. These two ggplots, in which `percent_commuting_msa` and `per_capita_pmt` were utilized, had the highest R2 outputs.    
 ```{r, messages=FALSE}
 
-## linear models with per_capita_gdp as response variable and different transit variables as explanatory variables
+## linear models with per_capita_gdp as response variable and different transit 
+## variables as explanatory variables
 
 # explanatory variable: percent_commuting_msa
 model_percent_commuting_msa <- lm(formula = per_capita_gdp ~ percent_commuting_msa, 
@@ -601,7 +604,9 @@ model_percent_commuting_msa <- lm(formula = per_capita_gdp ~ percent_commuting_m
 ggplot(final_df, aes(x = percent_commuting_msa, y = per_capita_gdp)) +
   geom_point() +
   geom_smooth(method = 'lm', se = F) + 
-  labs(x = "Percent Workers Commuting to Work by Public Transit", y = "GDP per Capita", title = "Percent Workers Commuting to Work
+  labs(x = "Percent Workers Commuting to Work by Public Transit",
+y = "GDP per Capita", 
+title = "Percent Workers Commuting to Work
        by Public Transit against GDP per Capita")
 
 summary(model_percent_commuting_msa)$adj.r.squared
@@ -627,7 +632,8 @@ This function take in up to five variables and uses them as explanatory variable
 ```{r, messages=FALSE}
 
 # function to make a regression tree model with response variable per_capita_gdp
-gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL, input4=NULL, input5=NULL) {
+gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL,
+                      input4=NULL, input5=NULL) {
   
   set.seed(2)
 
@@ -672,13 +678,14 @@ gdp_model <- function(explanatory_variables_eq, input1, input2=NULL, input3=NULL
   regression_formula <- paste0("per_capita_gdp ~ ", explanatory_variables_eq)
   
   regression_tree <- rpart(regression_formula, data=train_data)
-  predictions <- as.vector(predict(regression_tree, test_data)) # a vector of probabilities
+  predictions <- as.vector(predict(regression_tree, test_data)) 
   final_test_data <- test_data %>% mutate(prediction = predictions)
   final_test_data$truth <- final_test_data[,"per_capita_gdp"]
   results <- final_test_data %>%
     summarise("Explanatory Variables" = explanatory_variables_eq,
               #Percent_Rows = round(n/3416, 2),
-              MSE = formatC( (1/n() * sum((truth - predictions)^2, na.rm = T)), format = "e", digits = 2),
+              MSE = formatC( (1/n() * sum((truth - predictions)^2, na.rm = T)),
+                             format = "e", digits = 2),
               MAE  = round(1/n() * sum(abs(truth - predictions), na.rm = T), 0),
               R2   = round(cor(truth, predictions),3))
   
@@ -801,7 +808,8 @@ model29 <-  gdp_model(
 
 # all five explanatory variables
 model30 <-  gdp_model(
-  "per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh + per_capita_upt", 
+  "per_capita_vrm + percent_commuting_msa + per_capita_pmt + per_capita_vrh
+  + per_capita_upt", 
   "per_capita_vrm", "percent_commuting_msa",
   "per_capita_pmt","per_capita_vrh","per_capita_upt")
 
@@ -812,7 +820,8 @@ final_model <- rbind(model0, model1, model2, model3, model4, model5,
                      model21, model22, model23, model24, model25, 
                      model26, model27, model28, model29, model30) 
 
-kable(head(arrange(final_model, desc(as.numeric(R2))), caption="Final Models, Arranged by MAE"), n=6)
+kable(head(arrange(final_model, desc(as.numeric(R2))),
+           caption="Final Models, Arranged by MAE"), n=6)
 
 ```
 
