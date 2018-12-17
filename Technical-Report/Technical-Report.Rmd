@@ -26,21 +26,21 @@ options(warn=-1)
 ```
 
 # Abstract:
-This project seeks to better understand the relationship between GDP per capita and transit in metropolitan areas in the United States.  While the original intention was to create a quality of life score or statistic utilizing multiple variables to see how a city's transit may predict that score, doing so is beyond the scope of this project (see introduction for an elaboration of the motivation behind altering project scope).  We decided to pivot instead to explore how well transit statistics can predict GDP per capita in U.S. metropolitan areas.  We created 31 regression tree models, and our best model suggests that the percentage of workers commuting by public transport and the amount of vehicle hours per capita (percent_commuting_msa and per_capita_vrh, respectively) are best at predicting GDP per capita (based on the variables and U.S. areas present in our dataset).
+This project seeks to better understand the relationship between GDP per capita and transit in metropolitan areas in the United States.  While the original intention was to create a quality of life score or statistic utilizing multiple variables to see how a city's transit may predict that score, doing so is beyond the scope of this project (see introduction for an elaboration of the motivation behind altering project scope).  We decided to pivot instead to explore how well transit statistics can predict GDP per capita in U.S. metropolitan areas.  We created 31 regression tree models, and our best model suggests that the percentage of workers commuting by public transport and the amount of vehicle hours per capita (percent_commuting_msa and per_capita_vrh, respectively) are best at predicting GDP per capita (based on the variables and U.S. areas present in our data set).
 
 # Introduction:
 The research question at hand is if the quality of a U.S. metropolitan area's transit system can predict the GDP per capita of that area.  This question is interesting because GDP is a valued metric in terms of a city's economic well-being.  Looking for a relationship between GDP and a city's transit system thus has the potential to provide insight on how much a transit system matters in terms of GDP. 
 
 It's important to note that the question stated above was not the initial question that we sought to address.  We initially wanted to analyze the relationship between a city's transit system and the quality of life in that city.  However, this question presented various difficulties.  For example, creating a model that predicted different combinations of explanatory transit variables based on multiple quality of life response variables would prove to be beyond the scope of our capabilities.  An alternative option for combining multiple quality of life variables for a given city in a model would be to utilize only one quality of life response variable.  However, this would necessitate a reframing of the question at hand, as choosing one variable to represent the quality of life at large would be misleading (and any variables that might serve as a reasonable proxy—such as Human Development Index—).  To resolve these problems, we decided to alter the research question to ask the question, "How does a city's transit system predict its GDP per capita?"  We decided upon GDP per capita as a response variable as it is well-regarded as a broad metric of the health of a city's economy and avoids the problem of  the population of a city skewing the GDP.  
 
-In order to answer this question, one large dataframe was created that combined quality of life (including GDP per capita) and transit system information by metropolitan statistical areas. This data frame can be accessed via the R package, "gluskr" created during the course of this project.  Each variable in the data frame is explained in the documentation for the gluskr data frame (which is named `transit_qol_df`).
+In order to answer this question, one large data frame was created that combined quality of life (including GDP per capita) and transit system information by metropolitan statistical areas. This data frame can be accessed via the R package, "gluskr" created during the course of this project.  Each variable in the data frame is explained in the documentation for the gluskr data frame (which is named `transit_qol_df`).
 
-Upon creating multiple visualizations and models, the best model suggests that the percentage of workers commuting by public transport and the number of vehicle hours per capita (percent_commuting_msa and per_capita_vrh, respectively) together are the best way to predict the GDP per capita (based on the variables and U.S. areas present in our dataset).  
+Upon creating multiple visualizations and models, the best model suggests that the percentage of workers commuting by public transport and the number of vehicle hours per capita (percent_commuting_msa and per_capita_vrh, respectively) together are the best way to predict the GDP per capita (based on the variables and U.S. areas present in our data set).  
 
 # Data:
 The data included in the final data frame, transit_qol_df, comes from the U.S. Census Bureau, the Bureau of Economic Analysis, and the Federal Transit Administration’s National Transit Database.  This final data frame has 42 variables and has data from 2007-2017.  For specifics on each variable, consult the transit_qol_df documentation within the gluskr package or the readme for the project.  
 
-We first compiled our quality of life dataframe by combining all relevant quality of life statistics for each metropolitan statistical area. Once this was complete, we did the same with all of our transit data. We then joined the quality of life and transit data frames by a geographical ID to create our aggregate data frame. Lastly, we mutated this aggregate data frame to create 13 new transit related metrics based on existing variables in our dataframe, such as the cost per trip (which was calculated by doing the total amount of transit expenses divided by the number of passenger trips).
+We first compiled our quality of life data frame by combining all relevant quality of life statistics for each metropolitan statistical area. Once this was complete, we did the same with all of our transit data. We then joined the quality of life and transit data frames by a geographical ID to create our aggregate data frame. Lastly, we mutated this aggregate data frame to create 13 new transit related metrics based on existing variables in our data frame, such as the cost per trip (which was calculated by doing the total amount of transit expenses divided by the number of passenger trips).
 
 It’s important to note that we only used metropolitan statistical areas in the United States with a population of above one million in our modeling. This is an attempt to limit the error created by the differences between metropolitan statistical areas and urbanized areas. Our census data is grouped by metropolitan statistical area, but our transit data is by urbanized area. The relationship file between urbanized areas and metropolitan statistical area connects the two when they overlap in any way, so for example the urbanized area of “New York-Newark, NY-NJ-CT” relates to both the metropolitan area of “New York-Northern New Jersey-Long Island, NY-NJ-PA,” but also the metro area of “Trenton-Ewing, NJ.” This leads to problem when using transit variables with census variables. In the example above, the metric of trips per capita will be heavily skewed because the population of Trenton is significantly smaller than the population served by the transit system of the “New York-Newark, NY-NJ-CT” urbanized area leading to a skewed and inaccurate statistic. Filtering out cities below one million reduces this source of  error because it reduces the number of metro areas that overlap or are in close proximity. 
 
@@ -49,7 +49,8 @@ It’s important to note that we only used metropolitan statistical areas in the
 This creates a data frame with gdp for each metropolitan and micropolitan statistical area from the U.S. census from years 2001-2017.
 ```{r, messages=FALSE}
 
-gdp_df <- read_xls("../quality-of-life-data/gdp/gdp-industrytotal.xls", 
+gdp_df <- read_xls(
+  "../final-data/data-sources/quality-of-life-data/gdp/gdp-industrytotal.xls", 
                    sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
   gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
@@ -63,12 +64,12 @@ This creates a data frame with latitudinal and longitudinal coordinates for each
 
 # coordinates for metropolitan areas
 metropolitan_coordinates <- read_xlsx(
-  "../quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx",
+  "../final-data/data-sources/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx",
   sheet = 1, range = "A2:Q376", col_names = TRUE)
 
 # coordinates for micropolitan areas
 micropolitan_coordinates <- read_xlsx(
-  "../quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx",
+  "../final-data/data-sources/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx",
   sheet = 2, range = "A2:Q583", col_names = TRUE)
 
 # combine metropolitan and micropolitan areas
@@ -99,27 +100,38 @@ read_population_df <- function(file_name, year) {
 
 # read in population data for years 2007 through 2017
 pop_2007 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007))
+  '../final-data/data-sources/quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv',
+  2007))
 pop_2008 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008))
+  '../final-data/data-sources/quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv',
+  2008))
 pop_2009 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009))
+  '../final-data/data-sources/quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 
+  2009))
 pop_2010 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010))
+  '../final-data/data-sources/quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 
+  2010))
 pop_2011 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011))
+  '../final-data/data-sources/quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv',
+  2011))
 pop_2012 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012))
+  '../final-data/data-sources/quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 
+  2012))
 pop_2013 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013))
+  '../final-data/data-sources/quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 
+  2013))
 pop_2014 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014))
+  '../final-data/data-sources/quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 
+  2014))
 pop_2015 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015))
+  '../final-data/data-sources/quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv',
+  2015))
 pop_2016 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016))
+  '../final-data/data-sources/quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 
+  2016))
 pop_2017 <- suppressMessages(read_population_df(
-  '../quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017))
+  '../final-data/data-sources/quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 
+  2017))
 
 
 # join all years into one dataframe
@@ -179,27 +191,38 @@ clean_data_2010_2017 <- function(file_name, year) {
 
 # read in census data for  years 2007 through 2017
 census_data_2007 <- suppressMessages(clean_data_2007_2009(
-  "../quality-of-life-data/census-data/2007/ACS_07_1YR_DP3.csv", 2007))
+  "../final-data/data-sources/quality-of-life-data/census-data/2007/ACS_07_1YR_DP3.csv", 
+  2007))
 census_data_2008 <- suppressMessages(clean_data_2007_2009(
-  "../quality-of-life-data/census-data/2008/ACS_08_1YR_DP3.csv", 2008))
+  "../final-data/data-sources/quality-of-life-data/census-data/2008/ACS_08_1YR_DP3.csv",
+  2008))
 census_data_2009 <- suppressMessages(clean_data_2007_2009(
-  "../quality-of-life-data/census-data/2009/ACS_09_1YR_DP3.csv", 2009))
+  "../final-data/data-sources/quality-of-life-data/census-data/2009/ACS_09_1YR_DP3.csv", 
+  2009))
 census_data_2010 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2010/ACS_10_1YR_DP03.csv", 2010))
+  "../final-data/data-sources/quality-of-life-data/census-data/2010/ACS_10_1YR_DP03.csv", 
+  2010))
 census_data_2011 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2011/ACS_11_1YR_DP03.csv", 2011))
+  "../final-data/data-sources/quality-of-life-data/census-data/2011/ACS_11_1YR_DP03.csv",
+  2011))
 census_data_2012 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2012/ACS_12_1YR_DP03.csv", 2012))
+  "../final-data/data-sources/quality-of-life-data/census-data/2012/ACS_12_1YR_DP03.csv", 
+  2012))
 census_data_2013 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2013/ACS_13_1YR_DP03.csv", 2013))
+  "../final-data/data-sources/quality-of-life-data/census-data/2013/ACS_13_1YR_DP03.csv", 
+  2013))
 census_data_2014 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2014/ACS_14_1YR_DP03.csv", 2014))
+  "../final-data/data-sources/quality-of-life-data/census-data/2014/ACS_14_1YR_DP03.csv", 
+  2014))
 census_data_2015 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2015/ACS_15_1YR_DP03.csv", 2015))
+  "../final-data/data-sources/quality-of-life-data/census-data/2015/ACS_15_1YR_DP03.csv", 
+  2015))
 census_data_2016 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2016/ACS_16_1YR_DP03.csv", 2016))
+  "../final-data/data-sources/quality-of-life-data/census-data/2016/ACS_16_1YR_DP03.csv", 
+  2016))
 census_data_2017 <- suppressMessages(clean_data_2010_2017(
-  "../quality-of-life-data/census-data/2017/ACS_17_1YR_DP03.csv", 2017))
+  "../final-data/data-sources/quality-of-life-data/census-data/2017/ACS_17_1YR_DP03.csv", 
+  2017))
 
 # join all years into one dataframe
 census_qol_df <- suppressMessages(full_join(census_data_2007, census_data_2008) %>% 
@@ -252,7 +275,8 @@ clean_modes <- function(df) {
 # function to read in and clean up FTA dataframes
 clean_fta_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("../FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", 
+  df <- read_xlsx(
+    "../final-data/data-sources/FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", 
                   sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
   
   df <- df %>% 
@@ -291,7 +315,7 @@ clean_fta_df <- function(sheet_number, col_name) {
 # function to clean up FTA funding dataframes
 clean_funding_df <- function(sheet_number, col_name) {
   df <- read_xlsx(
-    "../FTA-data/FTA-dataframes/TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", 
+    "../final-data/data-sources/FTA-data/FTA-dataframes/TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", 
                   sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
   
   df <- df %>% 
@@ -397,14 +421,14 @@ This chunk reads in the transit stations data frame from the FTA and cleans it. 
 # Read in Master FTA Dataframe to use 
 # as joining key from transit agency to UZA
 transit_stations_master_fta_df <- read_xlsx(
-  "../FTA-data/FTA-dataframes/FTA_September_2018.xlsx",
+  "../final-data/data-sources/FTA-data/FTA-dataframes/FTA_September_2018.xlsx",
   sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>%  
   select(UZA, `5 digit NTD ID`)
 
 # read in transit stations dataframe
 transit_stations_df <- read_xlsx(
-  "../FTA-data/FTA-dataframes/Transit Stations_0.xlsx",
+  "../final-data/data-sources/FTA-data/FTA-dataframes/Transit Stations_0.xlsx",
   sheet=1, range="A1:L1100", col_names=TRUE) %>%
   filter(`Reporter Type` == "Full Reporter") %>% 
   mutate(Modes = Mode) %>% 
@@ -493,7 +517,8 @@ fta_df <- left_join(primary_variable_fta_df,
 
 # get census key dataframe
 suppressMessages(
-census_UZA_MSA_key <- read_csv("../census-FTA-joining-key/UZA_MSA_join.txt") %>% 
+census_UZA_MSA_key <- read_csv(
+  "../final-data/data-sources/census-FTA-joining-key/UZA_MSA_join.txt") %>% 
   mutate("GEO.id2" = CBSA) %>% 
   arrange(desc(UAPOP)) %>% 
   select(GEO.id2, UA, UANAME, UAPOP))
@@ -847,7 +872,7 @@ Additionally, we did not calculate a transit score that could serve as single ex
 
 There are multiple directions for future research available following this study.  Working with the data utilized for this study is made accessible through the creation of the gluskr package.  
 
-One suggestion for future research would involve resolving the discrepancy between urbanized areas and metropolitan statistical areas.  Another suggestion includes finding human development index (HDI) data that can be joined to the final dataframe so as to explore the relationship between transit and HDI instead of transit and GDP per capita.  Finally, it would be valuable to create a transit score for data analysis purposes. 
+One suggestion for future research would involve resolving the discrepancy between urbanized areas and metropolitan statistical areas.  Another suggestion includes finding human development index (HDI) data that can be joined to the final data frame so as to explore the relationship between transit and HDI instead of transit and GDP per capita.  Finally, it would be valuable to create a transit score for data analysis purposes. 
 
 # Notes:
-We created a Shiny app that allows a user to click on any of the cities incorporated into our analyses and to see an output that displays the population, GDP per capita, vehicle hours per capita, and percent workers commuting by public transit fpr that city.  The cities available to click on can be filtered by size of city.  Note that all of these statistics are averaged over a 10 year span from 2007-2017 and were informed by our best model (described in sections above). 
+We created a Shiny app that allows a user to click on any of the cities incorporated into our analyses and to see an output that displays the population, GDP per capita, vehicle hours per capita, and percent workers commuting by public transit for that city.  The cities available to click on can be filtered by size of city.  Note that all of these statistics are averaged over a 10 year span from 2007-2017 and were informed by our best model (described in sections above). The Shiny app can be found here: https://rstudio.amherst.edu/s/7048566a45635579038c1/p/3969/.

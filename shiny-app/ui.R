@@ -1,10 +1,7 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
-# library(mapview)
-# devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
-# devtools::install_github("r-spatial/mapview@develop")
-# devtools::install_github('r-lib/later')
+
 
 ui <- fluidPage(
   headerPanel('Average Transit Statistics across US Cities from 2007-2017'),

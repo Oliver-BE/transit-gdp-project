@@ -18,6 +18,7 @@ library(tidyr)
 library(ggplot2)
 library(readr)
 library(knitr)
+library(gluskr)
 ```
 
 
@@ -27,7 +28,7 @@ library(knitr)
 ### Read in GDP Data
 ```{r, message=False}
 
-gdp_df <- read_xls("../quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
+gdp_df <- read_xls("../final-data/data-sources/quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 1, range = 'A6:S390', col_names=TRUE) %>% 
   gather(key = "Year", value = "gdp", -c("GeoFips", "GeoName")) %>% 
   mutate("GEO.id2" = as.integer(GeoFips), "Year" = as.double(Year)) %>% 
   select(GEO.id2, GeoName, Year, gdp) 
@@ -40,10 +41,10 @@ gdp_df <- read_xls("../quality-of-life-data/gdp/gdp-industrytotal.xls", sheet = 
 ```{r, message=False}
 
 # coordinates for metropolitan areas
-metropolitan_coordinates <- read_xlsx("../quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 1,
+metropolitan_coordinates <- read_xlsx("../final-data/data-sources/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 1,
                                       range = "A2:Q376", col_names = TRUE)
 # coordinates for micropolitan areas
-micropolitan_coordinates <- read_xlsx("../quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 2,
+micropolitan_coordinates <- read_xlsx("../final-data/data-sources/quality-of-life-data/latitude-longitude/StatisticalAreasLatLong.xlsx", sheet = 2,
                                       range = "A2:Q583", col_names = TRUE)
 
 # combine metropolitan and micropolitan areas
@@ -71,17 +72,17 @@ read_population_df <- function(file_name, year) {
 }
 
 # read in population data for years 2007 through 2017
-pop_2007 <- read_population_df('../quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007)
-pop_2008 <- read_population_df('../quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008)
-pop_2009 <- read_population_df('../quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009)
-pop_2010 <- read_population_df('../quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010)
-pop_2011 <- read_population_df('../quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011)
-pop_2012 <- read_population_df('../quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012)
-pop_2013 <- read_population_df('../quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013)
-pop_2014 <- read_population_df('../quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014)
-pop_2015 <- read_population_df('../quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015)
-pop_2016 <- read_population_df('../quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016)
-pop_2017 <- read_population_df('../quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017)
+pop_2007 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2007/ACS_07_1YR_B01003.csv', 2007)
+pop_2008 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2008/ACS_08_1YR_B01003.csv', 2008)
+pop_2009 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2009/ACS_09_1YR_B01003.csv', 2009)
+pop_2010 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2010/ACS_10_1YR_B01003.csv', 2010)
+pop_2011 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2011/ACS_11_1YR_B01003.csv', 2011)
+pop_2012 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2012/ACS_12_1YR_B01003.csv', 2012)
+pop_2013 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2013/ACS_13_1YR_B01003.csv', 2013)
+pop_2014 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2014/ACS_14_1YR_B01003.csv', 2014)
+pop_2015 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2015/ACS_15_1YR_B01003.csv', 2015)
+pop_2016 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2016/ACS_16_1YR_B01003.csv', 2016)
+pop_2017 <- read_population_df('../final-data/data-sources/quality-of-life-data/population/2017/ACS_17_1YR_B01003.csv', 2017)
 
 # join all years into one dataframe
 population_df <- full_join(pop_2007, pop_2008) %>%
@@ -139,17 +140,17 @@ clean_data_2010_2017 <- function(file_name, year) {
 }
 
 # read in census data for  years 2007 through 2017
-census_data_2007 <- clean_data_2007_2009("../quality-of-life-data/census-data/2007/ACS_07_1YR_DP3.csv", 2007)
-census_data_2008 <- clean_data_2007_2009("../quality-of-life-data/census-data/2008/ACS_08_1YR_DP3.csv", 2008)
-census_data_2009 <- clean_data_2007_2009("../quality-of-life-data/census-data/2009/ACS_09_1YR_DP3.csv", 2009)
-census_data_2010 <- clean_data_2010_2017("../quality-of-life-data/census-data/2010/ACS_10_1YR_DP03.csv", 2010)
-census_data_2011 <- clean_data_2010_2017("../quality-of-life-data/census-data/2011/ACS_11_1YR_DP03.csv", 2011)
-census_data_2012 <- clean_data_2010_2017("../quality-of-life-data/census-data/2012/ACS_12_1YR_DP03.csv", 2012)
-census_data_2013 <- clean_data_2010_2017("../quality-of-life-data/census-data/2013/ACS_13_1YR_DP03.csv", 2013)
-census_data_2014 <- clean_data_2010_2017("../quality-of-life-data/census-data/2014/ACS_14_1YR_DP03.csv", 2014)
-census_data_2015 <- clean_data_2010_2017("../quality-of-life-data/census-data/2015/ACS_15_1YR_DP03.csv", 2015)
-census_data_2016 <- clean_data_2010_2017("../quality-of-life-data/census-data/2016/ACS_16_1YR_DP03.csv", 2016)
-census_data_2017 <- clean_data_2010_2017("../quality-of-life-data/census-data/2017/ACS_17_1YR_DP03.csv", 2017)
+census_data_2007 <- clean_data_2007_2009("../final-data/data-sources/quality-of-life-data/census-data/2007/ACS_07_1YR_DP3.csv", 2007)
+census_data_2008 <- clean_data_2007_2009("../final-data/data-sources/quality-of-life-data/census-data/2008/ACS_08_1YR_DP3.csv", 2008)
+census_data_2009 <- clean_data_2007_2009("../final-data/data-sources/quality-of-life-data/census-data/2009/ACS_09_1YR_DP3.csv", 2009)
+census_data_2010 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2010/ACS_10_1YR_DP03.csv", 2010)
+census_data_2011 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2011/ACS_11_1YR_DP03.csv", 2011)
+census_data_2012 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2012/ACS_12_1YR_DP03.csv", 2012)
+census_data_2013 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2013/ACS_13_1YR_DP03.csv", 2013)
+census_data_2014 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2014/ACS_14_1YR_DP03.csv", 2014)
+census_data_2015 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2015/ACS_15_1YR_DP03.csv", 2015)
+census_data_2016 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2016/ACS_16_1YR_DP03.csv", 2016)
+census_data_2017 <- clean_data_2010_2017("../final-data/data-sources/quality-of-life-data/census-data/2017/ACS_17_1YR_DP03.csv", 2017)
 
 # join all years into one dataframe
 census_qol_df <- full_join(census_data_2007, census_data_2008) %>% 
@@ -162,12 +163,6 @@ census_qol_df <- full_join(census_data_2007, census_data_2008) %>%
   full_join(census_data_2015) %>% 
   full_join(census_data_2016) %>% 
   full_join(census_data_2017) 
-
-  ## If we want to fix GEO.display-label column then need code similar to this:
-  # %>% 
-  # separate(col = `GEO.display-label`, into = c("City","State","Area_type"), 
-  #         sep = c(","), remove = TRUE)
-
 
 # census_qol_df
 
@@ -209,7 +204,7 @@ clean_modes <- function(df) {
 # function to read in and clean up FTA dataframes
 clean_fta_df <- function(sheet_number, col_name) {
   
-  df <- read_xlsx("../FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
+  df <- read_xlsx("../final-data/data-sources/FTA-data/FTA-dataframes/TS2.1TimeSeriesOpExpSvcModeTOS_2.xlsx", sheet=sheet_number, range="A1:AR5659", col_names=TRUE) 
   
   df <- df %>% 
     filter(`Reporter Type` == "Full Reporter") %>%
@@ -246,7 +241,7 @@ clean_fta_df <- function(sheet_number, col_name) {
 
 # function to clean up FTA funding dataframes
 clean_funding_df <- function(sheet_number, col_name) {
-  df <- read_xlsx("../FTA-data/FTA-dataframes/TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
+  df <- read_xlsx("../final-data/data-sources/FTA-data/FTA-dataframes/TS1.1TimeSeriesOpCapFundingSummary_4 (2).xlsx", sheet=sheet_number, range="A1:AO2943", col_names=TRUE)
   
   df <- df %>% 
     filter(`Reporter Type` == "Full Reporter") %>% 
@@ -276,6 +271,7 @@ clean_funding_df <- function(sheet_number, col_name) {
 
 ## Main Transit Variables
 ```{r, message=FALSE}
+
 expenses_fta_df <- clean_fta_df(3, "total_expenses") %>% 
   group_by(UZA, Year, modes_clean) %>% 
   mutate(total_expenses = sum(total_expenses, na.rm = TRUE)) %>% 
@@ -348,12 +344,12 @@ primary_variable_fta_df <-
 # Read in Master FTA Dataframe to use 
 # read in DF with master information about each transportation agency 
 # and the relevant Urbanized Area (UZA)
-transit_stations_master_fta_df <- read_xlsx("../FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
+transit_stations_master_fta_df <- read_xlsx("../final-data/data-sources/FTA-data/FTA-dataframes/FTA_September_2018.xlsx", sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
   filter(`Reporter Type` == "Full Reporter") %>%  
   select(UZA, `5 digit NTD ID`)
 
 # read in transit stations dataframe
-transit_stations_df <- read_xlsx("../FTA-data/FTA-dataframes/Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
+transit_stations_df <- read_xlsx("../final-data/data-sources/FTA-data/FTA-dataframes/Transit Stations_0.xlsx", sheet=1, range="A1:L1100", col_names=TRUE) %>%
   filter(`Reporter Type` == "Full Reporter") %>% 
   mutate(Modes = Mode) %>% 
   clean_modes() %>% 
@@ -436,7 +432,7 @@ fta_df <- left_join(primary_variable_fta_df, final_transit_stations_df, by = c("
   unique()
 
 # get census key dataframe
-census_UZA_MSA_key <- read_csv("../census-FTA-joining-key/UZA_MSA_join.txt") %>% 
+census_UZA_MSA_key <- read_csv("../final-data/data-sources/census-FTA-joining-key/UZA_MSA_join.txt") %>% 
   mutate("GEO.id2" = CBSA) %>% 
   arrange(desc(UAPOP)) %>% 
   select(GEO.id2, UA, UANAME, UAPOP)
@@ -544,5 +540,4 @@ write.csv(final_df, "FINAL_DATA.csv", row.names=F)
 
 saveRDS(final_df, file = "final_data.RDA")
 
-readRDS("../final-data/final_data.RDA")
 ```
