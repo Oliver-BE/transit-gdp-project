@@ -1,0 +1,67 @@
+---
+title: "population"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libary-ing
+
+```{r}
+library(dplyr)
+library(jsonlite)
+library(httr)
+library(rvest)
+library(readxl)
+library(tidyverse)
+library(mdsr)   
+library(tidyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+## Reading in data
+
+```{r pressure, echo=FALSE, message=FALSE}
+
+read_df <- function(file_name, year) {
+  df <- read_csv(file_name) 
+  colnames(df)[4] <- "PopEstimate" 
+  colnames(df)[5] <- "MOE" 
+  df <- df %>% 
+    mutate("Year" = year) %>% 
+    select(-MOE)
+  return(df)
+}
+
+pop_2007 <- read_df('2007/ACS_07_1YR_B01003.csv', 2007)
+pop_2008 <- read_df('2008/ACS_08_1YR_B01003.csv', 2008)
+pop_2009 <- read_df('2009/ACS_09_1YR_B01003.csv', 2009)
+pop_2010 <- read_df('2010/ACS_10_1YR_B01003.csv', 2010)
+pop_2011 <- read_df('2011/ACS_11_1YR_B01003.csv', 2011)
+pop_2012 <- read_df('2012/ACS_12_1YR_B01003.csv', 2012)
+pop_2013 <- read_df('2013/ACS_13_1YR_B01003.csv', 2013)
+pop_2014 <- read_df('2014/ACS_14_1YR_B01003.csv', 2014)
+pop_2015 <- read_df('2015/ACS_15_1YR_B01003.csv', 2015)
+pop_2016 <- read_df('2016/ACS_16_1YR_B01003.csv', 2016)
+pop_2017 <- read_df('2017/ACS_17_1YR_B01003.csv', 2017)
+
+```
+
+## Joining data
+```{r, message=FALSE}
+pop_all_years <- full_join(pop_2007, pop_2008) %>%
+  full_join(pop_2009) %>%
+  full_join(pop_2010) %>%
+  full_join(pop_2011) %>%
+  full_join(pop_2012) %>%
+  full_join(pop_2013) %>%
+  full_join(pop_2014) %>%
+  full_join(pop_2015) %>%
+  full_join(pop_2016) %>%
+  full_join(pop_2017)
+```
+
