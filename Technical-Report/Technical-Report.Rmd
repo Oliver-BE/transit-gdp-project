@@ -21,6 +21,7 @@ library(readr)
 library(knitr)
 library(roxygen2)#needed for gluskr documentation
 library(rpart)
+library(gluskr)
 options(warn=-1)
 ```
 
@@ -36,7 +37,7 @@ options(warn=-1)
 ## Quality of Life Data
 
 ### Read in GDP Data
-This returns a dataframe with gdp for each metropolitan and micropolitan statistical area from the U.S. census from years 2001-2017.
+This creates a data frame with gdp for each metropolitan and micropolitan statistical area from the U.S. census from years 2001-2017.
 ```{r, messages=FALSE}
 
 gdp_df <- read_xls("../quality-of-life-data/gdp/gdp-industrytotal.xls", 
@@ -48,7 +49,7 @@ gdp_df <- read_xls("../quality-of-life-data/gdp/gdp-industrytotal.xls",
 ```
 
 ### Read in Latitude Longitude Data
-This returns a dataset with latitudinal and longitudinal coordinates for each metropolitan and micropolitan statistical area. 
+This creates a data frame with latitudinal and longitudinal coordinates for each metropolitan and micropolitan statistical area. 
 ```{r, messages=FALSE}
 
 # coordinates for metropolitan areas
@@ -70,7 +71,7 @@ lat_long_df <- rbind(metropolitan_coordinates, micropolitan_coordinates) %>%
 ```
 
 ### Read in Population Data
-This code chunk reads in the population estimates from the U.S. Census Bureau from 2007 to 2017 and joins these separate tables into one table.  
+This code chunk reads in the population estimates from the U.S. Census Bureau for each year between 2007 and 2017 and joins each year's data into one data frame.
 ```{r, messages=FALSE, warning=FALSE}
 
 # function to read in population DFs efficiently 
@@ -124,10 +125,11 @@ population_df <- full_join(pop_2007, pop_2008) %>%
   full_join(pop_2015) %>%
   full_join(pop_2016) %>%
   full_join(pop_2017))
+
 ```
 
 ### Read in Census Quality of Life Data
-This dataframe takes a number of quality of life related variables from 2007-2009 and takes in the same variables as well as "percent no health insurance coverage".  Then, it joins the data sets to create one comprehensive dataframe.  
+This data frame consists of quality of life related variables obtained from the U.S. Census Bureau from 2007-2017. The Census Bureau changed the names and descriptions of their variables after 2009 which thus meant two different functions were needed to accurately read in the desired variables. There were also variables introduced in 2010 that we wanted to include in our data frame (`percent_no_insurance_msa` and `percent_below_poverty_level`). Because they didn't exist until 2010 they are recorded as NAs from 2007-2009.  
 ```{r, messages=FALSE, warnings=FALSE}
 
 # function to clean up data frames from 2007-2009
@@ -202,18 +204,10 @@ census_qol_df <- suppressMessages(full_join(census_data_2007, census_data_2008) 
   full_join(census_data_2016) %>% 
   full_join(census_data_2017) )
 
-  ## If we want to fix GEO.display-label column then need code similar to this:
-  # %>% 
-  # separate(col = `GEO.display-label`, into = c("City","State","Area_type"), 
-  #         sep = c(","), remove = TRUE)
-
-
-# census_qol_df
-
 ```
 
 ### Join All Quality of Life Dataframes
-This joins all of the non-transit related data into one dataframe.  
+This joins all of the quality of life related data into one data frame.  
 ```{r, messages=FALSE}
 
 # join all quality of life dataframes
@@ -223,9 +217,8 @@ qol_df <- left_join(population_df, census_qol_df,
   left_join(lat_long_df, by = c("GEO.id2", "GEO.display-label")) %>% 
   select(-c(GEO.id, GeoName))
 
-# qol_df
-
 ```
+
 ## Transit Data
 
 ### Functions to Clean up FTA Dataframes
@@ -321,8 +314,9 @@ clean_funding_df <- function(sheet_number, col_name) {
 ```
 
 ## Main Transit Variables
-Creates dataframe for each FTA variable: UPT, VRM, VRH, DRM, PMT, expenses, fares,  and cleans them.
+Creates and tidies dataframe for each transit variable (UPT, VRM, VRH, DRM, PMT, expenses, and fares).
 ```{r, messages=FALSE}
+
 expenses_fta_df <- clean_fta_df(3, "total_expenses") %>% 
   group_by(UZA, Year, modes_clean) %>% 
   mutate(total_expenses = sum(total_expenses, na.rm = TRUE)) %>% 
@@ -368,7 +362,9 @@ pmt_fta_df <- clean_fta_df(14, "pmt") %>%
 ```
 
 ### Join FTA Variable Dataframes
+Joins above transit data frames into one data frame.
 ```{r, messages=FALSE}
+
 # create file with master info
 master_fta_df <- clean_fta_df(3, "total_expenses") %>% 
   select(UZA, `UZA Area SQ Miles`, `UZA Population`)
@@ -383,15 +379,15 @@ primary_variable_fta_df <-
   inner_join(pmt_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>%
   inner_join(upt_fta_df,      by= c("UZA", "UZA Name", "Year", "modes_clean")) %>% 
   unique()
+
 ```
 
 ### Read in Transit Stations Dataframe
-Reads in the transit stations dataframe from the FTA and cleans it. Then joins the master to the transit stations. 
+This chunk reads in the transit stations data frame from the FTA and cleans it. It then joins the master data frame to the transit stations data frame.
 ```{r, messages=FALSE}
 
 # Read in Master FTA Dataframe to use 
 # as joining key from transit agency to UZA
-
 transit_stations_master_fta_df <- read_xlsx(
   "../FTA-data/FTA-dataframes/FTA_September_2018.xlsx",
   sheet=2, range="A1:Y2129", col_names=TRUE) %>% 
@@ -413,7 +409,6 @@ transit_stations_df <- read_xlsx(
 # and joining those ids onto the stations data via Agnecy ID
 # NOTE: this potentially double counts transit stations 
 # that are used by multiple transit networks
-
 final_transit_stations_df <- left_join(transit_stations_master_fta_df, 
   transit_stations_df, by = c("5 digit NTD ID" = "NTD ID" )) %>% 
   group_by(UZA, modes_clean) %>% 
@@ -422,51 +417,51 @@ final_transit_stations_df <- left_join(transit_stations_master_fta_df,
   filter(!is.na(modes_clean)) %>% 
   unique() 
 
-
 ```
 
 ### Read in Transit Funding Data
-Creates dataframe for each FTA funding variable: total funding, state funding, local funding, other funding, and cleans them.
+Creates and tidies data frame for each transit funding variable (total funding, state funding, local funding, other funding).
 ```{r, messages=FALSE}
 
-# read in Total Funding dataframe
+# read in Total Funding data frame
 Total_Funding_df <- clean_funding_df(3, "Total_Funding") %>% 
   group_by(UZA, Year) %>% 
   mutate(Total_Funding = sum(Total_Funding, na.rm = TRUE)) %>%  
   select(UZA, Year, Total_Funding) %>% 
   unique()
 
-# read in Federal Funding dataframe
+# read in Federal Funding data frame
 Federal_Funding_df <- clean_funding_df(4, "Federal_Funding") %>% 
   group_by(UZA, Year) %>% 
   mutate(Federal_Funding = sum(Federal_Funding, na.rm = TRUE)) %>%  
   select(UZA, Year, Federal_Funding) %>% 
   unique()
 
-# read in State Funding dataframe
+# read in State Funding data frame
 State_Funding_df <- clean_funding_df(5, "State_Funding") %>% 
   group_by(UZA, Year) %>% 
   mutate(State_Funding = sum(State_Funding, na.rm = TRUE)) %>%  
   select(UZA, Year, State_Funding) %>% 
   unique()
 
-# read in Local Funding dataframe
+# read in Local Funding data frame
 Local_Funding_df <- clean_funding_df(6, "Local_Funding") %>% 
   group_by(UZA, Year) %>% 
   mutate(Local_Funding = sum(Local_Funding, na.rm = TRUE)) %>%  
   select(UZA, Year, Local_Funding) %>% 
   unique()
 
-# read in Other Funding dataframe (aka Fares and other assorted revenue) 
+# read in Other Funding data frame (aka Fares and other assorted revenue) 
 Other_Funding_df <- clean_funding_df(7, "Other_Funding") %>% 
   group_by(UZA, Year) %>% 
   mutate(Other_Funding = sum(Other_Funding, na.rm = TRUE)) %>%  
   select(UZA, Year, Other_Funding) %>% 
   unique()
+
 ```
 
-### Join FTA Funding Dataframes
-Joins the four funding different dataframes. 
+### Join FTA Funding Data frames
+Joins the five above funding data frames into one comprehensive funding data frame. 
 ```{r, messages=FALSE}
 
 # join all Funding dataframes
@@ -475,12 +470,11 @@ fta_funding_df <- full_join(Total_Funding_df, Federal_Funding_df, by = c("UZA", 
   full_join(Local_Funding_df, by = c("UZA", "Year")) %>% 
   full_join(Other_Funding_df, by = c("UZA", "Year")) 
 
-
 ```
 
-### Add Identifiers to FTA Dataframe Through Relationship File and Join FTA dataframes
-Read in relationship file between urbanized areas in transit data and metropolitan statistical areas in census data. Also cleans the joined dataframe. 
-``` {r, messages=FALSE}
+### Add Identifiers to FTA Data frame Through Relationship File and Join FTA data frames
+This chunk reads in a file that contains the relationship between urbanized areas (used in our transit data) and metropolitan statistical areas (used in our quality of life data). It then tidies our final transit data frame. 
+```{r, messages=FALSE}
 
 fta_df <- left_join(primary_variable_fta_df, 
   final_transit_stations_df, by = c("UZA", "modes_clean"))%>%
@@ -504,10 +498,10 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   filter(UAPOP>100000) %>% 
   select(-UANAME, -UZA)
   
-  
 ```
 
 ## Join Quality of Life and Transit Data
+This chunk joins our quality of life and transit data frames by geographic ID and year. It also renames each of the columns for clarity. 
 ```{r, messages=FALSE}
 
 # join final quality of life and fta datasets 
@@ -553,7 +547,7 @@ colnames(final_df)[1:29] <- c("msa_id",
 ```
 
 ## Adding Per Capita Variables 
-ADD A DESCRIPTION
+This chunk adds new aggregate transit variables based on existing transit variables and adds them to our final data frame. 
 ```{r, messages = FALSE}
 
 #Per Capita Transit Variables
@@ -574,33 +568,14 @@ final_df <- final_df %>%
   
 ```
 
-# Removing Inf & NaN Values
-ADD A DESCRIPTION
-```{r, messages=FALSE}
-
-
-
-# #Removing NaN and Infinite values caused by mutations and replace them with NA
-# final_df <- as.data.frame(lapply(final_df, function(x) {
-#   replace(x, is.infinite(x) | is.nan(x), NA)
-#   }))
-# 
-# # convert factorial columns back into characters
-# final_df <- final_df %>% 
-#   mutate(msa_name = as.character(msa_name),
-#          ua_census_id = as.character(ua_census_id),
-#          ua_fta_name = as.character(ua_fta_name),
-#          transit_modes = as.character(transit_modes))
-    
-```
-## Write DF 
+## Save Final Data Frame 
+This convert our final data frame into a CSV as well as saving it as a reactive data structure (RDS). 
 ```{r, messages = FALSE}
 
 write.csv(final_df, "FINAL_DATA.csv", row.names=F)
 
 saveRDS(final_df, file = "final_data.RDA")
 
-#readRDS("../final-data/final_data.RDA")
 ```
 
 # Modeling Function
@@ -774,7 +749,7 @@ final_model <- rbind(model1, model2, model3, model4, model5,
                      model11, model12, model13, model14, model15,
                      model16, model17, model18, model19, model20)
 
-kable(arrange(final_model, desc(as.numeric(MAE))), caption="Final Models, Arranged by MAE")
+kable(arrange(final_model, as.numeric(MAE)), caption="Final Models, Arranged by MAE")
 
 ```
 ## Results:
