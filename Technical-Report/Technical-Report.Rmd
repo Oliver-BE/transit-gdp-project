@@ -712,12 +712,6 @@ Based on our above modeling we determined that we should do further modeling on 
 
 # get model results 
 
-# `percent_commuting_msa`, 
-# `per_capita_vrm`, 
-# `per_capita_upt`, 
-# `per_capita_vrh` and
-# `per_capita_pmt`
-
 # one explanatory variable
 model0 <- gdp_model("per_capita_vrm", "per_capita_vrm")
 model1 <- gdp_model("percent_commuting_msa", "percent_commuting_msa")
