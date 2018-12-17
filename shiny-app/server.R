@@ -7,15 +7,8 @@ server <- function(input, output, session){
   
   lat_long_df <- reactive({
     x <- df %>% 
-      filter(pop_estimate_msa < input$max_pop)
+      filter(avg_pop < input$max_pop)
   })
-  
-  test_plot <- reactive ({
-    ggplot(lat_long_df(), aes_string(x=msa_id, y=pop_estimate_msa)) +
-      geom_point() +
-      theme(legend.position = "none", axis.title = element_text(size = 15))
-  })
-  
 
   output$mymap <- renderLeaflet({
     df <- lat_long_df()
@@ -24,10 +17,10 @@ server <- function(input, output, session){
       addTiles() %>%
       addCircleMarkers(lng = ~longitude,
                  lat = ~latitude,
-                 popup = paste(lat_long_df())) %>% 
-                 #popup = paste(df$msa_name, "<br>",
-                 #              "ID #: ", df$msa_id)) %>% 
-                 #icon = list(iconUrl = "") 
+                 popup = paste("<em>",df$msa_name,"</em>", "<br>",
+                              "<b> Average Vehicle Hours per Capita per Year:  </b>", round(df$avg_vrh, digits=2), "hours", "<br>",
+                              "<b> Average Percent of Workers Commuting by Public Transport per Year: </b>", round(df$avg_commuting, digits=1),
+                              "%", "<br>", "<b> Average GDP per Capita per Year: </b> $", round(df$avg_gdp, digits=0))) %>% 
       setView(lng=-98.5795, lat=39.8283, zoom=4) #%>% 
       #mapview(popup = popupGraph(test_plot(), width = 300, height = 300))
     map

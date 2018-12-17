@@ -7,17 +7,16 @@ library(dplyr)
 # devtools::install_github('r-lib/later')
 
 ui <- fluidPage(
-  headerPanel('Leaflet Map'),
+  headerPanel('Average Transit Statistics across US Cities from 2007-2017'),
   
   sidebarPanel(
     sliderInput('max_pop', 
-                 'Maximum Metropolitan Statistical Area (MSA) Poulation (based on 2010 values): ', 
-                 min = 1000000, max = 20000000, value = 1500000, step = 500000, ticks=F)
+                 'Maximum Metropolitan Statistical Area Poulation (averaged from 2007-2017): ', 
+                 min = 1000000, max = 20000000, value = 20000000, step = 500000, ticks=F)
   ),
   
   mainPanel(
     leafletOutput("mymap", height = 600)
   )
  
-  
 )
