@@ -161,6 +161,13 @@ model_percent_commuting_msa <- lm(formula = per_capita_gdp ~ percent_commuting_m
 ggplot(nicole_df, aes(x = percent_commuting_msa, y = per_capita_gdp)) + geom_point() + geom_smooth(method = 'lm', se = F)
 summary(model_percent_commuting_msa)
 # .09
+
+# x = percent_commuting_msa
+# y = per_capita_vrh
+
+model_new <- lm(formula = percent_commuting_msa ~ per_capita_vrh, data = nicole_df)
+ggplot(nicole_df, aes(x = per_capita_vrh, y = percent_commuting_msa)) + geom_point() + geom_smooth(method = 'lm', se = F)
+summary(model_new)
 ```
 
 ## ggplots comparing gdp to passenger trips  

@@ -1,6 +1,6 @@
 ---
 title: "STAT-231 Final Project: Technical Report"
-author: "Martin Glusker, Nicole Frontero, Oliver Baldwin-Edwards"
+author: "Martin Glusker, Nicole Frontero, Oliver Baldwin Edwards"
 date: 'Due: 12/18/18'
 output:
   pdf_document: default
@@ -825,7 +825,7 @@ kable(head(arrange(final_model, desc(as.numeric(R2))),
 
 ```
 
-## Results:
+# Results:
 We utilized the gluskr package and its comprehensive data frame (transit_qol_df) to perform initial visualizations (using ggplot).  In each of the initial visualizations, the response variable was per capita GDP, while the explanatory variable was a different transit-related variable.  When a linear model was added to each of these ggplots, every adjusted r2 was below 0.10.  Given such low adjusted r2 values for these linear models, when we moved on to modeling, they decided to model all transit variables (individually) against per capita GDP in the regression tree.  
 
 We wrote a function that took in a combination of explanatory variables and created a regression tree with per capita GDP as the response variable. Each of the 20 transit variables was first put into the function individually.  The five transit variables that yielded the highest r2 were then chosen to be utilized in the next stage of modeling. These were vehicle miles per capita, passenger miles per capita, vehicles hours per capita, and the percent of workers commuting by public transport.  It’s important to note that these five variables selected were the variables that yielded the highest r2 and that wouldn’t be directly related to the size of a transit system, which is, in turn, would be related to population.  We decided to not include the variables: total transit funding, number of passenger trips, directional route miles, and vehicle hours, despite their high r2 values, because of their direct relation to the size of a transit system. 
@@ -834,12 +834,12 @@ In the second stage of modeling, the five chosen transit variables (per_capita_v
 
 The top six models had very similar (and very high) MSE and MAE values and each contained percent_commuting_msa and  per_capita_vrh as variables.  Consequently, we chose the model with just explanatory variables percent_commuting_msa and per_capita_vrh because it is the simplest model, and also because it has the lowest MSE and r2, with MAE being the second lowest of the models. This model had an r2 of 0.624, MAE of 9517, and an MSE of 1.70 x 108.  Despite MAE and MSE at first appearing to be quite large, given the scale of the response variable (per capita GDP) in use, they are relatively good. This means that any prediction for per capita GDP (which ranges from around $27,000 to $138,000) based on this best model has a mean average error of $9,517. While this is a fairly large number, it is still on the right scale of per capita GDP and means that any prediction this model gives is still in the ballpark of the true value for per capita GDP.
 
-## Diagnostics:
+# Diagnostics:
 The results suggest that the explanatory variables percent_commuting_msa and per_capita_vrh when utilized in a regression tree model can do a relatively good job at predicting the GDP per capita of a metropolitan statistical area. The metrics of MAE, MSE and r2 were what we used for assessing our model.  When compared to the other 30 models that we made, the chosen model performed the best.  For more description on how we chose our best model, see the results section. 
 
 It is worthwhile to discuss implications of what this model suggests about the relationship between transit and GDP per capita.  Our model suggests that investing in a city’s transit system such that the system sees increases in vehicle hours per capita (per_capita_vrh) may be beneficial for a city’s GDP.  Furthermore, promotion of the number of workers that commute by public transit (percent_commuting_msa) may achieve a similar goal.  
 
-## Conclusion:
+# Conclusion:
 The question that we sought to address was how the transit system of a metropolitan statistical area could predict GDP per capita.  Specifically, we sought to answer which variables pertaining to transit could predict GDP per capita and how well.  From our exploration, we learned that the best predictors of a statistical area’s GDP per capita are percent_commuting_msa and per_capita_vrh. This finding of correlation intuitively makes sense to us, because it makes sense that a high number of vehicle hours per person and a higher percent of people commuting via public transit would lead to increased gdp per capita. 
 
 There are several limitations/sources of error to this current exploration of the relationship between transit variables and GDP per capita for U.S. cities.  For example, as mentioned above the overlap between the urbanized areas and the metropolitan statistical areas is a source of error.  
@@ -848,3 +848,6 @@ Additionally, we did not calculate a transit score that could serve as single ex
 There are multiple directions for future research available following this study.  Working with the data utilized for this study is made accessible through the creation of the gluskr package.  
 
 One suggestion for future research would involve resolving the discrepancy between urbanized areas and metropolitan statistical areas.  Another suggestion includes finding human development index (HDI) data that can be joined to the final dataframe so as to explore the relationship between transit and HDI instead of transit and GDP per capita.  Finally, it would be valuable to create a transit score for data analysis purposes. 
+
+# Notes:
+We created a Shiny app that allows a user to click on any of the cities incorporated into our analyses and to see an output that displays the population, GDP per capita, vehicle hours per capita, and percent workers commuting by public transit fpr that city.  The cities available to click on can be filtered by size of city.  Note that all of these statistics are averaged over a 10 year span from 2007-2017 and were informed by our best model (described in sections above). 
