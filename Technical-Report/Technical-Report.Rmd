@@ -25,17 +25,16 @@ library(gluskr)
 options(warn=-1)
 ```
 
-## Abstract:
+# Abstract:
 
 
-## Introduction:
+# Introduction:
 
 
-## Data:
+# Data:
 
 
 ## Quality of Life Data
-
 ### Read in GDP Data
 This creates a data frame with gdp for each metropolitan and micropolitan statistical area from the U.S. census from years 2001-2017.
 ```{r, messages=FALSE}
@@ -220,9 +219,8 @@ qol_df <- left_join(population_df, census_qol_df,
 ```
 
 ## Transit Data
-
 ### Functions to Clean up FTA Dataframes
-These are three functions used to wrangle the transit data from the FTA. `clean_modes()` takes in a dataframe with variables `Modes` and groups categories them into a new variable called `modes_clean`. `clean_fta_df()` is a function to clean FTA dataframces. `clean_funding_df()` is a function to clean the FTA's transit agency funding data. 
+These are three functions used to wrangle the transit data from the FTA. `clean_modes()` takes in a data frame with variables `Modes` and groups categories them into a new variable called `modes_clean`. `clean_fta_df()` is a function to clean FTA data frames. `clean_funding_df()` is a function to clean the FTA's transit agency funding data. 
 ```{r, messages=FALSE}
 
 #function to clean the modes of transit
@@ -313,8 +311,8 @@ clean_funding_df <- function(sheet_number, col_name) {
 
 ```
 
-## Main Transit Variables
-Creates and tidies dataframe for each transit variable (UPT, VRM, VRH, DRM, PMT, expenses, and fares).
+### Main Transit Variables
+Creates and tidies data frame for each transit variable (UPT, VRM, VRH, DRM, PMT, expenses, and fares).
 ```{r, messages=FALSE}
 
 expenses_fta_df <- clean_fta_df(3, "total_expenses") %>% 
@@ -500,7 +498,8 @@ final_fta_df <- left_join(census_UZA_MSA_key, fta_df,
   
 ```
 
-## Join Quality of Life and Transit Data
+## Create Final Data Frame
+### Join Quality of Life and Transit Data
 This chunk joins our quality of life and transit data frames by geographic ID and year. It also renames each of the columns for clarity. 
 ```{r, messages=FALSE}
 
@@ -546,7 +545,7 @@ colnames(final_df)[1:29] <- c("msa_id",
 
 ```
 
-## Adding Per Capita Variables 
+### Adding Per Capita Variables 
 This chunk adds new aggregate transit variables based on existing transit variables and adds them to our final data frame. 
 ```{r, messages = FALSE}
 
@@ -568,8 +567,8 @@ final_df <- final_df %>%
   
 ```
 
-## Save Final Data Frame 
-This convert our final data frame into a CSV as well as saving it as a reactive data structure (RDS). 
+### Save Final Data Frame 
+This convert our final data frame into a CSV as well as saving it as an RDS. This set of data is what the `transit_qol_df` in `gluskr` uses. 
 ```{r, messages = FALSE}
 
 write.csv(final_df, "FINAL_DATA.csv", row.names=F)
@@ -578,7 +577,12 @@ saveRDS(final_df, file = "final_data.RDA")
 
 ```
 
-# Modeling Function
+# Visualizations and Modeling
+## Initial ggplots
+```{r, messages=FALSE}
+```
+
+## Modeling
 This function takes in the variables needed and select the columns of said variables and then eliminates rows with incomplete data (aka)
 ```{r, messages=FALSE}
 
@@ -752,6 +756,7 @@ final_model <- rbind(model1, model2, model3, model4, model5,
 kable(arrange(final_model, as.numeric(MAE)), caption="Final Models, Arranged by MAE")
 
 ```
+
 ## Results:
 
 ## Diagnostics:
