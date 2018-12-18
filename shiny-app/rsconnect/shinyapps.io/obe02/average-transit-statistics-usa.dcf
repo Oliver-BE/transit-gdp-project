@@ -5,8 +5,8 @@ account: obe02
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 619762
-bundleId: 1771415
+bundleId: 1771795
 url: https://obe02.shinyapps.io/average-transit-statistics-usa/
-when: 1545158112.46321
+when: 1545169194.3469
 asMultiple: FALSE
 asStatic: FALSE

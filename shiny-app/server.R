@@ -1,7 +1,8 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
-library(knitr)
+# library(knitr)
+library(shiny)
 
 server <- function(input, output, session){
   

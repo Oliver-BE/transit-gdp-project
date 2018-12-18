@@ -1,22 +1,23 @@
 library(dplyr)
-library(jsonlite)
-library(httr)
-library(rvest)
-library(readxl)
+# library(jsonlite)
+# library(httr)
+# library(rvest)
+# library(readxl)
 library(tidyverse)
-library(mdsr)   
+# library(mdsr)   
 library(tidyr)
-library(ggplot2)
-library(readr)
-library(knitr)
+# library(ggplot2)
+# library(readr)
+# library(knitr)
 library(shiny)
 library(leaflet)
+# library(rsconnect)
 
 # weird error using gluskr when publishing app so didn't use it
 # library(gluskr)
 # df <- transit_qol_df %>% 
 
-df <- readRDS("./final-data/final_data.RDA") %>% 
+df <- readRDS("./shiny-app/final_data.RDA") %>% 
   mutate("latitude" = intptlat, "longitude" = intptlon) %>% 
   group_by(year, msa_id) %>% 
   mutate(sum_year_vrh = sum(per_capita_vrh)) %>% 
@@ -33,8 +34,5 @@ df <- readRDS("./final-data/final_data.RDA") %>%
     unique() %>% 
     drop_na()
   
-saveRDS(df, "../df.rds")
-  
-  
-  
+# saveRDS(df, "../df.rds")
   
