@@ -19,7 +19,7 @@ The name of the area associated with a particular metropolitan or micropolitan s
 
 
 **`pop_estimate_msa`**
-The estimated population for the area dilineated by a specific msa_id.  
+The estimated population for the area delineated by a specific msa_id.  
 
 
 **`year`**
@@ -37,7 +37,7 @@ A percentage of the number of workers who commuted by public transportation (whi
 A percentage of the number of unemployed individuals in the civilian labor force who are counted in the population 16 years and older.
 
 **`percent_no_insurance_msa`**
-Percentage of the noninstitutionalized civilian population without health insurance coverage.
+Percentage of the non institutionalized civilian population without health insurance coverage.
 
 **`percent_below_poverty_level`**
 For the years 2010-2017, this variable exists.  This is the percentage of all people in the United States who have income below the poverty level.  
@@ -49,7 +49,7 @@ A measure of gross domestic product across all industries in millions of current
 Internal point latitude for each specific metropolitan and micropolitan statistical entity. 
 
 **`intptlon`**
-Internal point longitudefor each specific metropolitan and micropolitan statistical entity. 
+Internal point longitude for each specific metropolitan and micropolitan statistical entity. 
 
 **`ua_census_id`**
 The census' unique id code for every urbanized area in the US. 
@@ -151,7 +151,7 @@ A metric. Defined as `total_transit_expenses` divided by `passenger_miles`.
 The Census Bureau calculates an internal point (latitude and longitude coordinates) for each geographic entity.  For many geographic entities, the internal point is at or near the geographic center of the entity.  For some irregularly shaped entities (such as those shaped like a crescent), the calculated geographic center may be located outside the boundaries of the entity.  In such instances, the internal point is identified as a point inside the entity boundaries nearest to the calculated geographic center and, if possible, within a land polygon.  (https://www.census.gov/geo/reference/gtc/gtc_area_attr.html).
 
 *Metrics*
-The Federal Transit Adminastration uses all these metrics. The FTA's Small Transit Intensive Cities (STIC) Formula to determine funding allocation uses the following metrics: 1. Passenger miles traveled per vehicle revenue mile, 2. Passenger miles traveled per vehicle revenue hour 3. Vehicle revenue miles per capita, 4.Vehicle revenue hours per capita, 5.Passenger miles traveled per capita, and 6.Passengers per capita. 
+The Federal Transit Administration uses all these metrics. The FTA's Small Transit Intensive Cities (STIC) Formula to determine funding allocation uses the following metrics: 1. Passenger miles traveled per vehicle revenue mile, 2. Passenger miles traveled per vehicle revenue hour 3. Vehicle revenue miles per capita, 4.Vehicle revenue hours per capita, 5.Passenger miles traveled per capita, and 6.Passengers per capita. 
 
 The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger Trip", "Fare Revenues per Total Operating Expense (Recovery Ratio)", "Cost per
  Hour",	"Passengers per Hour",	"Cost per Passenger", and	"Cost per Passenger Mile." That was how we decided to use these statistics as metrics. 
