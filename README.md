@@ -3,6 +3,9 @@ Oliver Baldwin Edwards,
 Nicole Frontero, &
 Martin Glusker
 
+## Note about Reproducability
+All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
+
  --- 
  
 **Variable Definitions**
