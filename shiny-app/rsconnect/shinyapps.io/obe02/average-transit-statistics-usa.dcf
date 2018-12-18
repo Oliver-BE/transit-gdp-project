@@ -1,0 +1,12 @@
+name: average-transit-statistics-usa
+title: average-transit-statistics-usa
+username:
+account: obe02
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 619762
+bundleId: 1771415
+url: https://obe02.shinyapps.io/average-transit-statistics-usa/
+when: 1545158112.46321
+asMultiple: FALSE
+asStatic: FALSE

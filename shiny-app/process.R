@@ -11,9 +11,12 @@ library(readr)
 library(knitr)
 library(shiny)
 library(leaflet)
-library(gluskr)
 
-df <- transit_qol_df %>% 
+# weird error using gluskr when publishing app so didn't use it
+# library(gluskr)
+# df <- transit_qol_df %>% 
+
+df <- readRDS("./final-data/final_data.RDA") %>% 
   mutate("latitude" = intptlat, "longitude" = intptlon) %>% 
   group_by(year, msa_id) %>% 
   mutate(sum_year_vrh = sum(per_capita_vrh)) %>% 
