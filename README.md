@@ -3,12 +3,14 @@ Oliver Baldwin Edwards,
 Nicole Frontero, &
 Martin Glusker
 
-## Note about Reproducability
+Special thanks to Alex Baldenko, Kendall Codey, and Jonah Gilbert for their invaluable help on this project. 
+
+**Note about Reproducability**
 All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
 
  --- 
  
-**Variable Definitions**
+##Variable Definitions
 
 **`msa_id`**
 Msa_id is a numeric code that uniquely identifies all metropolitan and micropolitan statistical geographic areas for which the Census Bureau tabulates data. This is identical to the census' 'GEOid.2'. 
