@@ -5,8 +5,9 @@ account: obe02
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 619762
-bundleId: 1771795
+bundleId: 1772112
 url: https://obe02.shinyapps.io/average-transit-statistics-usa/
-when: 1545169194.3469
+when: 1545179244.13666
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: df.rds|final_data.RDA
