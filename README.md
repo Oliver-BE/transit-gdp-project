@@ -6,6 +6,7 @@ An exploration of predicting GDP per capita from transit statistics with an inte
 Our Shiny app can be found at the following link: https://jonah.shinyapps.io/test/
 
 ## R Package dataset
+The dataset `transit_qol_df`can be found in the `gluskr` package we created for this project:
 
 ### Variable Definitions
 **`msa_id`**
