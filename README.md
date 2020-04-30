@@ -1,13 +1,13 @@
 # Transit GDP Project
 An exploration of predicting GDP per capita from transit statistics with an interactive Shiny app and R package containing our full dataset (aggregation of 30 different datasets) 
 
-**Note about Reproducibility**
 
-All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
+## Shiny App
+Our Shiny app can be found at the following link: https://jonah.shinyapps.io/test/
 
- --- 
- 
-## Variable Definitions
+## R Package dataset
+
+### Variable Definitions
 **`msa_id`**
 Msa_id is a numeric code that uniquely identifies all metropolitan and micropolitan statistical geographic areas for which the Census Bureau tabulates data. This is identical to the census' 'GEOid.2'. 
 
@@ -139,10 +139,7 @@ A metric. Defined as `total_transit_expenses` divided by `passenger_trips`.
 **`cost_per_pmt`**
 A metric. Defined as `total_transit_expenses` divided by `passenger_miles`.
 
-
- --- 
-
-***Notes***
+### Notes on data
 
 
 *Internal Points* 
@@ -154,9 +151,12 @@ The Federal Transit Administration uses all these metrics. The FTA's Small Trans
 The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger Trip", "Fare Revenues per Total Operating Expense (Recovery Ratio)", "Cost per
  Hour",	"Passengers per Hour",	"Cost per Passenger", and	"Cost per Passenger Mile." That was how we decided to use these statistics as metrics. 
  
- --- 
+*Reproducibility*
 
-## Sources
+All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
+ 
+
+### Sources
 
 The variables `median_household_income_msa`, `percent_workers_commuting_by_public_transit_msa`, `percent_unemployed_msa`, `percent_no_insurance_msa`, `percent_no_insurance_msa` and `percent_below_poverty_level` were obtained from:
 
@@ -188,7 +188,7 @@ The United Census Bureau, TigerWeb
 Tab: Nation-Based DataFiles
 Tables: Metropolitan Statistical Areas - Census 2010, Micropolitan Statistical Areas - Census 2010
 
-## Authors
+### Authors
 Oliver Baldwin Edwards, 
 Nicole Frontero, &
 Martin Glusker 2018
