@@ -153,7 +153,6 @@ The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger T
  Hour",	"Passengers per Hour",	"Cost per Passenger", and	"Cost per Passenger Mile." That was how we decided to use these statistics as metrics. 
  
 *Reproducibility*
-
 All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
  
 
@@ -189,9 +188,9 @@ The United Census Bureau, TigerWeb
 Tab: Nation-Based DataFiles
 Tables: Metropolitan Statistical Areas - Census 2010, Micropolitan Statistical Areas - Census 2010
 
-### Authors
+## Authors
 Oliver Baldwin Edwards, 
-Nicole Frontero, &
+Nicole Frontero, and
 Martin Glusker 2018
 
 Special thanks to Alex Baldenko, Kendall Codey, and Jonah Gilbert for their invaluable help on this project. 
