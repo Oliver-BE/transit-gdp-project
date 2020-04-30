@@ -1,9 +1,5 @@
-# Gluskr Documentation
-Oliver Baldwin Edwards, 
-Nicole Frontero, &
-Martin Glusker
-
-Special thanks to Alex Baldenko, Kendall Codey, and Jonah Gilbert for their invaluable help on this project. 
+# Transit GDP Project
+An exploration of predicting GDP per capita from transit statistics with an interactive Shiny app and R package containing our full dataset (aggregation of 30 different datasets) 
 
 **Note about Reproducibility**
 
@@ -11,7 +7,7 @@ All the steps necessary to reproduce our results can be found by knitting our `T
 
  --- 
  
-# Variable Definitions
+## Variable Definitions
 **`msa_id`**
 Msa_id is a numeric code that uniquely identifies all metropolitan and micropolitan statistical geographic areas for which the Census Bureau tabulates data. This is identical to the census' 'GEOid.2'. 
 
@@ -65,13 +61,13 @@ The urbanized area's name.
 **`transit_modes`**
 The mode of transit categorized as rail, non-rail bus, and non-rail other. The following modes of transit are grouped into rail: Alaska Railroad (AR), Cable Car (CC), Commuter Rail (CR), Heavy Rail (HR), Hybrid Rail (YR), Inclined Plane (IP), Light Rail (LR), Monorail/Automated Guideway (MG), Streetcar Rail (SR). The following modes of transit are grouped into non-rail bus: Commuter Bus (CB), Bus (MB), Bus Rapid Transit (RB), Jitney (JT),  Público (PB), Trolleybus (TB). The following modes of transit are grouped into non-rail other: Ferryboat (FB), Aerial Tramway (TR), Vanpool (VP), Demand Response (DR), Demand Response – Taxi (DT). 
 
-**total_transit_expenses**
+**`total_transit_expenses`**
 Total expenses for all transit agencies in the urbanized area. 
 
-**total_fares**
+**`total_fares`**
 Total fares collected by all transit agencies in the urbanized area. 
 
-**directional_route_miles**
+**`directional_route_mile`**
 Defined by the FTA as: "The mileage in each direction over which public transportation vehicles travel while in revenue service."
 
 **`vehicle_hours`** 
@@ -80,7 +76,7 @@ Also known as Vehicle Revenue Hours. It is defined by the FTA as: "The hours tha
 **`vehicle_miles`**  
 Also known as Vehicle Revenue Miles. It is defined by the FTA as: "The miles that vehicles are scheduled to or actually travel while in revenue service.""
 
-**passenger_miles**
+**`passenger_miles`**
 Defined by the FTA as: "The cumulative sum of the distances ridden by each passenger."
 
 **`passenger_trips`**    
@@ -160,7 +156,7 @@ The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger T
  
  --- 
 
-***Sources***
+## Sources
 
 The variables `median_household_income_msa`, `percent_workers_commuting_by_public_transit_msa`, `percent_unemployed_msa`, `percent_no_insurance_msa`, `percent_no_insurance_msa` and `percent_below_poverty_level` were obtained from:
 
@@ -192,4 +188,10 @@ The United Census Bureau, TigerWeb
 Tab: Nation-Based DataFiles
 Tables: Metropolitan Statistical Areas - Census 2010, Micropolitan Statistical Areas - Census 2010
 
+## Authors
+Oliver Baldwin Edwards, 
+Nicole Frontero, &
+Martin Glusker 2018
+
+Special thanks to Alex Baldenko, Kendall Codey, and Jonah Gilbert for their invaluable help on this project. 
 
