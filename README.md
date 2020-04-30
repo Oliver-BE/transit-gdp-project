@@ -143,16 +143,16 @@ A metric. Defined as `total_transit_expenses` divided by `passenger_miles`.
 ### Notes on data
 
 
-*Internal Points* 
+**Internal Points**
 The Census Bureau calculates an internal point (latitude and longitude coordinates) for each geographic entity.  For many geographic entities, the internal point is at or near the geographic center of the entity.  For some irregularly shaped entities (such as those shaped like a crescent), the calculated geographic center may be located outside the boundaries of the entity.  In such instances, the internal point is identified as a point inside the entity boundaries nearest to the calculated geographic center and, if possible, within a land polygon.  (https://www.census.gov/geo/reference/gtc/gtc_area_attr.html).
 
-*Metrics*
+**Metrics**
 The Federal Transit Administration uses all these metrics. The FTA's Small Transit Intensive Cities (STIC) Formula to determine funding allocation uses the following metrics: 1. Passenger miles traveled per vehicle revenue mile, 2. Passenger miles traveled per vehicle revenue hour 3. Vehicle revenue miles per capita, 4.Vehicle revenue hours per capita, 5.Passenger miles traveled per capita, and 6.Passengers per capita. 
 
 The FTA's file called "Metrics" includes "Fare Revenues per Unlinked Passenger Trip", "Fare Revenues per Total Operating Expense (Recovery Ratio)", "Cost per
  Hour",	"Passengers per Hour",	"Cost per Passenger", and	"Cost per Passenger Mile." That was how we decided to use these statistics as metrics. 
  
-*Reproducibility*
+**Reproducibility**
 All the steps necessary to reproduce our results can be found by knitting our `Technical-Report.Rmd`.
  
 
